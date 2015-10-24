@@ -1,6 +1,7 @@
-﻿
+﻿/// <reference path="../../typings/tsd.d.ts" />
+
 $(function () {
-    var canvas = $('#canvas')[0];
+    var canvas: HTMLCanvasElement = <HTMLCanvasElement>$('#canvas')[0];
     var context = canvas.getContext('2d');
 
 
@@ -12,9 +13,14 @@ $(function () {
         gameX: 0,
         gameY: 0,
         insideCanvas: false,
+        isOverFog: false,
+        buttonPressed: false,
         panDirection: "",
         panningThreshold: 48,
         panningVelocity: 24,
+        dragX: 0,
+        dragY: 0,
+        dragSelect: null,
         handlePanning: function () {
             var panDirection = "";
             if (mouse.insideCanvas) {
@@ -362,20 +368,9 @@ $(function () {
         spriteImage: null,
         cursors: [],
         cursorCount: 0,
-        loadCursor: function (name, x, y, imageCount, cursorSpeed) {
-            if (!x && !y) {
-                x = 0;
-                y = 0;
-            }
-            if (!cursorSpeed) {
-                cursorSpeed = 1;
-            }
-            if (!imageCount) {
-                imageCount = 1;
-            }
+        loadCursor: function (name: string, x: number = 0, y: number = 0, imageCount: number = 1, cursorSpeed: number = 1) {
             this.cursors[name] = { x: x, y: y, name: name, count: imageCount, spriteOffset: this.cursorCount, cursorSpeed: cursorSpeed };
             this.cursorCount += imageCount;
-
         },
         loadAllCursors: function () {
             mouse.spriteImage = this.preloadImage('cursors.png');
@@ -435,9 +430,13 @@ $(function () {
             mapImage: {
                 width: 0,
                 height: 0
-            }
+            },
+            team: ''
         },
         gridSize: 24,
+        obstructionGrid: [],
+        buildingObstructionGrid: [],
+        heroObstructionGrid: [],
         animationLoop: null,
         animationTimeout: 50,
         debugMode: false,
@@ -501,8 +500,8 @@ $(function () {
             for (var i = this.units.length - 1; i >= 0; i--) {
                 var unit = this.units[i];
 
-                var x = unit.x;
-                var y = unit.y;
+                var x: number = unit.x;
+                var y: number = unit.y;
                 //var collisionRadius = unit.collisionRadius/game.gridSize;
                 game.buildingObstructionGrid[Math.floor(y)][Math.floor(x)] = 1;
                 //game.obstructionGrid[Math.floor(y-collisionRadius)][Math.floor(x-collisionRadius)] = 1;
@@ -790,7 +789,7 @@ $(function () {
         showDebugger: function () {
             var getKeys = function (item) {
                 var html = '<ul>';
-                for (key in item) {
+                for (var key in item) {
                     if (item.hasOwnProperty(key)) {
                         var o = item[key];
                         if (typeof o != "function" || o === null) {
@@ -916,13 +915,14 @@ $(function () {
             };
 
         },
-        displayMessage: function (text, displayHeader) {
+        displayMessage: function (text, displayHeader?: boolean) {
             this.messageText = text;
             this.messageVisible = true;
             this.messageHeadingVisible = !!displayHeader;
         },
         missionStatus: function () {
-            var heroUnits = [], heroBuildings = [], heroTurrets = [], villainBuildings = [], villainUnits = [], villainTurrets = [];
+            var item,
+                heroUnits = [], heroBuildings = [], heroTurrets = [], villainBuildings = [], villainUnits = [], villainTurrets = [];
             for (var i = game.units.length - 1; i >= 0; i--) {
                 item = game.units[i];
                 if (item.team == game.currentLevel.team) {
@@ -973,7 +973,7 @@ $(function () {
             this.selectedAttackers = [];
             this.selectedUnits = []
         },
-        selectItem: function (item, shiftPressed) {
+        selectItem: function (item, shiftPressed?: boolean) {
             if (shiftPressed && item.selected) {
                 // deselect item
                 item.selected = false;
@@ -1234,7 +1234,7 @@ $(function () {
             this.tiberiumLoop = setInterval(function () {
                 for (var i = 0; i < game.overlay.length; i++) {
                     var overlay = game.overlay[i];
-                    if (overlay.name == 'tiberium' & overlay.stage < 11) {
+                    if (overlay.name == 'tiberium' && overlay.stage < 11) {
                         overlay.stage++;
                     }
                 };
@@ -1262,14 +1262,21 @@ $(function () {
         preloadCount: 0,
         loadedCount: 0,
         preloadImage: preloadImage,
+        repairImageBig: <HTMLImageElement>null,
+        primaryBuildingImage: <HTMLImageElement>null,
+        placementWhiteImage: '',
+        placementRedImage: '',
         tabsImage: null,
         width: 160,
+        left: 0,
+        top: 0,
         visible: true,
         cash: 0,
         deployMode: false,
         deployBuilding: '',
         repairMode: false,
         sellMode: false,
+        messageBox: null,
         finishDeployingBuilding: function () {
             for (var i = 0; i < game.buildings.length; i++) {
                 if (game.buildings[i].name == 'construction-yard' && game.buildings[i].team == game.currentLevel.team) {
@@ -1839,6 +1846,7 @@ $(function () {
     }
 
     var buildings = {
+        loaded: false,
         types: [],
         buildingDetails: {
             'construction-yard': {
@@ -2006,7 +2014,8 @@ $(function () {
 
 
 
-            var life = this.getLife();
+            var life = this.getLife(),
+                imageCategory: string;
             if (this.status == "build" || this.status == "sell") {
                 imageCategory = 'build';
             } else if (this.status == "" || this.life == "ultra-damaged") {
@@ -2108,27 +2117,28 @@ $(function () {
 
         load: function (name) {
             var details = this.buildingDetails[name];
-            var buildingType = {};
-            buildingType.defaults = {
-                type: 'building',
-                draw: buildings.draw,
-                underPoint: underPoint,
-                drawSelection: drawSelection,
-                getLife: getLife,
-                animationSpeed: 2,
-                status: "",
-                health: details.hitPoints,
-                gridHeight: details.gridShape.length,
-                gridWidth: details.gridShape[0].length,
-                pixelHeight: details.gridShape.length * game.gridSize,
-                pixelWidth: details.gridShape[0].length * game.gridSize,
-                bibImage: this.preloadImage('buildings/bib/bib-' + details.gridShape[0].length + '.gif'),
-                pixelOffsetX: 0,
-                pixelOffsetY: 0,
-                pixelTop: 0,
-                pixelLeft: 0
+            var buildingType = {
+                defaults: {
+                    type: 'building',
+                    draw: buildings.draw,
+                    underPoint: underPoint,
+                    drawSelection: drawSelection,
+                    getLife: getLife,
+                    animationSpeed: 2,
+                    status: "",
+                    health: details.hitPoints,
+                    gridHeight: details.gridShape.length,
+                    gridWidth: details.gridShape[0].length,
+                    pixelHeight: details.gridShape.length * game.gridSize,
+                    pixelWidth: details.gridShape[0].length * game.gridSize,
+                    bibImage: this.preloadImage('buildings/bib/bib-' + details.gridShape[0].length + '.gif'),
+                    pixelOffsetX: 0,
+                    pixelOffsetY: 0,
+                    pixelTop: 0,
+                    pixelLeft: 0
 
-            }
+                }
+            };
 
             this.loadSpriteSheet(buildingType, details, 'buildings');
 
@@ -2137,8 +2147,9 @@ $(function () {
         },
         loadSpriteSheet: loadSpriteSheet,
         add: function (details) {
-            var newBuilding = {};
-            newBuilding.team = game.currentLevel.team;
+            var newBuilding = {
+                team: game.currentLevel.team
+            };
             //alert(game.currentLevel.team)
             var name = details.name;
             $.extend(newBuilding, this.types[name].defaults);
@@ -2283,24 +2294,26 @@ $(function () {
         },
         load: function (name) {
             var details = this.infantryDetails[name];
-            var infantryType = {};
-            infantryType.defaults = {
-                type: 'infantry',
-                draw: this.draw,
-                drawSelection: drawSelection,
-                underPoint: underPoint,
-                collision: this.collision,
-                move: this.move,
-                getLife: getLife,
-                status: 'stand',
-                animationSpeed: 4,
-                health: details.hitPoints,
-                pixelOffsetX: -50 / 2,
-                pixelOffsetY: -39 / 2,
-                pixelWidth: 16,
-                pixelHeight: 16,
-                pixelTop: 6,
-                pixelLeft: 16
+            var infantryType = {
+                defaults: {
+                    type: 'infantry',
+                    draw: this.draw,
+                    drawSelection: drawSelection,
+                    underPoint: underPoint,
+                    collision: this.collision,
+                    move: this.move,
+                    getLife: getLife,
+                    status: 'stand',
+                    animationSpeed: 4,
+                    health: details.hitPoints,
+                    pixelOffsetX: -50 / 2,
+                    pixelOffsetY: -39 / 2,
+                    pixelWidth: 16,
+                    pixelHeight: 16,
+                    pixelTop: 6,
+                    pixelLeft: 16
+                },
+                imageArray: []
             };
 
             //$.extend(infantryType,defaults);
@@ -2347,12 +2360,13 @@ $(function () {
             this.drawSelection();
         },
         add: function (details) {
-            var newInfantry = {};
+            var newInfantry = {
+                moveDirection: 0,
+                animationIndex: 0,
+                team: game.currentLevel.team
+            };
             var name = details.name;
-
-            newInfantry.moveDirection = 0;
-            newInfantry.animationIndex = 0;
-            newInfantry.team = game.currentLevel.team;
+            
             $.extend(newInfantry, this.types[name].defaults);
             $.extend(newInfantry, this.types[name]);
             $.extend(newInfantry, details);
@@ -2388,6 +2402,7 @@ $(function () {
     };
 
     var vehicles = {
+        loaded: false,
         types: [],
         vehicleDetails: {
             'mcv': {
@@ -2472,7 +2487,7 @@ $(function () {
         loadedCount: 0,
         collision: function (otherUnit) {
             if (this == otherUnit) {
-                return false;
+                return null;
             }
 	        
             //alert(otherUnit.x + ' ' + otherUnit.y)
@@ -2489,31 +2504,32 @@ $(function () {
             } else if (distanceSquared <= softRadiusSquared) {
                 return { type: 'soft', distance: Math.pow(distanceSquared, 0.5) };
             } else {
-                return false;
+                return null;
             }
         },
         load: function (name) {
             var details = this.vehicleDetails[name];
-            var vehicleType = {};
-            vehicleType.defaults = {
-                type: 'vehicle',
-                draw: this.draw,
-                drawSelection: drawSelection,
-                underPoint: underPoint,
-                processOrders: this.processOrders,
-                moveTo: this.moveTo,
-                move: this.move,
-                collision: this.collision,
-                getLife: getLife,
-                animationSpeed: 4,
-                health: details.hitPoints,
-                pixelLeft: 0,
-                pixelTop: 0,
-                pixelOffsetX: 0,
-                pixelOffsetY: 0,
-                moveDirection: 0,
-                turretDirection: 0,
-                status: ''
+            var vehicleType = {
+                defaults: {
+                    type: 'vehicle',
+                    draw: this.draw,
+                    drawSelection: drawSelection,
+                    underPoint: underPoint,
+                    processOrders: this.processOrders,
+                    moveTo: this.moveTo,
+                    move: this.move,
+                    collision: this.collision,
+                    getLife: getLife,
+                    animationSpeed: 4,
+                    health: details.hitPoints,
+                    pixelLeft: 0,
+                    pixelTop: 0,
+                    pixelOffsetX: 0,
+                    pixelOffsetY: 0,
+                    moveDirection: 0,
+                    turretDirection: 0,
+                    status: ''
+                }
             };
 
             this.loadSpriteSheet(vehicleType, details, 'units/vehicles');
@@ -2614,7 +2630,7 @@ $(function () {
             this.instructions = [];
             if (this.path.length <= 1) {
                 if (Math.abs(this.x - destination.x) < 1 && Math.abs(this.y - destination.y) < 1) {
-                    if (this.x == end.x && this.y == end.y) {
+                    if (this.x == end[0] && this.y == end[1]) {
                         //reached
                     } else {
                         this.path = [{ x: start[0], y: start[1] }, { x: end[0], y: end[1] }];
@@ -3216,9 +3232,10 @@ $(function () {
    	        };
         },
         add: function (details) {
-            var newVehicle = {};
+            var newVehicle = {
+                team: game.currentLevel.team
+            };
             var name = details.name;
-            newVehicle.team = game.currentLevel.team;
             $.extend(newVehicle, this.types[name].defaults);
 
             $.extend(newVehicle, this.types[name]);
@@ -3290,24 +3307,25 @@ $(function () {
         loadedCount: 0,
         load: function (name) {
             var details = this.turretDetails[name];
-            var turretType = {};
-            turretType.defaults = {
-                type: 'turret',
-                status: '',
+            var turretType = {
+                defaults: {
+                    type: 'turret',
+                    status: '',
 
-                draw: this.draw,
-                drawSelection: drawSelection,
-                processOrders: this.processOrders,
-                underPoint: underPoint,
-                move: this.move,
-                getLife: getLife,
-                animationSpeed: 4,
-                health: details.hitPoints,
-                pixelLeft: 0,
-                pixelTop: 0,
-                pixelOffsetX: 0,
-                pixelOffsetY: 0,
-                turretDirection: 0
+                    draw: this.draw,
+                    drawSelection: drawSelection,
+                    processOrders: this.processOrders,
+                    underPoint: underPoint,
+                    move: this.move,
+                    getLife: getLife,
+                    animationSpeed: 4,
+                    health: details.hitPoints,
+                    pixelLeft: 0,
+                    pixelTop: 0,
+                    pixelOffsetX: 0,
+                    pixelOffsetY: 0,
+                    turretDirection: 0
+                }
             };
 
 
@@ -3325,6 +3343,7 @@ $(function () {
                 //alert(teamYOffset)
             }
 
+            var imageCategory: string;
             if (this.status == "build" || this.status == "sell") {
                 imageCategory = 'build';
             } else if (this.status == "") {
@@ -3492,9 +3511,10 @@ $(function () {
    	        };
         },
         add: function (details) {
-            var newTurret = {};
+            var newTurret = {
+                team: game.currentLevel.team
+            };
             var name = details.name;
-            newTurret.team = game.currentLevel.team;
             $.extend(newTurret, this.types[name].defaults);
 
             $.extend(newTurret, this.types[name]);
@@ -3742,12 +3762,17 @@ $(function () {
         preloadCount: 0,
         loadedCount: 0,
         load: function (id) {
-            var level = {};
-            level.id = id;
+            var level = {
+                id: id,
+                mapImage: this.preloadImage(this.levelDetails[id].mapUrl),
+                mapGrid: [],
+                obstructionGrid: [],
+                overlay: [],
+                team: ''
+            };
             //level.mapImage = new Image();
-            level.mapImage = this.preloadImage(this.levelDetails[id].mapUrl);
             var details = this.levelDetails[id];
-            for (item in details.items) {
+            for (var item in details.items) {
                 if (item == "vehicles") {
                     for (var i = details.items[item].length - 1; i >= 0; i--) {
                         vehicles.load(this.levelDetails[id].items[item][i]);
@@ -3783,8 +3808,8 @@ $(function () {
             };
             for (var i = details.terrain.length - 1; i >= 0; i--) {
                 var terrain = details.terrain[i];
-                for (var x = terrain.x1; x <= terrain.x2; x++) {
-                    for (var y = terrain.y1; y <= terrain.y2; y++) {
+                for (var x: number = terrain.x1; x <= terrain.x2; x++) {
+                    for (var y: number = terrain.y1; y <= terrain.y2; y++) {
                         obstructionGrid[y][x] = 1;
                         mapGrid[y][x] = terrain.type;
                     }
@@ -3815,7 +3840,7 @@ $(function () {
             //alert(sound.src);
             return sound;
         },
-        play: function (name, unique) {
+        play: function (name) {
             var options = this.sound_list[name];
             //alert(name)
             if (options.length == 1) {
@@ -3863,8 +3888,8 @@ $(function () {
     }
 	
     // common functions used by all objects
-	
-    function preloadImage(imgUrl, callbackFunction) {
+
+    function preloadImage(imgUrl: string, callbackFunction?: () => void): HTMLImageElement {
         var loadee = this;
         this.loaded = false;
         var image = new Image();
@@ -4011,7 +4036,7 @@ $(function () {
         var currentOverlay;
         for (var i = 0; i < game.overlay.length; i++) {
             var overlay = game.overlay[i];
-            if (overlay.name == 'tiberium' & overlay.stage > 0 && !fog.isOver(overlay.x * game.gridSize, overlay.y * game.gridSize)) {
+            if (overlay.name == 'tiberium' && overlay.stage > 0 && !fog.isOver(overlay.x * game.gridSize, overlay.y * game.gridSize)) {
                 var distance = Math.pow(overlay.x - hero.x, 2) + Math.pow(overlay.y - hero.y, 2);
                 if (!currentDistance || (currentDistance > distance)) {
                     currentOverlay = overlay;
@@ -4067,7 +4092,7 @@ $(function () {
         var path = AStar(g, start, end, 'Euclidean');
         shortenPath(path, g);
         if (path.length > 1 && game.debugMode) {
-            for (k = 0; k < path.length; k++) {
+            for (var k = 0; k < path.length; k++) {
                 //game.highlightGrid(path[k].x,path[k].y,1,1,'rgba(100,100,100,0.3)');
                 context.beginPath();
                 context.fillStyle = 'rgba(150,50,100,0.5)';
@@ -4168,7 +4193,7 @@ $(function () {
         if (angle2 >= base / 2) {
             angle2 = angle2 - base
         }
-        diff = angle2 - angle1;
+        var diff = angle2 - angle1;
         if (diff < -base / 2) {
             diff += base;
         }
@@ -4417,7 +4442,7 @@ $(function () {
 
     } ());
 
-    Array.prototype.remove = function (e) {
+    Array.prototype['remove'] = function (e) {
         var t, _ref;
         if ((t = this.indexOf(e)) > -1) {
             return ([].splice.apply(this, [t, t - t + 1].concat(_ref = [])), _ref);
