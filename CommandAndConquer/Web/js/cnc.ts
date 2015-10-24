@@ -2354,9 +2354,11 @@ $(function () {
 	        
             var x = this.x * game.gridSize + game.viewportAdjustX + this.pixelOffsetX;
             var y = this.y * game.gridSize + game.viewportAdjustY + this.pixelOffsetY;
-            //context.drawImage
-            drawSprite(moveImage, x, y, this.team, this.type);
-            //context.fillRect(this.x*game.gridSize+game.viewportAdjustX+this.pixelWidth/2,this.y*game.gridSize+game.viewportAdjustY+this.pixelHeight/2,10,10);
+
+            debugger;
+            console.error('drawSprite() not implemented here'); 
+            //drawSprite(moveImage, x, y, this.team, this.type);
+            ////context.fillRect(this.x*game.gridSize+game.viewportAdjustX+this.pixelWidth/2,this.y*game.gridSize+game.viewportAdjustY+this.pixelHeight/2,10,10);
             this.drawSelection();
         },
         add: function (details) {
@@ -2992,7 +2994,10 @@ $(function () {
 	            
                 //var collDirection=findAngle(this.orders.for,this,32);
                 //var dTurn = angleDiff(this.moveDirection,collDirection,32);
-                
+
+                debugger;
+                console.error('What is collDirection here?');
+                var collDirection = undefined;
                 if (Math.abs(collDirection) > 16) {
                     this.instructions.push({ type: 'move', distance: 0.25 });
                 } else {
@@ -3747,7 +3752,7 @@ $(function () {
                     {
                         id: 'wintrigger',
                         actions: [
-                            { action: 'wait', trigger: 'condition', condition: function () { return (units.enemyUnitCount() == 0 && buildings.enemyBuildingsCount == 0); } },
+                            { action: 'wait', trigger: 'condition', condition: function () { debugger; return console.error('Not implemented'); /*return (units.enemyUnitCount() == 0 && buildings.enemyBuildingsCount == 0);*/ } },
                             { action: 'endLevel', type: 'success' }
                         ]
                     }
