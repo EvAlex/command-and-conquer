@@ -3,34 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "command-and-conquer", ".", "{036BAF16-AB5C-4B4A-8D18-AE95B7620D90}"
-	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
-		Debug.AspNetCompiler.VirtualPath = "/localhost_55716"
-		Debug.AspNetCompiler.PhysicalPath = "..\..\..\..\Work\Github\EvAlex\command-and-conquer\"
-		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55716\"
-		Debug.AspNetCompiler.Updateable = "true"
-		Debug.AspNetCompiler.ForceOverwrite = "true"
-		Debug.AspNetCompiler.FixedNames = "false"
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.VirtualPath = "/localhost_55716"
-		Release.AspNetCompiler.PhysicalPath = "..\..\..\..\Work\Github\EvAlex\command-and-conquer\"
-		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_55716\"
-		Release.AspNetCompiler.Updateable = "true"
-		Release.AspNetCompiler.ForceOverwrite = "true"
-		Release.AspNetCompiler.FixedNames = "false"
-		Release.AspNetCompiler.Debug = "False"
-		VWDPort = "55716"
-		SlnRelativePath = "..\..\..\..\Work\Github\EvAlex\command-and-conquer\"
+Project("{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}") = "CommandAndConquer", "CommandAndConquer\CommandAndConquer.njsproj", "{147BE9DB-32EC-48B3-A202-CAEFFF71E260}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7176CF25-1D78-4704-84E4-7036BD5ECA9B}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
 	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{036BAF16-AB5C-4B4A-8D18-AE95B7620D90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{036BAF16-AB5C-4B4A-8D18-AE95B7620D90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{147BE9DB-32EC-48B3-A202-CAEFFF71E260}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{147BE9DB-32EC-48B3-A202-CAEFFF71E260}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{147BE9DB-32EC-48B3-A202-CAEFFF71E260}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{147BE9DB-32EC-48B3-A202-CAEFFF71E260}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

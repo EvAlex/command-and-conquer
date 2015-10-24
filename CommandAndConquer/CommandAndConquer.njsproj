@@ -1,0 +1,375 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>CommandAndConquer</Name>
+    <RootNamespace>CommandAndConquer</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>147be9db-32ec-48b3-a202-caefff71e260</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>server.ts</StartupFile>
+    <StartWebBrowser>True</StartWebBrowser>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <ProjectView>ProjectFiles</ProjectView>
+    <NodejsPort>1337</NodejsPort>
+    <TypeScriptSourceMap>true</TypeScriptSourceMap>
+    <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
+    <EnableTypeScript>true</EnableTypeScript>
+    <StartWebBrowser>true</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="tsconfig.json" />
+    <Content Include="Web\audio\sounds\button.ogg" />
+    <Content Include="Web\audio\sounds\construction.ogg" />
+    <Content Include="Web\audio\sounds\machine_gun-0.ogg" />
+    <Content Include="Web\audio\sounds\machine_gun-1.ogg" />
+    <Content Include="Web\audio\sounds\sell.ogg" />
+    <Content Include="Web\audio\sounds\tank-fire-0.ogg" />
+    <Content Include="Web\audio\sounds\tank-fire-1.ogg" />
+    <Content Include="Web\audio\sounds\tank-fire-2.ogg" />
+    <Content Include="Web\audio\sounds\tank-fire-3.ogg" />
+    <Content Include="Web\audio\talk\acknowledged.ogg" />
+    <Content Include="Web\audio\talk\affirmative.ogg" />
+    <Content Include="Web\audio\talk\awaiting_orders.ogg" />
+    <Content Include="Web\audio\talk\moving_out.ogg" />
+    <Content Include="Web\audio\talk\over_and_out.ogg" />
+    <Content Include="Web\audio\talk\ready_and_waiting.ogg" />
+    <Content Include="Web\audio\talk\reporting.ogg" />
+    <Content Include="Web\audio\talk\right_away.ogg" />
+    <Content Include="Web\audio\talk\unit_reporting.ogg" />
+    <Content Include="Web\audio\talk\vehicle_reporting.ogg" />
+    <Content Include="Web\audio\talk\yes_sir.ogg" />
+    <Content Include="Web\audio\voice\building.ogg" />
+    <Content Include="Web\audio\voice\building_in_progress.ogg" />
+    <Content Include="Web\audio\voice\cancelled.ogg" />
+    <Content Include="Web\audio\voice\cannot_deploy_here.ogg" />
+    <Content Include="Web\audio\voice\construction_complete.ogg" />
+    <Content Include="Web\audio\voice\insufficient_funds.ogg" />
+    <Content Include="Web\audio\voice\low_power.ogg" />
+    <Content Include="Web\audio\voice\mission_accomplished.ogg" />
+    <Content Include="Web\audio\voice\mission_failure.ogg" />
+    <Content Include="Web\audio\voice\new_construction_options.ogg" />
+    <Content Include="Web\audio\voice\not_ready.ogg" />
+    <Content Include="Web\audio\voice\on_hold.ogg" />
+    <Content Include="Web\audio\voice\reinforcements_have_arrived.ogg" />
+    <Content Include="Web\audio\voice\unit_ready.ogg" />
+    <Content Include="Web\debug.html" />
+    <Content Include="Web\images\blank-blank.gif" />
+    <Content Include="Web\images\blank-pointer.cur" />
+    <Content Include="Web\images\buildings\advanced-power-plant-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\barracks-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\bib-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\bib\bib-2.gif" />
+    <Content Include="Web\images\buildings\bib\bib-3.gif" />
+    <Content Include="Web\images\buildings\bib\bib-4.gif" />
+    <Content Include="Web\images\buildings\construction-yard-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\hand-of-nod-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\power-plant-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\refinery-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\tiberium-silo-sprite-sheet.png" />
+    <Content Include="Web\images\buildings\weapons-factory-sprite-sheet.png" />
+    <Content Include="Web\images\bullets\120mm.png" />
+    <Content Include="Web\images\cursors.png" />
+    <Content Include="Web\images\cursors\blank.cur" />
+    <Content Include="Web\images\cursors\blank.gif" />
+    <Content Include="Web\images\cursors\invisible.cur" />
+    <Content Include="Web\images\htitle.jpeg" />
+    <Content Include="Web\images\loading.gif" />
+    <Content Include="Web\images\logo.jpg" />
+    <Content Include="Web\images\maps\gdi\map01.jpeg" />
+    <Content Include="Web\images\sidebar\buttons\hmap 000.png" />
+    <Content Include="Web\images\sidebar\buttons\hmap 001.png" />
+    <Content Include="Web\images\sidebar\buttons\hmap 002.png" />
+    <Content Include="Web\images\sidebar\buttons\hrepair 000.png" />
+    <Content Include="Web\images\sidebar\buttons\hsell 000.png" />
+    <Content Include="Web\images\sidebar\buttons\hstripdn0.png" />
+    <Content Include="Web\images\sidebar\buttons\hstripdn1.png" />
+    <Content Include="Web\images\sidebar\buttons\hstripup0.png" />
+    <Content Include="Web\images\sidebar\buttons\hstripup1.png" />
+    <Content Include="Web\images\sidebar\buttons\repair-pressed.png" />
+    <Content Include="Web\images\sidebar\buttons\sell-pressed.png" />
+    <Content Include="Web\images\sidebar\cnc-2.ttf" />
+    <Content Include="Web\images\sidebar\cnc.ttf" />
+    <Content Include="Web\images\sidebar\hold.png" />
+    <Content Include="Web\images\sidebar\icons-sprite-sheet.png" />
+    <Content Include="Web\images\sidebar\icons\advanced-communication-tower-icon.png" />
+    <Content Include="Web\images\sidebar\icons\advanced-guard-tower-icon.png" />
+    <Content Include="Web\images\sidebar\icons\advanced-power-plant-icon.png" />
+    <Content Include="Web\images\sidebar\icons\air-strike-icon.png" />
+    <Content Include="Web\images\sidebar\icons\airstrip-icon.png" />
+    <Content Include="Web\images\sidebar\icons\apache-icon.png" />
+    <Content Include="Web\images\sidebar\icons\apc-icon.png" />
+    <Content Include="Web\images\sidebar\icons\artillery-icon.png" />
+    <Content Include="Web\images\sidebar\icons\barbed-wire-icon.png" />
+    <Content Include="Web\images\sidebar\icons\barracks-icon.png" />
+    <Content Include="Web\images\sidebar\icons\chain-link-icon.png" />
+    <Content Include="Web\images\sidebar\icons\chem-warrior-icon.png" />
+    <Content Include="Web\images\sidebar\icons\commando-icon.png" />
+    <Content Include="Web\images\sidebar\icons\communications-tower-icon.png" />
+    <Content Include="Web\images\sidebar\icons\concrete-wall-icon.png" />
+    <Content Include="Web\images\sidebar\icons\engineer-icon.png" />
+    <Content Include="Web\images\sidebar\icons\flame-tank-icon.png" />
+    <Content Include="Web\images\sidebar\icons\flamethrower-icon.png" />
+    <Content Include="Web\images\sidebar\icons\grenadier-icon.png" />
+    <Content Include="Web\images\sidebar\icons\guard-tower-icon.png" />
+    <Content Include="Web\images\sidebar\icons\gunboat-icon.png" />
+    <Content Include="Web\images\sidebar\icons\hand-of-nod-icon.png" />
+    <Content Include="Web\images\sidebar\icons\harvester-icon.png" />
+    <Content Include="Web\images\sidebar\icons\helipad-icon.png" />
+    <Content Include="Web\images\sidebar\icons\hover-craft-icon.png" />
+    <Content Include="Web\images\sidebar\icons\ion-cannon-icon.png" />
+    <Content Include="Web\images\sidebar\icons\jeep-icon.png" />
+    <Content Include="Web\images\sidebar\icons\light-tank-icon.png" />
+    <Content Include="Web\images\sidebar\icons\mammoth-tank-icon.png" />
+    <Content Include="Web\images\sidebar\icons\mcv-icon.png" />
+    <Content Include="Web\images\sidebar\icons\medium-tank-icon.png" />
+    <Content Include="Web\images\sidebar\icons\minigunner-icon.png" />
+    <Content Include="Web\images\sidebar\icons\msamicnh.png" />
+    <Content Include="Web\images\sidebar\icons\nod-buggy-icon.png" />
+    <Content Include="Web\images\sidebar\icons\nuclear-strike-icon.png" />
+    <Content Include="Web\images\sidebar\icons\obelisk-icon.png" />
+    <Content Include="Web\images\sidebar\icons\orca-icon.png" />
+    <Content Include="Web\images\sidebar\icons\power-plant-icon.png" />
+    <Content Include="Web\images\sidebar\icons\recon-bike-icon.png" />
+    <Content Include="Web\images\sidebar\icons\refinery-icon.png" />
+    <Content Include="Web\images\sidebar\icons\repair-facility-icon.png" />
+    <Content Include="Web\images\sidebar\icons\rocket_soldier-icon.png" />
+    <Content Include="Web\images\sidebar\icons\sam-site-icon.png" />
+    <Content Include="Web\images\sidebar\icons\sandbags-icon.png" />
+    <Content Include="Web\images\sidebar\icons\ssm-launcher-icon.png" />
+    <Content Include="Web\images\sidebar\icons\stealth-tank-icon.png" />
+    <Content Include="Web\images\sidebar\icons\support-aircraft-icon.png" />
+    <Content Include="Web\images\sidebar\icons\temple-of-nod-icon.png" />
+    <Content Include="Web\images\sidebar\icons\tiberium-silo-icon.png" />
+    <Content Include="Web\images\sidebar\icons\transport-icon.png" />
+    <Content Include="Web\images\sidebar\icons\turret-icon.png" />
+    <Content Include="Web\images\sidebar\icons\weapons-factory-icon.png" />
+    <Content Include="Web\images\sidebar\icons\wooden-fence-icon.png" />
+    <Content Include="Web\images\sidebar\message_box.jpg" />
+    <Content Include="Web\images\sidebar\placement-red.gif" />
+    <Content Include="Web\images\sidebar\placement-white.gif" />
+    <Content Include="Web\images\sidebar\power\power_bar_green.png" />
+    <Content Include="Web\images\sidebar\power\power_bar_orange.png" />
+    <Content Include="Web\images\sidebar\power\power_bar_red.png" />
+    <Content Include="Web\images\sidebar\power\power_indicator.png" />
+    <Content Include="Web\images\sidebar\power\power_indicator2.png" />
+    <Content Include="Web\images\sidebar\primary.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 000.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 001.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 002.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 003.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 004.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 005.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 006.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 007.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 008.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 009.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 010.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 011.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 012.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 013.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 014.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 015.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 016.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 017.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 018.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 019.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 020.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 021.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 022.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 023.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 024.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 025.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 026.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 027.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 028.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 029.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 030.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 031.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 032.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 033.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 034.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 035.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 036.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 037.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 038.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 039.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 040.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 041.png" />
+    <Content Include="Web\images\sidebar\radar\gdi\radar 042.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 000.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 001.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 002.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 003.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 004.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 005.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 006.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 007.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 008.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 009.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 010.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 011.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 012.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 013.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 014.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 015.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 016.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 017.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 018.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 019.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 020.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 021.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 022.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 023.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 024.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 025.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 026.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 027.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 028.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 029.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 030.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 031.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 032.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 033.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 034.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 035.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 036.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 037.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 038.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 039.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 040.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 041.png" />
+    <Content Include="Web\images\sidebar\radar\nod\radar 042.png" />
+    <Content Include="Web\images\sidebar\ready.png" />
+    <Content Include="Web\images\sidebar\repair-big.png" />
+    <Content Include="Web\images\sidebar\repair-small.png" />
+    <Content Include="Web\images\sidebar\select 000.png" />
+    <Content Include="Web\images\sidebar\select 001.png" />
+    <Content Include="Web\images\sidebar\sidebar.png" />
+    <Content Include="Web\images\sidebar\tabs.png" />
+    <Content Include="Web\images\sidebar\trans2.gif" />
+    <Content Include="Web\images\tiles\temperate\tiberium-sprite-sheet.png" />
+    <Content Include="Web\images\tiles\temperate\tree-sprite-sheet.png" />
+    <Content Include="Web\images\tiles\temperate\trees-sprite-sheet.png" />
+    <Content Include="Web\images\turrets\guard-tower-sprite-sheet.png" />
+    <Content Include="Web\images\turrets\gun-turret-sprite-sheet.png" />
+    <Content Include="Web\images\units\vehicles\harvester-sprite-sheet.png" />
+    <Content Include="Web\images\units\vehicles\light-tank-sprite-sheet.png" />
+    <Content Include="Web\images\units\vehicles\mcv-sprite-sheet.png" />
+    <Content Include="Web\index.html" />
+    <Content Include="Web\js\--no-seqs" />
+    <Content Include="Web\js\cnc-v0.3b" />
+    <TypeScriptCompile Include="server.ts" />
+    <Content Include="package.json" />
+    <Content Include="README.md" />
+    <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\mime\mime.d.ts" />
+    <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
+    <TypeScriptCompile Include="typings\winston\winston.d.ts" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="typings\" />
+    <Folder Include="typings\express\" />
+    <Folder Include="typings\mime\" />
+    <Folder Include="typings\node\" />
+    <Folder Include="typings\serve-static\" />
+    <Folder Include="typings\winston\" />
+    <Folder Include="Web\" />
+    <Folder Include="Scripts\" />
+    <Folder Include="Web\audio\" />
+    <Folder Include="Web\audio\sounds\" />
+    <Folder Include="Web\audio\talk\" />
+    <Folder Include="Web\audio\voice\" />
+    <Folder Include="Web\images\" />
+    <Folder Include="Web\images\buildings\" />
+    <Folder Include="Web\images\buildings\bib\" />
+    <Folder Include="Web\images\bullets\" />
+    <Folder Include="Web\images\cursors\" />
+    <Folder Include="Web\images\maps\" />
+    <Folder Include="Web\images\maps\gdi\" />
+    <Folder Include="Web\images\sidebar\" />
+    <Folder Include="Web\images\sidebar\buttons\" />
+    <Folder Include="Web\images\sidebar\icons\" />
+    <Folder Include="Web\images\sidebar\power\" />
+    <Folder Include="Web\images\sidebar\radar\" />
+    <Folder Include="Web\images\sidebar\radar\gdi\" />
+    <Folder Include="Web\images\sidebar\radar\nod\" />
+    <Folder Include="Web\images\tiles\" />
+    <Folder Include="Web\images\tiles\temperate\" />
+    <Folder Include="Web\images\turrets\" />
+    <Folder Include="Web\images\units\" />
+    <Folder Include="Web\images\units\vehicles\" />
+    <Folder Include="Web\js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Web\js\cnc-old.js" />
+    <Compile Include="Web\js\cnc-v0.1.js" />
+    <Compile Include="Web\js\cnc-v0.2.js" />
+    <Compile Include="Web\js\cnc-v0.2b.js" />
+    <Compile Include="Web\js\cnc-v0.3.js" />
+    <Compile Include="Web\js\cnc-v0.31.js" />
+    <Compile Include="Web\js\cnc-v0.3b.js" />
+    <Compile Include="Web\js\cnc-v0.3c.js" />
+    <Compile Include="Web\js\cnc-v0.3d.js" />
+    <Compile Include="Web\js\cnc.js" />
+    <Compile Include="Web\js\jquery.js" />
+  </ItemGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

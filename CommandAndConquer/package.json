@@ -1,0 +1,19 @@
+{
+    "name": "CommandAndConquer",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/EvAlex/command-and-conquer.git"
+    },
+    "license": "MIT",
+    "version": "0.0.0",
+    "description": "CommandAndConquer",
+    "main": "server.js",
+    "author": {
+        "name": "Alexander",
+        "email": "evalexhimself@gmail.com"
+    },
+    "dependencies": {
+        "express": "^4.13.3",
+        "winston": "^1.1.1"
+    }
+}
