@@ -1,4 +1,5 @@
 typings/
+bower_components/
 CommandAndConquer/**/*.js
 CommandAndConquer/**/*.js.map
 

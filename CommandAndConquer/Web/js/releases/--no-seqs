@@ -995,7 +995,8 @@ $(function() {
         },
         draw: function() {
             var moveImage = this.moveImages[Math.floor(this.moveDirection)], x = this.x * game.gridSize + this.pixelOffsetX + game.viewportAdjustX, y = this.y * game.gridSize + this.pixelOffsetY + game.viewportAdjustY;
-            drawSprite(moveImage, x, y, this.team, this.name == "mcv" ? "mcv" : this.type);
+            
+			(moveImage, x, y, this.team, this.name == "mcv" ? "mcv" : this.type);
             if (this.turretImageCount) {
                 var turretImage = this.turretImages[Math.floor(this.turretDirection)];
                 context.drawImage, drawSprite(turretImage, x, y, this.team, this.type);

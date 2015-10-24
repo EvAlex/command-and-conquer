@@ -1,0 +1,29 @@
+{
+  "name": "CommandAndConquer",
+  "version": "0.0.0",
+  "homepage": "https://github.com/EvAlex/command-and-conquer",
+  "authors": [
+    "EvAlex <evalexhimself@gmail.com>"
+  ],
+  "description": "Remake of Command & Conquer (()\u001b[Dc\u001b[) Westwood\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D\u001b[D1995 Westwood)",
+  "main": "server.js",
+  "keywords": [
+    "html5",
+    "canvas",
+    "game"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.4"
+  }
+}
