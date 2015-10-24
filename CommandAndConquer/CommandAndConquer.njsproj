@@ -328,7 +328,7 @@
     <Compile Include="Web\js\cnc-v0.3b.js" />
     <Compile Include="Web\js\cnc-v0.3c.js" />
     <Compile Include="Web\js\cnc-v0.3d.js" />
-    <Compile Include="Web\js\cnc.js" />
+    <Compile Include="Web\js\cnc.ts" />
     <Compile Include="Web\js\jquery.js" />
   </ItemGroup>
   <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
