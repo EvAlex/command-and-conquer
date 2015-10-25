@@ -20,7 +20,7 @@
     <OutputPath>.</OutputPath>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
-    <ProjectView>ProjectFiles</ProjectView>
+    <ProjectView>ShowAllFiles</ProjectView>
     <NodejsPort>1337</NodejsPort>
     <TypeScriptSourceMap>true</TypeScriptSourceMap>
     <TypeScriptModuleKind>CommonJS</TypeScriptModuleKind>
@@ -277,24 +277,38 @@
     <Content Include="Web\index.html" />
     <Content Include="Web\js\releases\--no-seqs" />
     <Content Include="Web\js\releases\cnc-v0.3b" />
+    <TypeScriptCompile Include="gulpfile.ts" />
     <TypeScriptCompile Include="server.ts" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <TypeScriptCompile Include="typings\browserify\browserify.d.ts" />
     <TypeScriptCompile Include="typings\express\express.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-browserify\gulp-browserify.d.ts" />
+    <TypeScriptCompile Include="typings\gulp-rename\gulp-rename.d.ts" />
+    <TypeScriptCompile Include="typings\gulp\gulp.d.ts" />
     <TypeScriptCompile Include="typings\jquery\jquery.d.ts" />
     <TypeScriptCompile Include="typings\mime\mime.d.ts" />
     <TypeScriptCompile Include="typings\node\node.d.ts" />
+    <TypeScriptCompile Include="typings\orchestrator\orchestrator.d.ts" />
+    <TypeScriptCompile Include="typings\q\Q.d.ts" />
     <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="typings\winston\winston.d.ts" />
     <TypeScriptCompile Include="Web\js\cnc.ts" />
+    <TypeScriptCompile Include="Web\js\Mouse.ts" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="typings\" />
+    <Folder Include="typings\browserify\" />
     <Folder Include="typings\express\" />
+    <Folder Include="typings\gulp\" />
     <Folder Include="typings\jquery\" />
     <Folder Include="typings\mime\" />
+    <Folder Include="typings\gulp-browserify\" />
+    <Folder Include="typings\gulp-rename\" />
     <Folder Include="typings\node\" />
+    <Folder Include="typings\orchestrator\" />
+    <Folder Include="typings\q\" />
     <Folder Include="typings\serve-static\" />
     <Folder Include="typings\winston\" />
     <Folder Include="Web\" />

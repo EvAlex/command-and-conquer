@@ -1,19 +1,26 @@
 {
-    "name": "CommandAndConquer",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/EvAlex/command-and-conquer.git"
-    },
-    "license": "MIT",
-    "version": "0.0.0",
-    "description": "CommandAndConquer",
-    "main": "server.js",
-    "author": {
-        "name": "Alexander",
-        "email": "evalexhimself@gmail.com"
-    },
-    "dependencies": {
-        "express": "^4.13.3",
-        "winston": "^1.1.1"
-    }
+  "name": "CommandAndConquer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/EvAlex/command-and-conquer.git"
+  },
+  "license": "MIT",
+  "version": "0.0.0",
+  "description": "CommandAndConquer",
+  "main": "server.js",
+  "author": {
+    "name": "Alexander",
+    "email": "evalexhimself@gmail.com"
+  },
+  "dependencies": {
+    "express": "^4.13.3",
+    "winston": "^1.1.1"
+  },
+  "devDependencies": {
+    "browserify": "^11.2.0",
+    "gulp": "^3.9.0",
+    "gulp-browserify": "^0.5.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0"
+  }
 }

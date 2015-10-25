@@ -22,6 +22,18 @@
         },
         "winston/winston.d.ts": {
             "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+        },
+        "orchestrator/orchestrator.d.ts": {
+            "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+        },
+        "gulp/gulp.d.ts": {
+            "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+        },
+        "q/Q.d.ts": {
+            "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
+        },
+        "browserify/browserify.d.ts": {
+            "commit": "3191f6e0088eee07c4d8fd24e4d27a40a60d9eb9"
         }
     }
 }
