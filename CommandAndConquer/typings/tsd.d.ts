@@ -11,3 +11,4 @@
 /// <reference path="browserify/browserify.d.ts" />
 /// <reference path="gulp-browserify/gulp-browserify.d.ts" />
 /// <reference path="gulp-rename/gulp-rename.d.ts" />
+/// <reference path="gulp-watch/gulp-watch.d.ts" />

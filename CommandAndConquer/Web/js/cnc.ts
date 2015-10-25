@@ -1,5 +1,9 @@
 ﻿/// <reference path="../../typings/tsd.d.ts" />
 
+import Mouse = require('./Mouse');
+
+var mmm = new Mouse();
+
 $(function () {
     var canvas: HTMLCanvasElement = <HTMLCanvasElement>$('#canvas')[0];
     var context = canvas.getContext('2d');
