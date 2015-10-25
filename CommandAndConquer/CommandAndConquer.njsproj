@@ -298,8 +298,13 @@
     <TypeScriptCompile Include="Web\js\Buildings.ts" />
     <TypeScriptCompile Include="Web\js\cnc.ts" />
     <TypeScriptCompile Include="Web\js\Game.ts" />
+    <TypeScriptCompile Include="Web\js\Infantry.ts" />
     <TypeScriptCompile Include="Web\js\Mouse.ts" />
+    <TypeScriptCompile Include="Web\js\Overlay.ts" />
+    <TypeScriptCompile Include="Web\js\Ships.ts" />
     <TypeScriptCompile Include="Web\js\Sidebar.ts" />
+    <TypeScriptCompile Include="Web\js\Turrets.ts" />
+    <TypeScriptCompile Include="Web\js\Vehicles.ts" />
     <TypeScriptCompile Include="Web\js\VisualObject.ts" />
   </ItemGroup>
   <ItemGroup>
