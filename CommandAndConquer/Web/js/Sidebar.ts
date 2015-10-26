@@ -547,7 +547,7 @@ class Sidebar extends VisualObject {
 
     }
 
-    draw() {
+    draw(context: CanvasRenderingContext2D) {
         context.drawImage(this.tabsImage, 0, this.top - this.tabsImage.height + 2);
         context.fillStyle = 'lightgreen';
         context.font = '12px "Command and Conquer"';

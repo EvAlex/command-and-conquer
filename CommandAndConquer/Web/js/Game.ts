@@ -1,8 +1,20 @@
 ﻿
+import Sidebar = require('./Sidebar');
+import Fog = require('./Fog');
+import Mouse = require('./Mouse');
+import Levels = require('./Levels');
+import Buildings = require('./Buildings');
+import Turrets = require('./Turrets');
+import Infantry = require('./Infantry');
+import Vehicles = require('./Vehicles');
+import Sounds = require('./Sounds');
+import Overlay = require('./Overlay');
+
 class Game {
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
+        this.context = canvas.getContext('2d');
         this.screenWidth = canvas.width;
         this.screenHeight = canvas.height;
         this.viewportTop = 35;
@@ -10,9 +22,31 @@ class Game {
         this.animationTimeout = 50;
         this.debugMode = false;
         this.speedAdjustmentFactor = 0.2;
+
+        this.sidebar = new Sidebar();
+        this.fog = new Fog();
+        this.mouse = new Mouse();
+        this.levels = new Levels();
+        this.buildingsFactory = new Buildings;
+        this.infantry = new Infantry();
+        this.vehicles = new Vehicles();
+        this.sounds = new Sounds();
+        this.overlayFactory = new Overlay();
     }
 
+    private sidebar: Sidebar;
+    private fog: Fog;
+    private mouse: Mouse;
+    private levels: Levels;
+    private buildingsFactory: Buildings;
+    private turretsFactory: Turrets;
+    private infantry: Infantry;
+    private vehicles: Vehicles;
+    private sounds: Sounds;
+    private overlayFactory: Overlay;
+
     private canvas: HTMLCanvasElement;
+    private context: CanvasRenderingContext2D;
 
     screenWidth: number;
     screenHeight: number;
@@ -27,34 +61,37 @@ class Game {
     viewportAdjustX: number = 0;
     viewportAdjustY: number = 0;
     currentLevel = {
-        mapImage: {
+        mapImage: <HTMLImageElement>{
             width: 0,
             height: 0
         },
-        team: ''
+        team: '',
+        overlay: null,
+        obstructionGrid: []
     };
     gridSize: number;
     obstructionGrid = [];
     buildingObstructionGrid = [];
     heroObstructionGrid = [];
-    animationLoop: NodeJS.Timer = null;
-    tiberiumLoop: NodeJS.Timer = null;
+    private animationLoop: NodeJS.Timer = null;
+    private tiberiumLoop: NodeJS.Timer = null;
+    private statusLoop: NodeJS.Timer = null;
     animationTimeout: number;
     debugMode: boolean;
     speedAdjustmentFactor: number;
 
     setViewport() {
-        context.beginPath();
-        this.viewportWidth = (sidebar.visible) ? (this.screenWidth - sidebar.width) : this.screenWidth;
+        this.context.beginPath();
+        this.viewportWidth = (this.sidebar.visible) ? (this.screenWidth - this.sidebar.width) : this.screenWidth;
         this.viewportHeight = 480;
-        context.rect(this.viewportLeft, this.viewportTop, this.viewportWidth - this.viewportLeft, this.viewportHeight);
-        context.clip();
+        this.context.rect(this.viewportLeft, this.viewportTop, this.viewportWidth - this.viewportLeft, this.viewportHeight);
+        this.context.clip();
     }
 
     drawMap() {
         //context.drawImage(this.currentLevel.mapImage,0,0);
-        mouse.handlePanning();
-        context.drawImage(this.currentLevel.mapImage,
+        this.mouse.handlePanning();
+        this.context.drawImage(this.currentLevel.mapImage,
             this.viewportX, this.viewportY, this.viewportWidth, this.viewportHeight,
             this.viewportLeft, this.viewportTop, this.viewportWidth, this.viewportHeight);
     	    
@@ -139,7 +176,7 @@ class Game {
         // Buildings can't be built on fog either
         for (var y = 0; y < this.heroObstructionGrid.length; y++) {
             for (var x = 0; x < this.heroObstructionGrid[y].length; x++) {
-                if (fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize)) {
+                if (this.fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize)) {
                     //this.heroObstructionGrid[y][x] = 0;
                     this.buildingObstructionGrid[y][x] = 1;
                 }
@@ -188,14 +225,14 @@ class Game {
         var gridSize = this.gridSize;
 
         if (optionalImage && $(optionalImage).is('img')) {
-            context.drawImage(optionalImage, i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
+            this.context.drawImage(optionalImage, i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
         } else {
             if (optionalImage) {
-                context.fillStyle = optionalImage;
+                this.context.fillStyle = optionalImage;
             } else {
-                context.fillStyle = 'rgba(225,225,225,0.5)';
+                this.context.fillStyle = 'rgba(225,225,225,0.5)';
             }
-            context.fillRect(i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
+            this.context.fillRect(i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
         }
     }
 
@@ -208,17 +245,17 @@ class Game {
 
         var gridWidth = mapWidth / gridSize;
         var gridHeight = mapHeight / gridSize;
-        context.beginPath();
-        context.strokeStyle = 'rgba(30,0,0,.6)';
+        this.context.beginPath();
+        this.context.strokeStyle = 'rgba(30,0,0,.6)';
         for (var i = 0; i < gridWidth; i++) {
-            context.moveTo(i * gridSize - viewportX + this.viewportLeft, 0 - viewportY + this.viewportTop);
-            context.lineTo(i * gridSize - viewportX + this.viewportLeft, mapHeight - viewportY + this.viewportTop);
+            this.context.moveTo(i * gridSize - viewportX + this.viewportLeft, 0 - viewportY + this.viewportTop);
+            this.context.lineTo(i * gridSize - viewportX + this.viewportLeft, mapHeight - viewportY + this.viewportTop);
         }
         for (var i = 0; i < gridHeight; i++) {
-            context.moveTo(0 - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
-            context.lineTo(mapWidth - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
+            this.context.moveTo(0 - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
+            this.context.lineTo(mapWidth - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
         }
-        context.stroke();
+        this.context.stroke();
 
 
 
@@ -293,8 +330,8 @@ class Game {
                     }
                 }
 
-                context.fillStyle = 'red';
-                context.fillRect(x + this.viewportAdjustX, y + this.viewportAdjustY, 2, 2);
+                this.context.fillStyle = 'red';
+                this.context.fillRect(x + this.viewportAdjustX, y + this.viewportAdjustY, 2, 2);
             }
     	        
             //alert(x +' '+y)
@@ -430,24 +467,24 @@ class Game {
         var html = "";
 
         html += "Level";
-        html += getKeys(levels);
+        html += getKeys(this.levels);
         html += "Mouse";
-        html += getKeys(mouse);
+        html += getKeys(this.mouse);
         if (this.selectedItems.length == 1) {
             html += "Selected Item";
             html += getKeys(this.selectedItems[0]);
         }
         html += "Game";
-        html += getKeys(game);
+        html += getKeys(this);
         html += "Sidebar";
-        html += getKeys(sidebar);
+        html += getKeys(this.sidebar);
         html += "Vehicles";
-        html += getKeys(vehicles);
+        html += getKeys(this.vehicles);
         html += "Buildings";
-        html += getKeys(buildings);
+        html += getKeys(this.buildings);
 
         html += "Infantry";
-        html += getKeys(infantry);
+        html += getKeys(this.infantry);
 
         $('#debugger').html(html);
     }
@@ -458,19 +495,19 @@ class Game {
             this.showDebugger();
         }
 
-        if (!levels.loaded || !sidebar.loaded
-            || !vehicles.loaded || !infantry.loaded || !buildings.loaded) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
+        if (!this.levels.loaded || !this.sidebar.loaded
+            || !this.vehicles.loaded || !this.infantry.loaded || !this.buildingsFactory.loaded) {
+            this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
             return;
 
         }
 
-        context.save();
+        this.context.save();
         // Draw the top panels
         // Draw sidebar if appropriate
         // set viewport
-    	    
-        sidebar.draw();
+
+        this.sidebar.draw(this.context);
         this.setViewport();
 
         this.drawMap();
@@ -493,15 +530,15 @@ class Game {
     	    
         this.drawBullets();
         if (!this.debugMode) {
-            fog.draw();
+            this.fog.draw();
         }
 
-        context.restore();
+        this.context.restore();
 
 
         this.drawMessage();
         // show appropriate mouse cursor
-        mouse.draw();
+        this.mouse.draw();
     	    
         ///this.missionStatus();
         //
@@ -516,18 +553,18 @@ class Game {
         if (!this.messageVisible) {
             return;
         }
-        context.drawImage(sidebar.messageBox, this.viewportLeft + 22, this.viewportTop + 150);
+        this.context.drawImage(this.sidebar.messageBox, this.viewportLeft + 22, this.viewportTop + 150);
         if (!this.messageHeadingVisible) {
-            context.fillStyle = 'black';
-            context.fillRect(265, 198, 120, 20)
+            this.context.fillStyle = 'black';
+            this.context.fillRect(265, 198, 120, 20)
         }
 
 
-        context.fillStyle = 'green';
-        context.font = '16px "Command and Conquer"';
+        this.context.fillStyle = 'green';
+        this.context.font = '16px "Command and Conquer"';
         var msgs = this.messageText.split('\n');
         for (var i = 0; i < msgs.length; i++) {
-            context.fillText(msgs[i], this.viewportLeft + 80, this.viewportTop + 200 + i * 18)
+            this.context.fillText(msgs[i], this.viewportLeft + 80, this.viewportTop + 200 + i * 18)
         };
 
     }
@@ -569,13 +606,13 @@ class Game {
         //alert(heroBuildings.length)
         if (heroUnits.length == 0 && heroBuildings.length == 0) {
             //mission failed;
-            sounds.play('mission_failure');
+            this.sounds.play('mission_failure');
             this.end();
             //alert('Game over \n If you liked this, please share with your friends using the Like button and leave me a comment');
         }
         if (villainTurrets.length == 0 && villainBuildings.length == 0 && villainUnits.length == 0) {
             //mission accomplished
-            sounds.play('mission_accomplished');
+            this.sounds.play('mission_accomplished');
             this.end();
             //alert('Game over \n If you liked this, please share with your friends using the Like button and leave me a comment');
         }
@@ -598,9 +635,13 @@ class Game {
         if (shiftPressed && item.selected) {
             // deselect item
             item.selected = false;
-            this.selectedItems.remove(item);
-            this.selectedUnits.remove(item);
-            this.selectedAttackers.remove(item);
+            var i = this.selectedItems.indexOf(item);
+            if (i >= 0)
+                this.selectedItems.splice(i, 1);
+            else if ((i = this.selectedUnits.indexOf(item)) >= 0)
+                this.selectedUnits.splice(i, 1);
+            else if ((i = this.selectedAttackers.indexOf(item)) >= 0)
+                this.selectedAttackers.splice(i, 1);
             return;
         }
 
@@ -609,7 +650,7 @@ class Game {
         //alert(1)
         if (item.type != 'building' && item.team == this.currentLevel.team) {
             this.selectedUnits.push(item);
-            sounds.play(item.type + '_select');
+            this.sounds.play(item.type + '_select');
             if (item.primaryWeapon) {
                 this.selectedAttackers.push(item);
             }
@@ -619,29 +660,29 @@ class Game {
     click(ev, rightClick) {
 
         if (this.messageVisible) {
-            if (mouse.x >= 290 && mouse.x <= 350 && mouse.y >= 310 && mouse.y <= 325) {
+            if (this.mouse.x >= 290 && this.mouse.x <= 350 && this.mouse.y >= 310 && this.mouse.y <= 325) {
                 this.messageVisible = false;
                 return;
             }
         }
-        var selectedObject = mouse.checkOverObject();
+        var selectedObject = this.mouse.checkOverObject();
         if (rightClick) {
             this.clearSelection();
-            sidebar.repairMode = false;
-            sidebar.deployMode = false;
-            sidebar.sellMode = false;
+            this.sidebar.repairMode = false;
+            this.sidebar.deployMode = false;
+            this.sidebar.sellMode = false;
             return;
         }
-        if (sidebar.repairMode) {
+        if (this.sidebar.repairMode) {
             if (selectedObject && selectedObject.team == this.currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret') && (selectedObject.health < selectedObject.hitPoints)) {
                 // do repair
                 //alert('repairing')
                 selectedObject.repairing = true;
             }
-        } else if (sidebar.deployMode) {
+        } else if (this.sidebar.deployMode) {
             //if (buildings.canConstruct(sidebar.deployBuilding,mouse.gridX,mouse.gridY)){
-            var buildingType = buildings.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
+            var buildingType = this.buildingsFactory.types[this.sidebar.deployBuilding] || this.turretsFactory.types[this.sidebar.deployBuilding];
             var grid = $.extend([], buildingType.gridShape);
             grid.push(grid[grid.length - 1]);
             //grid.push(grid[1]);
@@ -650,32 +691,32 @@ class Game {
 
                     if (grid[y][x] == 1) {
                         //console.log("mouse.gridX+x"+(mouse.gridX+x)+"mouse.gridY+y:"+(mouse.gridY+y))
-                        if (mouse.gridY + y < 0 || mouse.gridY + y >= this.buildingObstructionGrid.length || mouse.gridX + x < 0 || mouse.gridX + x >= this.buildingObstructionGrid[mouse.gridY + y].length || this.buildingObstructionGrid[mouse.gridY + y][mouse.gridX + x] == 1) {
-                            sounds.play('cannot_deploy_here');
+                        if (this.mouse.gridY + y < 0 || this.mouse.gridY + y >= this.buildingObstructionGrid.length || this.mouse.gridX + x < 0 || this.mouse.gridX + x >= this.buildingObstructionGrid[this.mouse.gridY + y].length || this.buildingObstructionGrid[this.mouse.gridY + y][this.mouse.gridX + x] == 1) {
+                            this.sounds.play('cannot_deploy_here');
                             return;
                         }
                     }
                 }
             }
-            sidebar.finishDeployingBuilding();                        
+            this.sidebar.finishDeployingBuilding();                        
             //} else {
             //    sounds.play('cannot_deploy_here');
             //}
-        } else if (sidebar.sellMode) {
+        } else if (this.sidebar.sellMode) {
             if (selectedObject && selectedObject.team == this.currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret')) {
                 if (selectedObject.name == 'refinery' && selectedObject.status == 'unload') {
-                    this.units.push(vehicles.add({
+                    this.units.push(this.vehicles.add({
                         name: 'harvester', team: selectedObject.team, x: selectedObject.x + 0.5,
                         y: selectedObject.y + 2, health: selectedObject.harvester.health, moveDirection: 14, orders: { type: 'guard' }
                     }));
                     selectedObject.harvester = null;
                 }
                 selectedObject.status = 'sell';
-                sounds.play('sell');
-                sidebar.cash += selectedObject.cost / 2;
+                this.sounds.play('sell');
+                this.sidebar.cash += selectedObject.cost / 2;
             }
-        } else if (!rightClick && !mouse.dragSelect) {
+        } else if (!rightClick && !this.mouse.dragSelect) {
             if (selectedObject) {
                 if (this.selectedUnits.length == 1 && selectedObject.selected && selectedObject.team == this.currentLevel.team) {
                     if (selectedObject.name == 'mcv') {
@@ -686,37 +727,37 @@ class Game {
                     }
                 } else if (this.selectedUnits.length == 1 && this.selectedUnits[0].name == 'harvester'
                     && this.selectedUnits[0].team == this.currentLevel.team
-                    && (selectedObject.name == 'tiberium' || selectedObject.name == 'refinery') && !mouse.isOverFog) {
+                    && (selectedObject.name == 'tiberium' || selectedObject.name == 'refinery') && !this.mouse.isOverFog) {
                     //My team's harvester is selected alone
                     if (selectedObject.name == 'tiberium') {
                         this.selectedUnits[0].orders = { type: 'harvest', to: { x: selectedObject.x, y: selectedObject.y } };
-                        sounds.play('vehicle_move');
+                        this.sounds.play('vehicle_move');
                     }
                     if (selectedObject.name == 'refinery' && selectedObject.team == this.currentLevel.team) {
                         this.selectedUnits[0].orders = { type: 'harvest-return', to: selectedObject };
-                        sounds.play('vehicle_move');
+                        this.sounds.play('vehicle_move');
                     }
                 } else if (selectedObject.team == this.currentLevel.team) {
                     if (!ev.shiftKey) {
                         this.clearSelection();
                     }
                     this.selectItem(selectedObject, ev.shiftKey);
-                } else if (this.selectedAttackers.length > 0 && selectedObject.name != 'tiberium' && !mouse.isOverFog) {
+                } else if (this.selectedAttackers.length > 0 && selectedObject.name != 'tiberium' && !this.mouse.isOverFog) {
                     for (var i = this.selectedAttackers.length - 1; i >= 0; i--) {
                         if (this.selectedAttackers[i].primaryWeapon) {
                             this.selectedAttackers[i].orders = { type: 'attack', target: selectedObject };
-                            sounds.play(this.selectedAttackers[i].type + '_move');
+                            this.sounds.play(this.selectedAttackers[i].type + '_move');
                         }
 
                     };
                 } else if (selectedObject.name == 'tiberium') {
                     if (this.selectedUnits.length > 0) {
-                        if (this.obstructionGrid[mouse.gridY] && this.obstructionGrid[mouse.gridY][mouse.gridX] == 1 && !mouse.isOverFog) {
+                        if (this.obstructionGrid[this.mouse.gridY] && this.obstructionGrid[this.mouse.gridY][this.mouse.gridX] == 1 && !this.mouse.isOverFog) {
                             // Don't do anything
                         } else {
                             for (var i = this.selectedUnits.length - 1; i >= 0; i--) {
-                                this.selectedUnits[i].orders = { type: 'move', to: { x: mouse.gridX, y: mouse.gridY } };
-                                sounds.play(this.selectedUnits[i].type + '_move');
+                                this.selectedUnits[i].orders = { type: 'move', to: { x: this.mouse.gridX, y: this.mouse.gridY } };
+                                this.sounds.play(this.selectedUnits[i].type + '_move');
                             };
                         }
                     }
@@ -728,12 +769,12 @@ class Game {
                 }
             } else { // no object under mouse
                 if (this.selectedUnits.length > 0) {
-                    if (this.obstructionGrid[mouse.gridY] && this.obstructionGrid[mouse.gridY][mouse.gridX] == 1 && !mouse.isOverFog) {
+                    if (this.obstructionGrid[this.mouse.gridY] && this.obstructionGrid[this.mouse.gridY][this.mouse.gridX] == 1 && !this.mouse.isOverFog) {
                         // Don't do anything
                     } else {
                         for (var i = this.selectedUnits.length - 1; i >= 0; i--) {
-                            this.selectedUnits[i].orders = { type: 'move', to: { x: mouse.gridX, y: mouse.gridY } };
-                            sounds.play(this.selectedUnits[i].type + '_move');
+                            this.selectedUnits[i].orders = { type: 'move', to: { x: this.mouse.gridX, y: this.mouse.gridY } };
+                            this.sounds.play(this.selectedUnits[i].type + '_move');
                         };
                     }
                 }
@@ -747,112 +788,112 @@ class Game {
         //$(canvas).css("cursor", "cursor:url(cursors/blank.png),none !important;");
         // load all sounds
         // load level
-        mouse.loadAllCursors();
-        sounds.loadAll();
-        overlay.loadAll();
+        this.mouse.loadAllCursors();
+        this.sounds.loadAll();
+        this.overlayFactory.loadAll();
 
-        this.currentLevel = levels.load('gdi1');
+        this.currentLevel = this.levels.load('gdi1');
         this.overlay = this.currentLevel.overlay;
         //this.team = this.currentLevel.team;
-        sidebar.load();
+        this.sidebar.load();
 
-        mouse.listenEvents();
-        fog.init();
+        this.mouse.listenEvents();
+        this.fog.init();
 
         this.viewportX = 96;
         this.viewportY = 264;
-        sidebar.visible = false;
+        this.sidebar.visible = false;
         // Enemy Stuff
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 8, y: 6, turretDirection: 16, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 9, y: 3, turretDirection: 16, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 7, y: 5, turretDirection: 16, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 8, y: 2, turretDirection: 16, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 8, y: 6, turretDirection: 16, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 9, y: 3, turretDirection: 16, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 7, y: 5, turretDirection: 16, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 8, y: 2, turretDirection: 16, team: 'nod' }));
 
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 16, y: 25, turretDirection: 24, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 13, y: 26, turretDirection: 24, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 16, y: 25, turretDirection: 24, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 13, y: 26, turretDirection: 24, team: 'nod' }));
 
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 11, y: 23, turretDirection: 18, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 10, y: 24, turretDirection: 20, team: 'nod' }));
-        this.turrets.push(turrets.add({ name: 'gun-turret', x: 9, y: 25, turretDirection: 24, team: 'nod' }));
-        //this.turrets.push(turrets.add({name:'gun-turret',x:9,y:26,turretDirection:26,team:'nod'}));
-            
-        this.buildings.push(buildings.add({ name: 'refinery', team: 'nod', x: 26, y: 8, status: 'build', health: 200 }));
-        //this.units.push(vehicles.add({name:'harvester',team:'nod',x:24,y:18,moveDirection:0}));
-            
-            
-        //this.units.push(vehicles.add({name:'harvester',x:25,y:18,moveDirection:0}));
-            
-        this.buildings.push(buildings.add({ name: 'construction-yard', x: 1, y: 14, team: 'nod' }));
-        this.buildings.push(buildings.add({ name: 'power-plant', x: 5, y: 14, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 11, y: 23, turretDirection: 18, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 10, y: 24, turretDirection: 20, team: 'nod' }));
+        this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 9, y: 25, turretDirection: 24, team: 'nod' }));
+        //this.turrets.push(this.turretsFactory.add({name:'gun-turret',x:9,y:26,turretDirection:26,team:'nod'}));
 
-        this.buildings.push(buildings.add({ name: 'hand-of-nod', x: 5, y: 19, team: 'nod' }));
+        this.buildings.push(this.buildingsFactory.add({ name: 'refinery', team: 'nod', x: 26, y: 8, status: 'build', health: 200 }));
+        //this.units.push(this.vehicles.add({name:'harvester',team:'nod',x:24,y:18,moveDirection:0}));
             
-        //this.buildings.push(buildings.add({name:'barracks',x:4,y:14,team:'nod'}));             
-        //this.buildings.push(buildings.add({name:'power-plant',x:18,y:10,health:200,team:'nod'})); 
-        this.units.push(vehicles.add({ name: 'light-tank', x: 7, y: 6, team: 'nod', orders: { type: 'patrol', from: { x: 9, y: 24 }, to: { x: 12, y: 8 } } }));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 2, y: 20, team: 'nod', orders: { type: 'patrol', from: { x: 2, y: 5 }, to: { x: 6, y: 20 } } }));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 5, y: 10, team: 'nod', orders: { type: 'patrol', from: { x: 17, y: 12 }, to: { x: 22, y: 2 } } }));
-    	    
-        //this.units.push(vehicles.add({name:'light-tank',x:2,y:2,team:'nod',orders:{type:'patrol',from:{x:25,y:5},to:{x:17,y:25}}}));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 4, y: 23, team: 'nod', orders: { type: 'patrol', from: { x: 4, y: 23 }, to: { x: 22, y: 25 } } }));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 2, y: 10, team: 'nod', orders: { type: 'protect', target: this.units[0] } }));
+            
+        //this.units.push(this.vehicles.add({name:'harvester',x:25,y:18,moveDirection:0}));
+            
+        this.buildings.push(this.buildingsFactory.add({ name: 'construction-yard', x: 1, y: 14, team: 'nod' }));
+        this.buildings.push(this.buildingsFactory.add({ name: 'power-plant', x: 5, y: 14, team: 'nod' }));
 
-        this.units.push(vehicles.add({ name: 'mcv', x: 23.5, y: 23.5, moveDirection: 0, orders: { type: 'move', to: { x: 23, y: 21 } } }));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 23, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 22, y: 23 } } }));
-        this.units.push(vehicles.add({ name: 'light-tank', x: 24, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 24, y: 23 } } }));
+        this.buildings.push(this.buildingsFactory.add({ name: 'hand-of-nod', x: 5, y: 19, team: 'nod' }));
+            
+        //this.buildings.push(this.buildingsFactory.add({name:'barracks',x:4,y:14,team:'nod'}));             
+        //this.buildings.push(this.buildingsFactory.add({name:'power-plant',x:18,y:10,health:200,team:'nod'})); 
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 7, y: 6, team: 'nod', orders: { type: 'patrol', from: { x: 9, y: 24 }, to: { x: 12, y: 8 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 2, y: 20, team: 'nod', orders: { type: 'patrol', from: { x: 2, y: 5 }, to: { x: 6, y: 20 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 5, y: 10, team: 'nod', orders: { type: 'patrol', from: { x: 17, y: 12 }, to: { x: 22, y: 2 } } }));
+    	    
+        //this.units.push(this.vehicles.add({name:'light-tank',x:2,y:2,team:'nod',orders:{type:'patrol',from:{x:25,y:5},to:{x:17,y:25}}}));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 4, y: 23, team: 'nod', orders: { type: 'patrol', from: { x: 4, y: 23 }, to: { x: 22, y: 25 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 2, y: 10, team: 'nod', orders: { type: 'protect', target: this.units[0] } }));
+
+        this.units.push(this.vehicles.add({ name: 'mcv', x: 23.5, y: 23.5, moveDirection: 0, orders: { type: 'move', to: { x: 23, y: 21 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 23, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 22, y: 23 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 24, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 24, y: 23 } } }));
     	    
     	    
-        //this.buildings.push(buildings.add({name:'weapons-factory',x:18,y:6}));
+        //this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:18,y:6}));
     	    
     	    
-        //this.buildings.push(buildings.add({name:'weapons-factory',x:24,y:18}));
+        //this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:24,y:18}));
 
     	    
-        //this.units.push(vehicles.add({name:'mcv',x:7,y:4,moveDirection:8}));
-        //this.units.push(infantry.add({name:'minigunner',x:27,y:12,team:'nod'}));
-        //this.units.push(infantry.add({name:'minigunner',x:6,y:22,team:'nod'}));
-        //this.units.push(infantry.add({name:'minigunner',x:5,y:22,team:'nod'}));
-        //this.units.push(infantry.add({name:'minigunner',x:28,y:12,team:'nod'}));
+        //this.units.push(this.vehicles.add({name:'mcv',x:7,y:4,moveDirection:8}));
+        //this.units.push(this.infantry.add({name:'minigunner',x:27,y:12,team:'nod'}));
+        //this.units.push(this.infantry.add({name:'minigunner',x:6,y:22,team:'nod'}));
+        //this.units.push(this.infantry.add({name:'minigunner',x:5,y:22,team:'nod'}));
+        //this.units.push(this.infantry.add({name:'minigunner',x:28,y:12,team:'nod'}));
     	    
     	    
     	    
-        //this.units.push(vehicles.add({name:'light-tank',x:23,y:25,moveDirection:0}));
+        //this.units.push(this.vehicles.add({name:'light-tank',x:23,y:25,moveDirection:0}));
     	    
         //sounds.play('reinforcements_have_arrived');
-        //this.units.push(infantry.add({name:'minigunner',x:8,y:13}));
-        //this.units.push(vehicles.add({name:'light-tank',x:5,y:13,orders:{type:'patrol',from:{x:5,y:13},to:{x:4,y:4}},team:'nod'})); 
-        //this.units.push(vehicles.add({name:'light-tank',x:16,y:8,orders:{type:'protect',target:this.units[3]}}));
+        //this.units.push(this.infantry.add({name:'minigunner',x:8,y:13}));
+        //this.units.push(this.vehicles.add({name:'light-tank',x:5,y:13,orders:{type:'patrol',from:{x:5,y:13},to:{x:4,y:4}},team:'nod'})); 
+        //this.units.push(this.vehicles.add({name:'light-tank',x:16,y:8,orders:{type:'protect',target:this.units[3]}}));
     	    
         /*
-        this.units.push(infantry.add({name:'minigunner',x:7,y:13,team:'nod'}));
-        this.units.push(vehicles.add({name:'light-tank',x:5,y:13,orders:{type:'patrol',from:{x:5,y:13},to:{x:4,y:4}},team:'nod'})); 
-        this.units.push(vehicles.add({name:'light-tank',x:16,y:8,orders:{type:'protect',target:this.units[3]}}));
-        this.units.push(vehicles.add({name:'light-tank',x:10,y:10,orders:{type:'protect',target:this.units[0]},team:'nod'}));
+        this.units.push(this.infantry.add({name:'minigunner',x:7,y:13,team:'nod'}));
+        this.units.push(this.vehicles.add({name:'light-tank',x:5,y:13,orders:{type:'patrol',from:{x:5,y:13},to:{x:4,y:4}},team:'nod'})); 
+        this.units.push(this.vehicles.add({name:'light-tank',x:16,y:8,orders:{type:'protect',target:this.units[3]}}));
+        this.units.push(this.vehicles.add({name:'light-tank',x:10,y:10,orders:{type:'protect',target:this.units[0]},team:'nod'}));
         
-        this.units.push(turrets.add({name:'gun-turret',x:12,y:13,moveDirection:9,team:'nod'}));
-        
-        */
-        //this.buildings.push(buildings.add({name:'power-plant',x:12,y:8,health:100,primaryBuilding:true})); 
-        //this.buildings.push(buildings.add({name:'construction-yard',x:9,y:4,primaryBuilding:true})); 
-        //this.buildings.push(buildings.add({name:'barracks',x:12,y:4,status:'build'}));
-        //this.buildings.push(buildings.add({name:'weapons-factory',x:15,y:12})); 
-        /*this.buildings.push(buildings.add({name:'construction-yard',x:3,y:9,status:'build',team:'nod'}));  
-        
-        
-        this.buildings.push(buildings.add({name:'barracks',x:12,y:4}));
-        this.buildings.push(buildings.add({name:'barracks',x:14,y:4,team:'nod'})); 
-        
-        this.buildings.push(buildings.add({name:'power-plant',x:12,y:8,status:'build',health:100,primaryBuilding:true})); 
-        
-        this.buildings.push(buildings.add({name:'power-plant',x:18,y:10,status:'build',health:200,team:'nod'})); 
-        
-        this.buildings.push(buildings.add({name:'weapons-factory',x:15,y:12,status:'construct',health:200})); 
-        
-        
-        this.buildings.push(buildings.add({name:'weapons-factory',x:13,y:16,status:'build',health:200,team:'nod'}));
+        this.units.push(this.turrets.add({name:'gun-turret',x:12,y:13,moveDirection:9,team:'nod'}));
         
         */
-        this.animationLoop = setInterval(this.animate, this.animationTimeout);
+        //this.buildings.push(this.buildingsFactory.add({name:'power-plant',x:12,y:8,health:100,primaryBuilding:true})); 
+        //this.buildings.push(this.buildingsFactory.add({name:'construction-yard',x:9,y:4,primaryBuilding:true})); 
+        //this.buildings.push(this.buildingsFactory.add({name:'barracks',x:12,y:4,status:'build'}));
+        //this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:15,y:12})); 
+        /*this.buildings.push(this.buildingsFactory.add({name:'construction-yard',x:3,y:9,status:'build',team:'nod'}));  
+        
+        
+        this.buildings.push(this.buildingsFactory.add({name:'barracks',x:12,y:4}));
+        this.buildings.push(this.buildingsFactory.add({name:'barracks',x:14,y:4,team:'nod'})); 
+        
+        this.buildings.push(this.buildingsFactory.add({name:'power-plant',x:12,y:8,status:'build',health:100,primaryBuilding:true})); 
+        
+        this.buildings.push(this.buildingsFactory.add({name:'power-plant',x:18,y:10,status:'build',health:200,team:'nod'})); 
+        
+        this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:15,y:12,status:'construct',health:200})); 
+        
+        
+        this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:13,y:16,status:'build',health:200,team:'nod'}));
+        
+        */
+        this.animationLoop = setInterval(() => this.animate(), this.animationTimeout);
 
         this.tiberiumLoop = setInterval(function () {
             for (var i = 0; i < this.overlay.length; i++) {
@@ -873,7 +914,7 @@ class Game {
         //clearInterval(this.animationLoop);
         clearInterval(this.statusLoop);
         clearInterval(this.tiberiumLoop);
-        sidebar.visible = false;
+        this.sidebar.visible = false;
         this.displayMessage('Thank you for trying this demo.'
             + 'This is still a work in progress. \nAny comments, feedback (including bugs), and advice is appreciated.\n\nIf you liked this demo, please share this page with all your friends. ');
 

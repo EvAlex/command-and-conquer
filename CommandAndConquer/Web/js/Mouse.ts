@@ -1,8 +1,21 @@
 ﻿
 import VisualObject = require('./VisualObject');
 
+class Cursor {
+    x: number; 
+    y: number; 
+    name: string; 
+    count: number;
+    spriteOffset: number; 
+    cursorSpeed: number;
+}
+
 class Mouse extends VisualObject {
 
+    constructor() {
+        super();
+    }
+    
     x: number;
     y: number;
     gridX: number;
@@ -23,61 +36,61 @@ class Mouse extends VisualObject {
     handlePanning() {
         var panDirection = "";
         if (this.insideCanvas) {
-            if (this.y <= game.viewportTop + this.panningThreshold && this.y >= game.viewportTop) {
-                game.viewportDeltaY = -this.panningVelocity;
+            if (this.y <= this.game.viewportTop + this.panningThreshold && this.y >= this.game.viewportTop) {
+                this.game.viewportDeltaY = -this.panningVelocity;
                 panDirection += "_top";
-            } else if (this.y >= game.viewportTop + game.viewportHeight - this.panningThreshold && this.y <= game.viewportTop + game.viewportHeight) {
-                game.viewportDeltaY = this.panningVelocity;
+            } else if (this.y >= this.game.viewportTop + this.game.viewportHeight - this.panningThreshold && this.y <= this.game.viewportTop + this.game.viewportHeight) {
+                this.game.viewportDeltaY = this.panningVelocity;
                 panDirection += "_bottom";
             } else {
-                game.viewportDeltaY = 0;
+                this.game.viewportDeltaY = 0;
                 panDirection += "";
             }
 
-            if (this.x < this.panningThreshold && this.y >= game.viewportTop && this.y <= game.viewportTop + game.viewportHeight) {
-                game.viewportDeltaX = -this.panningVelocity;
+            if (this.x < this.panningThreshold && this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
+                this.game.viewportDeltaX = -this.panningVelocity;
                 panDirection += "_left";
-            } else if (this.x > game.screenWidth - this.panningThreshold && this.y >= game.viewportTop && this.y <= game.viewportTop + game.viewportHeight) {
-                game.viewportDeltaX = this.panningVelocity;
+            } else if (this.x > this.game.screenWidth - this.panningThreshold && this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
+                this.game.viewportDeltaX = this.panningVelocity;
                 panDirection += "_right";
             } else {
-                game.viewportDeltaX = 0;
+                this.game.viewportDeltaX = 0;
                 panDirection += "";
             }
         }
 
-        if ((game.viewportX + game.viewportDeltaX < 0)
-            || (game.viewportX + game.viewportDeltaX + game.screenWidth + (sidebar.visible ? -sidebar.width : 0) > game.currentLevel.mapImage.width)) {
-            game.viewportDeltaX = 0;
-            //console.log (game.viewportX+game.viewportDeltaX +game.screenWidth+(sidebar.visible?-sidebar.width:0));
-            //console.log (game.currentLevel.mapImage.width);
+        if ((this.game.viewportX + this.game.viewportDeltaX < 0)
+            || (this.game.viewportX + this.game.viewportDeltaX + this.game.screenWidth + (this.sidebar.visible ? -this.sidebar.width : 0) > this.game.currentLevel.mapImage.width)) {
+            this.game.viewportDeltaX = 0;
+            //console.log (this.game.viewportX+this.game.viewportDeltaX +this.game.screenWidth+(this.sidebar.visible?-this.sidebar.width:0));
+            //console.log (this.game.currentLevel.mapImage.width);
         }
 
-        if (!sidebar.visible && (game.viewportX + game.screenWidth > game.currentLevel.mapImage.width)) {
-            game.viewportX = game.currentLevel.mapImage.width - game.screenWidth;
-            game.viewportDeltaX = 0;
+        if (!this.sidebar.visible && (this.game.viewportX + this.game.screenWidth > this.game.currentLevel.mapImage.width)) {
+            this.game.viewportX = this.game.currentLevel.mapImage.width - this.game.screenWidth;
+            this.game.viewportDeltaX = 0;
         }
 
-        if ((game.viewportY + game.viewportDeltaY < 0)
-            || (game.viewportY + game.viewportDeltaY + game.viewportHeight > game.currentLevel.mapImage.height)) {
-            game.viewportDeltaY = 0;
+        if ((this.game.viewportY + this.game.viewportDeltaY < 0)
+            || (this.game.viewportY + this.game.viewportDeltaY + this.game.viewportHeight > this.game.currentLevel.mapImage.height)) {
+            this.game.viewportDeltaY = 0;
         }
 
         if (panDirection != "") {
-            if (game.viewportDeltaX == 0 && game.viewportDeltaY == 0) {
+            if (this.game.viewportDeltaX == 0 && this.game.viewportDeltaY == 0) {
                 panDirection = "no_pan" + panDirection;
             } else {
                 panDirection = "pan" + panDirection;
             }
         }
         this.panDirection = panDirection;
-        game.viewportX += game.viewportDeltaX;
-        game.viewportY += game.viewportDeltaY;
-        this.gameX = this.x + game.viewportX - game.viewportLeft;
-        this.gameY = this.y + game.viewportY - game.viewportTop;
+        this.game.viewportX += this.game.viewportDeltaX;
+        this.game.viewportY += this.game.viewportDeltaY;
+        this.gameX = this.x + this.game.viewportX - this.game.viewportLeft;
+        this.gameY = this.y + this.game.viewportY - this.game.viewportTop;
 
-        game.viewportAdjustX = game.viewportLeft - game.viewportX;
-        game.viewportAdjustY = game.viewportTop - game.viewportY;
+        this.game.viewportAdjustX = this.game.viewportLeft - this.game.viewportX;
+        this.game.viewportAdjustY = this.game.viewportTop - this.game.viewportY;
 
     }
 
@@ -97,7 +110,7 @@ class Mouse extends VisualObject {
             var width = Math.abs(this.gameX - this.dragX)
             var height = Math.abs(this.gameY - this.dragY)
             context.strokeStyle = 'white';
-            context.strokeRect(x + game.viewportAdjustX, y + game.viewportAdjustY, width, height);
+            context.strokeRect(x + this.game.viewportAdjustX, y + this.game.viewportAdjustY, width, height);
         }
     	    
         //var image = this.cursor.images[Math.floor(this.cursorLoop/this.cursor.cursorSpeed)];
@@ -107,8 +120,8 @@ class Mouse extends VisualObject {
 
     checkOverObject() {
         this.overObject = null;
-        for (var i = game.overlay.length - 1; i >= 0; i--) {
-            var overlay = game.overlay[i];
+        for (var i = this.game.overlay.length - 1; i >= 0; i--) {
+            var overlay = this.game.overlay[i];
 
             if (overlay.name == 'tiberium' && this.gridX == overlay.x && this.gridY == overlay.y) {
                 //
@@ -117,23 +130,23 @@ class Mouse extends VisualObject {
                 //alert('overlay')
             }
         };
-        for (var i = game.buildings.length - 1; i >= 0; i--) {
-            if (game.buildings[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = game.buildings[i];
+        for (var i = this.game.buildings.length - 1; i >= 0; i--) {
+            if (this.game.buildings[i].underPoint(this.gameX, this.gameY)) {
+                this.overObject = this.game.buildings[i];
                 break;
             }
         };
 
-        for (var i = game.turrets.length - 1; i >= 0; i--) {
-            if (game.turrets[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = game.turrets[i];
+        for (var i = this.game.turrets.length - 1; i >= 0; i--) {
+            if (this.game.turrets[i].underPoint(this.gameX, this.gameY)) {
+                this.overObject = this.game.turrets[i];
                 break;
             }
         };
 
-        for (var i = game.units.length - 1; i >= 0; i--) {
-            if (game.units[i].underPoint && game.units[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = game.units[i];
+        for (var i = this.game.units.length - 1; i >= 0; i--) {
+            if (this.game.units[i].underPoint && this.game.units[i].underPoint(this.gameX, this.gameY)) {
+                this.overObject = this.game.units[i];
                 break;
             }
         };
@@ -146,42 +159,42 @@ class Mouse extends VisualObject {
         this.cursor = this.cursors['default'];
         var selectedObject = this.checkOverObject();
 
-        if (this.y < game.viewportTop || this.y > game.viewportTop + game.viewportHeight) {
+        if (this.y < this.game.viewportTop || this.y > this.game.viewportTop + this.game.viewportHeight) {
             // default cursor if too much to the top
-        } else if (sidebar.deployMode) {
-            var buildingType = buildings.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
+        } else if (this.sidebar.deployMode) {
+            var buildingType = buildings.types[this.sidebar.deployBuilding] || turrets.types[this.sidebar.deployBuilding];
             var grid = $.extend([], buildingType.gridShape);
             grid.push(grid[grid.length - 1]);
             //grid.push(grid[1]);
             for (var y = 0; y < grid.length; y++) {
                 for (var x = 0; x < grid[y].length; x++) {
                     if (grid[y][x] == 1) {
-                        if (this.gridY + y < 0 || this.gridY + y >= game.buildingObstructionGrid.length || this.gridX + x < 0 || this.gridX + x >= game.buildingObstructionGrid[this.gridY + y].length || game.buildingObstructionGrid[this.gridY + y][this.gridX + x] == 1) {
-                            //if (game.buildingObstructionGrid[this.gridY+y][this.gridX+x] == 1){
-                            game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, sidebar.placementRedImage);
+                        if (this.gridY + y < 0 || this.gridY + y >= this.game.buildingObstructionGrid.length || this.gridX + x < 0 || this.gridX + x >= this.game.buildingObstructionGrid[this.gridY + y].length || this.game.buildingObstructionGrid[this.gridY + y][this.gridX + x] == 1) {
+                            //if (this.game.buildingObstructionGrid[this.gridY+y][this.gridX+x] == 1){
+                            this.game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, this.sidebar.placementRedImage);
                         } else {
-                            game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, sidebar.placementWhiteImage);
+                            this.game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, this.sidebar.placementWhiteImage);
                         }
                     }
                 }
             }
-        } else if (sidebar.repairMode) {
-            if (selectedObject && selectedObject.team == game.currentLevel.team
+        } else if (this.sidebar.repairMode) {
+            if (selectedObject && selectedObject.team == this.game.currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret') && (selectedObject.health < selectedObject.hitPoints)) {
                 this.cursor = this.cursors['repair'];
             } else {
                 this.cursor = this.cursors['no_repair'];
             }
-        } else if (sidebar.sellMode) {
-            if (selectedObject && selectedObject.team == game.currentLevel.team
+        } else if (this.sidebar.sellMode) {
+            if (selectedObject && selectedObject.team == this.game.currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret')) {
                 this.cursor = this.cursors['sell'];
             } else {
                 this.cursor = this.cursors['no_sell'];
             }
-        } else if (sidebar.visible && this.x > sidebar.left) {
+        } else if (this.sidebar.visible && this.x > this.sidebar.left) {
             //over a button
-            var hovButton = sidebar.hoveredButton();
+            var hovButton = this.sidebar.hoveredButton();
             if (hovButton) {
                 var tooltipName = hovButton.type;
                 switch (hovButton.type) {
@@ -207,26 +220,26 @@ class Mouse extends VisualObject {
         } else if (this.dragSelect) {
             this.cursor = this.cursors['default'];
         } else if (selectedObject && !this.isOverFog) {
-            if (selectedObject.team && selectedObject.team != game.currentLevel.team && game.selectedAttackers.length > 0) {
+            if (selectedObject.team && selectedObject.team != this.game.currentLevel.team && this.game.selectedAttackers.length > 0) {
                 this.cursor = this.cursors['attack'];
-            } else if (game.selectedUnits.length == 1 && game.selectedUnits[0].name == 'harvester'
-                && game.selectedUnits[0].team == game.currentLevel.team
+            } else if (this.game.selectedUnits.length == 1 && this.game.selectedUnits[0].name == 'harvester'
+                && this.game.selectedUnits[0].team == this.game.currentLevel.team
                 && (selectedObject.name == 'tiberium' || selectedObject.name == 'refinery')) {
                 //My team's harvester is selected alone
                 if (selectedObject.name == 'tiberium') {
                     this.cursor = this.cursors['attack']; // Harvester attacks tiberium 
                 }
-                if (selectedObject.name == 'refinery' && selectedObject.team == game.currentLevel.team) {
+                if (selectedObject.name == 'refinery' && selectedObject.team == this.game.currentLevel.team) {
                     this.cursor = this.cursors['load_vehicle']; // Harvester enters my refinery
                 }
-            } else if (game.selectedUnits.length == 1 && selectedObject.selected && selectedObject.team == game.currentLevel.team) {
+            } else if (this.game.selectedUnits.length == 1 && selectedObject.selected && selectedObject.team == this.game.currentLevel.team) {
                 if (selectedObject.name == 'mcv') {
                     this.cursor = this.cursors['build_command'];
                 }
             } else if (!selectedObject.selected && selectedObject.name != 'tiberium') {
                 this.cursor = this.cursors['select'];
             } else if (selectedObject.name == 'tiberium') {
-                if (game.obstructionGrid[this.gridY] && game.obstructionGrid[this.gridY][this.gridX] == 1) {
+                if (this.game.obstructionGrid[this.gridY] && this.game.obstructionGrid[this.gridY][this.gridX] == 1) {
                     this.cursor = this.cursors['no_move'];
                 } else {
                     this.cursor = this.cursors['move'];
@@ -236,8 +249,8 @@ class Mouse extends VisualObject {
         } else if (this.panDirection && this.panDirection != "") {
             this.cursor = this.cursors[this.panDirection];
         }
-        else if (game.selectedUnits.length > 0) {
-            if (game.obstructionGrid[this.gridY] && game.obstructionGrid[this.gridY][this.gridX] == 1 && !this.isOverFog) {
+        else if (this.game.selectedUnits.length > 0) {
+            if (this.game.obstructionGrid[this.gridY] && this.game.obstructionGrid[this.gridY][this.gridX] == 1 && !this.isOverFog) {
                 this.cursor = this.cursors['no_move'];
             } else {
                 this.cursor = this.cursors['move'];
@@ -255,7 +268,7 @@ class Mouse extends VisualObject {
     }
 
     click(ev, rightClick) {
-        if (this.y <= game.viewportTop && this.y > game.viewportTop - 15) {
+        if (this.y <= this.game.viewportTop && this.y > this.game.viewportTop - 15) {
             // Tab Area Clicked    
             if (this.x >= 0 && this.x < 160) {
                 // Options button clicked
@@ -266,15 +279,15 @@ class Mouse extends VisualObject {
             } else if (this.x >= 480 && this.x < 640) {
                 // Sidebar button clicked
                 //alert ('Sidebar button clicked');
-                sidebar.visible = !sidebar.visible;
+                this.sidebar.visible = !this.sidebar.visible;
             }
-        } else if (this.y >= game.viewportTop && this.y <= game.viewportTop + game.viewportHeight) {
+        } else if (this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
             //Game Area Clicked
-            if (sidebar.visible && this.x > sidebar.left) {
+            if (this.sidebar.visible && this.x > this.sidebar.left) {
                 //alert ('sidebar clicked');
-                sidebar.click(ev, rightClick);
+                this.sidebar.click(ev, rightClick);
             } else {
-                game.click(ev, rightClick);
+                this.game.click(ev, rightClick);
                 //alert('game area clicked');
             }
 
@@ -288,8 +301,8 @@ class Mouse extends VisualObject {
             this.y = ev.pageY - offset.top;
 
 
-            this.gridX = Math.floor((this.gameX) / game.gridSize);
-            this.gridY = Math.floor((this.gameY) / game.gridSize);
+            this.gridX = Math.floor((this.gameX) / this.game.gridSize);
+            this.gridY = Math.floor((this.gameY) / this.game.gridSize);
             this.isOverFog = fog.isOver(this.gameX, this.gameY);
             //this.panDirection = this.handlePanning();
             //this.showAppropriateCursor();
@@ -329,17 +342,17 @@ class Mouse extends VisualObject {
             if (ev.which == 1) {
                 if (this.dragSelect) {
                     if (!ev.shiftKey) {
-                        game.clearSelection();
+                        this.game.clearSelection();
                     }
                     var x1 = Math.min(this.gameX, this.dragX);
                     var y1 = Math.min(this.gameY, this.dragY);
                     var x2 = Math.max(this.gameX, this.dragX);
                     var y2 = Math.max(this.gameY, this.dragY);
-                    for (var i = game.units.length - 1; i >= 0; i--) {
-                        var unit = game.units[i];
-                        if (!unit.selected && unit.team == game.currentLevel.team && x1 <= unit.x * game.gridSize && x2 >= unit.x * game.gridSize
-                            && y1 <= unit.y * game.gridSize && y2 >= unit.y * game.gridSize) {
-                            game.selectItem(unit, ev.shiftKey);
+                    for (var i = this.game.units.length - 1; i >= 0; i--) {
+                        var unit = this.game.units[i];
+                        if (!unit.selected && unit.team == this.game.currentLevel.team && x1 <= unit.x * this.game.gridSize && x2 >= unit.x * this.game.gridSize
+                            && y1 <= unit.y * this.game.gridSize && y2 >= unit.y * this.game.gridSize) {
+                            this.game.selectItem(unit, ev.shiftKey);
                         }
                     };
                     //this.dragSelect = false;
@@ -360,7 +373,7 @@ class Mouse extends VisualObject {
 
 
         $(document).keypress(function (ev) {
-            game.keyPressed(ev);
+            this.game.keyPressed(ev);
         });
 
     }
@@ -369,7 +382,8 @@ class Mouse extends VisualObject {
     preloadCount: number = 0;
     loadedCount: number = 0;
     spriteImage: HTMLImageElement = null;
-    cursors: any[];
+    cursor: Cursor;
+    cursors: Object;
     cursorCount: number = 0;
 
     loadCursor(name: string, x: number = 0, y: number = 0, imageCount: number = 1, cursorSpeed: number = 1) {
