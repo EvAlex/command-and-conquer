@@ -1,4 +1,5 @@
 ﻿
+import GameScreen = require('./GameScreen');
 import Sidebar = require('./Sidebar');
 import Fog = require('./Fog');
 import Mouse = require('./Mouse');
@@ -15,9 +16,8 @@ class Game {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
-        this.screenWidth = canvas.width;
-        this.screenHeight = canvas.height;
-        this.viewportTop = 35;
+        this.screen = new GameScreen(canvas.width, canvas.height);
+        this.screen.viewport.top = 35;
         this.gridSize = 24;
         this.animationTimeout = 50;
         this.debugMode = false;
@@ -48,18 +48,21 @@ class Game {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
-    screenWidth: number;
-    screenHeight: number;
-    viewportTop: number;
-    viewportLeft: number = 0;
-    viewportHeight: number = 0;
-    viewportWidth: number = 0;
-    viewportX: number = 0;
-    viewportY: number = 0;
-    viewportDeltaX: number = 0;
-    viewportDeltaY: number = 0;
-    viewportAdjustX: number = 0;
-    viewportAdjustY: number = 0;
+    private screen: GameScreen;
+    //  Below is moved to GameScreen
+    //screenWidth: number;
+    //screenHeight: number;
+    //viewportTop: number;
+    //viewportLeft: number = 0;
+    //viewportHeight: number = 0;
+    //viewportWidth: number = 0;
+    //viewportX: number = 0;
+    //viewportY: number = 0;
+    //viewportDeltaX: number = 0;
+    //viewportDeltaY: number = 0;
+    //viewportAdjustX: number = 0;
+    //viewportAdjustY: number = 0;
+
     currentLevel = {
         mapImage: <HTMLImageElement>{
             width: 0,
@@ -82,18 +85,18 @@ class Game {
 
     setViewport() {
         this.context.beginPath();
-        this.viewportWidth = (this.sidebar.visible) ? (this.screenWidth - this.sidebar.width) : this.screenWidth;
-        this.viewportHeight = 480;
-        this.context.rect(this.viewportLeft, this.viewportTop, this.viewportWidth - this.viewportLeft, this.viewportHeight);
+        this.screen.viewport.width = (this.sidebar.visible) ? (this.screen.width - this.sidebar.width) : this.screen.width;
+        this.screen.viewport.height = 480;
+        this.context.rect(this.screen.viewport.left, this.screen.viewport.top, this.screen.viewport.width - this.screen.viewport.left, this.screen.viewport.height);
         this.context.clip();
     }
 
     drawMap() {
         //context.drawImage(this.currentLevel.mapImage,0,0);
-        this.mouse.handlePanning();
+        this.mouse.handlePanning(this.screen, this.currentLevel.mapImage, this.sidebar);
         this.context.drawImage(this.currentLevel.mapImage,
-            this.viewportX, this.viewportY, this.viewportWidth, this.viewportHeight,
-            this.viewportLeft, this.viewportTop, this.viewportWidth, this.viewportHeight);
+            this.screen.viewportOffset.x, this.screen.viewportOffset.y, this.screen.viewport.width, this.screen.viewport.height,
+            this.screen.viewport.left, this.screen.viewport.top, this.screen.viewport.width, this.screen.viewport.height);
     	    
     	    
         // Create an obstruction grid from the level 
@@ -225,14 +228,14 @@ class Game {
         var gridSize = this.gridSize;
 
         if (optionalImage && $(optionalImage).is('img')) {
-            this.context.drawImage(optionalImage, i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
+            this.context.drawImage(optionalImage, i * gridSize + this.screen.viewportAdjust.x, j * gridSize + this.screen.viewportAdjust.y, width * gridSize, height * gridSize);
         } else {
             if (optionalImage) {
                 this.context.fillStyle = optionalImage;
             } else {
                 this.context.fillStyle = 'rgba(225,225,225,0.5)';
             }
-            this.context.fillRect(i * gridSize + this.viewportAdjustX, j * gridSize + this.viewportAdjustY, width * gridSize, height * gridSize);
+            this.context.fillRect(i * gridSize + this.screen.viewportAdjust.x, j * gridSize + this.screen.viewportAdjust.y, width * gridSize, height * gridSize);
         }
     }
 
@@ -240,20 +243,20 @@ class Game {
         var gridSize = this.gridSize;
         var mapWidth = this.currentLevel.mapImage.width;
         var mapHeight = this.currentLevel.mapImage.height;
-        var viewportX = this.viewportX;
-        var viewportY = this.viewportY;
+        var viewportX = this.screen.viewportOffset.x;
+        var viewportY = this.screen.viewportOffset.y;
 
         var gridWidth = mapWidth / gridSize;
         var gridHeight = mapHeight / gridSize;
         this.context.beginPath();
         this.context.strokeStyle = 'rgba(30,0,0,.6)';
         for (var i = 0; i < gridWidth; i++) {
-            this.context.moveTo(i * gridSize - viewportX + this.viewportLeft, 0 - viewportY + this.viewportTop);
-            this.context.lineTo(i * gridSize - viewportX + this.viewportLeft, mapHeight - viewportY + this.viewportTop);
+            this.context.moveTo(i * gridSize - viewportX + this.screen.viewport.left, 0 - viewportY + this.screen.viewport.top);
+            this.context.lineTo(i * gridSize - viewportX + this.screen.viewport.left, mapHeight - viewportY + this.screen.viewport.top);
         }
         for (var i = 0; i < gridHeight; i++) {
-            this.context.moveTo(0 - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
-            this.context.lineTo(mapWidth - viewportX + this.viewportLeft, i * gridSize - viewportY + this.viewportTop);
+            this.context.moveTo(0 - viewportX + this.screen.viewport.left, i * gridSize - viewportY + this.screen.viewport.top);
+            this.context.lineTo(mapWidth - viewportX + this.screen.viewport.left, i * gridSize - viewportY + this.screen.viewport.top);
         }
         this.context.stroke();
 
@@ -331,7 +334,7 @@ class Game {
                 }
 
                 this.context.fillStyle = 'red';
-                this.context.fillRect(x + this.viewportAdjustX, y + this.viewportAdjustY, 2, 2);
+                this.context.fillRect(x + this.screen.viewportAdjust.x, y + this.screen.viewportAdjust.y, 2, 2);
             }
     	        
             //alert(x +' '+y)
@@ -553,7 +556,7 @@ class Game {
         if (!this.messageVisible) {
             return;
         }
-        this.context.drawImage(this.sidebar.messageBox, this.viewportLeft + 22, this.viewportTop + 150);
+        this.context.drawImage(this.sidebar.messageBox, this.screen.viewport.left + 22, this.screen.viewport.top + 150);
         if (!this.messageHeadingVisible) {
             this.context.fillStyle = 'black';
             this.context.fillRect(265, 198, 120, 20)
@@ -564,7 +567,7 @@ class Game {
         this.context.font = '16px "Command and Conquer"';
         var msgs = this.messageText.split('\n');
         for (var i = 0; i < msgs.length; i++) {
-            this.context.fillText(msgs[i], this.viewportLeft + 80, this.viewportTop + 200 + i * 18)
+            this.context.fillText(msgs[i], this.screen.viewport.left + 80, this.screen.viewport.top + 200 + i * 18)
         };
 
     }
@@ -800,8 +803,8 @@ class Game {
         this.mouse.listenEvents();
         this.fog.init();
 
-        this.viewportX = 96;
-        this.viewportY = 264;
+        this.screen.viewportOffset.x = 96;
+        this.screen.viewportOffset.y = 264;
         this.sidebar.visible = false;
         // Enemy Stuff
         this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 8, y: 6, turretDirection: 16, team: 'nod' }));

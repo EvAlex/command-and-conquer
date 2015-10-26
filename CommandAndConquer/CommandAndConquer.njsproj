@@ -299,10 +299,14 @@
     <TypeScriptCompile Include="Web\js\cnc.ts" />
     <TypeScriptCompile Include="Web\js\Fog.ts" />
     <TypeScriptCompile Include="Web\js\Game.ts" />
+    <TypeScriptCompile Include="Web\js\GameScreen.ts" />
     <TypeScriptCompile Include="Web\js\Infantry.ts" />
+    <TypeScriptCompile Include="Web\js\ISize.d.ts" />
     <TypeScriptCompile Include="Web\js\Levels.ts" />
     <TypeScriptCompile Include="Web\js\Mouse.ts" />
     <TypeScriptCompile Include="Web\js\Overlay.ts" />
+    <TypeScriptCompile Include="Web\js\Point.ts" />
+    <TypeScriptCompile Include="Web\js\Rectangle.ts" />
     <TypeScriptCompile Include="Web\js\Ships.ts" />
     <TypeScriptCompile Include="Web\js\Sidebar.ts" />
     <TypeScriptCompile Include="Web\js\Sounds.ts" />

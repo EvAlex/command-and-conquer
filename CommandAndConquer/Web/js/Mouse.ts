@@ -1,5 +1,7 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import GameScreen = require('./GameScreen');
+import Sidebar = require('./Sidebar');
 
 class Cursor {
     x: number; 
@@ -33,64 +35,64 @@ class Mouse extends VisualObject {
     dragSelect: any;
     cursorLoop: number;
 
-    handlePanning() {
+    handlePanning(screen: GameScreen, mapImageSize: ISize, sidebar: Sidebar) {
         var panDirection = "";
         if (this.insideCanvas) {
-            if (this.y <= this.game.viewportTop + this.panningThreshold && this.y >= this.game.viewportTop) {
-                this.game.viewportDeltaY = -this.panningVelocity;
+            if (this.y <= screen.viewport.top + this.panningThreshold && this.y >= screen.viewport.top) {
+                screen.viewportDelta.y = -this.panningVelocity;
                 panDirection += "_top";
-            } else if (this.y >= this.game.viewportTop + this.game.viewportHeight - this.panningThreshold && this.y <= this.game.viewportTop + this.game.viewportHeight) {
-                this.game.viewportDeltaY = this.panningVelocity;
+            } else if (this.y >= screen.viewport.top + screen.viewport.height - this.panningThreshold && this.y <= screen.viewport.top + screen.viewport.height) {
+                screen.viewportDelta.y = this.panningVelocity;
                 panDirection += "_bottom";
             } else {
-                this.game.viewportDeltaY = 0;
+                screen.viewportDelta.y = 0;
                 panDirection += "";
             }
 
-            if (this.x < this.panningThreshold && this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
-                this.game.viewportDeltaX = -this.panningVelocity;
+            if (this.x < this.panningThreshold && this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
+                screen.viewportDelta.y = -this.panningVelocity;
                 panDirection += "_left";
-            } else if (this.x > this.game.screenWidth - this.panningThreshold && this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
-                this.game.viewportDeltaX = this.panningVelocity;
+            } else if (this.x > screen.width - this.panningThreshold && this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
+                screen.viewportDelta.y = this.panningVelocity;
                 panDirection += "_right";
             } else {
-                this.game.viewportDeltaX = 0;
+                screen.viewportDelta.y = 0;
                 panDirection += "";
             }
         }
 
-        if ((this.game.viewportX + this.game.viewportDeltaX < 0)
-            || (this.game.viewportX + this.game.viewportDeltaX + this.game.screenWidth + (this.sidebar.visible ? -this.sidebar.width : 0) > this.game.currentLevel.mapImage.width)) {
-            this.game.viewportDeltaX = 0;
-            //console.log (this.game.viewportX+this.game.viewportDeltaX +this.game.screenWidth+(this.sidebar.visible?-this.sidebar.width:0));
+        if ((screen.viewportOffset.x + screen.viewportDelta.y < 0)
+            || (screen.viewportOffset.x + screen.viewportDelta.y + screen.width + (sidebar.visible ? -sidebar.width : 0) > mapImageSize.width)) {
+            screen.viewportDelta.y = 0;
+            //console.log (screen.viewportOffset.x+screen.viewportDelta.y +screen.width+(this.sidebar.visible?-this.sidebar.width:0));
             //console.log (this.game.currentLevel.mapImage.width);
         }
 
-        if (!this.sidebar.visible && (this.game.viewportX + this.game.screenWidth > this.game.currentLevel.mapImage.width)) {
-            this.game.viewportX = this.game.currentLevel.mapImage.width - this.game.screenWidth;
-            this.game.viewportDeltaX = 0;
+        if (!sidebar.visible && (screen.viewportOffset.x + screen.width > mapImageSize.width)) {
+            screen.viewportOffset.x = mapImageSize.width - screen.width;
+            screen.viewportDelta.y = 0;
         }
 
-        if ((this.game.viewportY + this.game.viewportDeltaY < 0)
-            || (this.game.viewportY + this.game.viewportDeltaY + this.game.viewportHeight > this.game.currentLevel.mapImage.height)) {
-            this.game.viewportDeltaY = 0;
+        if ((screen.viewportOffset.y + screen.viewportDelta.y < 0)
+            || (screen.viewportOffset.y + screen.viewportDelta.y + screen.viewport.height > mapImageSize.height)) {
+            screen.viewportDelta.y = 0;
         }
 
         if (panDirection != "") {
-            if (this.game.viewportDeltaX == 0 && this.game.viewportDeltaY == 0) {
+            if (screen.viewportDelta.y == 0 && screen.viewportDelta.y == 0) {
                 panDirection = "no_pan" + panDirection;
             } else {
                 panDirection = "pan" + panDirection;
             }
         }
         this.panDirection = panDirection;
-        this.game.viewportX += this.game.viewportDeltaX;
-        this.game.viewportY += this.game.viewportDeltaY;
-        this.gameX = this.x + this.game.viewportX - this.game.viewportLeft;
-        this.gameY = this.y + this.game.viewportY - this.game.viewportTop;
+        screen.viewportOffset.x += screen.viewportDelta.y;
+        screen.viewportOffset.y += screen.viewportDelta.y;
+        this.gameX = this.x + screen.viewportOffset.x - screen.viewport.left;
+        this.gameY = this.y + screen.viewportOffset.y - screen.viewport.top;
 
-        this.game.viewportAdjustX = this.game.viewportLeft - this.game.viewportX;
-        this.game.viewportAdjustY = this.game.viewportTop - this.game.viewportY;
+        screen.viewportAdjust.x = screen.viewport.left - screen.viewportOffset.x;
+        screen.viewportAdjust.y = screen.viewport.top - screen.viewportOffset.y;
 
     }
 
@@ -159,7 +161,7 @@ class Mouse extends VisualObject {
         this.cursor = this.cursors['default'];
         var selectedObject = this.checkOverObject();
 
-        if (this.y < this.game.viewportTop || this.y > this.game.viewportTop + this.game.viewportHeight) {
+        if (this.y < screen.viewport.top || this.y > screen.viewport.top + screen.viewport.height) {
             // default cursor if too much to the top
         } else if (this.sidebar.deployMode) {
             var buildingType = buildings.types[this.sidebar.deployBuilding] || turrets.types[this.sidebar.deployBuilding];
@@ -268,7 +270,7 @@ class Mouse extends VisualObject {
     }
 
     click(ev, rightClick) {
-        if (this.y <= this.game.viewportTop && this.y > this.game.viewportTop - 15) {
+        if (this.y <= screen.viewport.top && this.y > screen.viewport.top - 15) {
             // Tab Area Clicked    
             if (this.x >= 0 && this.x < 160) {
                 // Options button clicked
@@ -281,7 +283,7 @@ class Mouse extends VisualObject {
                 //alert ('Sidebar button clicked');
                 this.sidebar.visible = !this.sidebar.visible;
             }
-        } else if (this.y >= this.game.viewportTop && this.y <= this.game.viewportTop + this.game.viewportHeight) {
+        } else if (this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
             //Game Area Clicked
             if (this.sidebar.visible && this.x > this.sidebar.left) {
                 //alert ('sidebar clicked');
