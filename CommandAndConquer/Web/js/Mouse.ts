@@ -2,6 +2,10 @@
 import VisualObject = require('./VisualObject');
 import GameScreen = require('./GameScreen');
 import Sidebar = require('./Sidebar');
+import Buildings = require('./Buildings');
+import Turrets = require('./Turrets');
+import Infantry = require('./Infantry');
+import Vehicles = require('./Vehicles');
 
 class Cursor {
     x: number; 
@@ -96,7 +100,7 @@ class Mouse extends VisualObject {
 
     }
 
-    drawCursor() {
+    drawCursor(context: CanvasRenderingContext2D, screen: GameScreen) {
         if (!this.insideCanvas) {
             return;
         }
@@ -112,7 +116,7 @@ class Mouse extends VisualObject {
             var width = Math.abs(this.gameX - this.dragX)
             var height = Math.abs(this.gameY - this.dragY)
             context.strokeStyle = 'white';
-            context.strokeRect(x + this.game.viewportAdjustX, y + this.game.viewportAdjustY, width, height);
+            context.strokeRect(x + screen.viewportAdjust.x, y + screen.viewportAdjust.y, width, height);
         }
     	    
         //var image = this.cursor.images[Math.floor(this.cursorLoop/this.cursor.cursorSpeed)];
@@ -157,53 +161,75 @@ class Mouse extends VisualObject {
         return this.overObject;
     }
 
-    draw() {
+    draw(
+        context: CanvasRenderingContext2D,
+        screen: GameScreen,
+        currentLevel: IGameLevel,
+        sidebar: Sidebar,
+        buildings: Buildings,
+        turrets: Turrets,
+        vehicles: Vehicles,
+        infantry: Infantry,
+        selectedUnits: IUnit[],
+        selectedAttackers: IUnit[],
+        buildingObstructionGrid: number[][],
+        obstructionGrid: number[][],
+        highlightGrid: (i: number, j: number, width: number, height: number, optionalImage?: string) => void) {
+
         this.cursor = this.cursors['default'];
         var selectedObject = this.checkOverObject();
 
         if (this.y < screen.viewport.top || this.y > screen.viewport.top + screen.viewport.height) {
             // default cursor if too much to the top
-        } else if (this.sidebar.deployMode) {
-            var buildingType = buildings.types[this.sidebar.deployBuilding] || turrets.types[this.sidebar.deployBuilding];
+        } else if (sidebar.deployMode) {
+            var buildingType = buildings.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
             var grid = $.extend([], buildingType.gridShape);
             grid.push(grid[grid.length - 1]);
             //grid.push(grid[1]);
             for (var y = 0; y < grid.length; y++) {
                 for (var x = 0; x < grid[y].length; x++) {
                     if (grid[y][x] == 1) {
-                        if (this.gridY + y < 0 || this.gridY + y >= this.game.buildingObstructionGrid.length || this.gridX + x < 0 || this.gridX + x >= this.game.buildingObstructionGrid[this.gridY + y].length || this.game.buildingObstructionGrid[this.gridY + y][this.gridX + x] == 1) {
+                        if (this.gridY + y < 0 || this.gridY + y >= buildingObstructionGrid.length || this.gridX + x < 0 || this.gridX + x >= buildingObstructionGrid[this.gridY + y].length || buildingObstructionGrid[this.gridY + y][this.gridX + x] == 1) {
                             //if (this.game.buildingObstructionGrid[this.gridY+y][this.gridX+x] == 1){
-                            this.game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, this.sidebar.placementRedImage);
+                            highlightGrid(this.gridX + x, this.gridY + y, 1, 1, sidebar.placementRedImage);
                         } else {
-                            this.game.highlightGrid(this.gridX + x, this.gridY + y, 1, 1, this.sidebar.placementWhiteImage);
+                            highlightGrid(this.gridX + x, this.gridY + y, 1, 1, sidebar.placementWhiteImage);
                         }
                     }
                 }
             }
-        } else if (this.sidebar.repairMode) {
-            if (selectedObject && selectedObject.team == this.game.currentLevel.team
+        } else if (sidebar.repairMode) {
+            if (selectedObject && selectedObject.team == currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret') && (selectedObject.health < selectedObject.hitPoints)) {
                 this.cursor = this.cursors['repair'];
             } else {
                 this.cursor = this.cursors['no_repair'];
             }
-        } else if (this.sidebar.sellMode) {
-            if (selectedObject && selectedObject.team == this.game.currentLevel.team
+        } else if (sidebar.sellMode) {
+            if (selectedObject && selectedObject.team == currentLevel.team
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret')) {
                 this.cursor = this.cursors['sell'];
             } else {
                 this.cursor = this.cursors['no_sell'];
             }
-        } else if (this.sidebar.visible && this.x > this.sidebar.left) {
+        } else if (sidebar.visible && this.x > sidebar.left) {
             //over a button
-            var hovButton = this.sidebar.hoveredButton();
+            var hovButton = sidebar.hoveredButton();
             if (hovButton) {
                 var tooltipName = hovButton.type;
                 switch (hovButton.type) {
-                    case 'infantry': tooltipName = infantry.types[hovButton.name].label; break;
-                    case 'building': tooltipName = buildings.types[hovButton.name].label; break;
-                    case 'turret': tooltipName = turrets.types[hovButton.name].label; break;
-                    case 'vehicle': tooltipName = vehicles.types[hovButton.name].label; break;
+                    case 'infantry':
+                        tooltipName = infantry.types[hovButton.name].label;
+                        break;
+                    case 'building':
+                        tooltipName = buildings.types[hovButton.name].label;
+                        break;
+                    case 'turret':
+                        tooltipName = turrets.types[hovButton.name].label;
+                        break;
+                    case 'vehicle':
+                        tooltipName = vehicles.types[hovButton.name].label;
+                        break;
 
                 }
                 var tooltipCost = "$" + hovButton.cost;
@@ -222,26 +248,26 @@ class Mouse extends VisualObject {
         } else if (this.dragSelect) {
             this.cursor = this.cursors['default'];
         } else if (selectedObject && !this.isOverFog) {
-            if (selectedObject.team && selectedObject.team != this.game.currentLevel.team && this.game.selectedAttackers.length > 0) {
+            if (selectedObject.team && selectedObject.team != currentLevel.team && selectedAttackers.length > 0) {
                 this.cursor = this.cursors['attack'];
-            } else if (this.game.selectedUnits.length == 1 && this.game.selectedUnits[0].name == 'harvester'
-                && this.game.selectedUnits[0].team == this.game.currentLevel.team
+            } else if (selectedUnits.length == 1 && selectedUnits[0].name == 'harvester'
+                && selectedUnits[0].team == currentLevel.team
                 && (selectedObject.name == 'tiberium' || selectedObject.name == 'refinery')) {
                 //My team's harvester is selected alone
                 if (selectedObject.name == 'tiberium') {
                     this.cursor = this.cursors['attack']; // Harvester attacks tiberium 
                 }
-                if (selectedObject.name == 'refinery' && selectedObject.team == this.game.currentLevel.team) {
+                if (selectedObject.name == 'refinery' && selectedObject.team == currentLevel.team) {
                     this.cursor = this.cursors['load_vehicle']; // Harvester enters my refinery
                 }
-            } else if (this.game.selectedUnits.length == 1 && selectedObject.selected && selectedObject.team == this.game.currentLevel.team) {
+            } else if (selectedUnits.length == 1 && selectedObject.selected && selectedObject.team == currentLevel.team) {
                 if (selectedObject.name == 'mcv') {
                     this.cursor = this.cursors['build_command'];
                 }
             } else if (!selectedObject.selected && selectedObject.name != 'tiberium') {
                 this.cursor = this.cursors['select'];
             } else if (selectedObject.name == 'tiberium') {
-                if (this.game.obstructionGrid[this.gridY] && this.game.obstructionGrid[this.gridY][this.gridX] == 1) {
+                if (obstructionGrid[this.gridY] && obstructionGrid[this.gridY][this.gridX] == 1) {
                     this.cursor = this.cursors['no_move'];
                 } else {
                     this.cursor = this.cursors['move'];
@@ -251,8 +277,8 @@ class Mouse extends VisualObject {
         } else if (this.panDirection && this.panDirection != "") {
             this.cursor = this.cursors[this.panDirection];
         }
-        else if (this.game.selectedUnits.length > 0) {
-            if (this.game.obstructionGrid[this.gridY] && this.game.obstructionGrid[this.gridY][this.gridX] == 1 && !this.isOverFog) {
+        else if (selectedUnits.length > 0) {
+            if (obstructionGrid[this.gridY] && obstructionGrid[this.gridY][this.gridX] == 1 && !this.isOverFog) {
                 this.cursor = this.cursors['no_move'];
             } else {
                 this.cursor = this.cursors['move'];
@@ -263,7 +289,7 @@ class Mouse extends VisualObject {
 
 
         if (this.insideCanvas) {
-            this.drawCursor();
+            this.drawCursor(context, screen);
         }
 
 

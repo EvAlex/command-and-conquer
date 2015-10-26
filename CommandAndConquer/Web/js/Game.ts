@@ -63,19 +63,21 @@ class Game {
     //viewportAdjustX: number = 0;
     //viewportAdjustY: number = 0;
 
-    currentLevel = {
+    currentLevel: IGameLevel = {
+        id: '', 
         mapImage: <HTMLImageElement>{
             width: 0,
             height: 0
         },
         team: '',
         overlay: null,
-        obstructionGrid: []
+        obstructionGrid: [],
+        mapGrid: [],
     };
     gridSize: number;
-    obstructionGrid = [];
-    buildingObstructionGrid = [];
-    heroObstructionGrid = [];
+    obstructionGrid: number[][] = [];
+    buildingObstructionGrid: number[][] = [];
+    heroObstructionGrid: number[][] = [];
     private animationLoop: NodeJS.Timer = null;
     private tiberiumLoop: NodeJS.Timer = null;
     private statusLoop: NodeJS.Timer = null;
@@ -223,12 +225,12 @@ class Game {
         }
     }
 
-    highlightGrid(i, j, width, height, optionalImage) {
+    highlightGrid(i: number, j: number, width: number, height: number, optionalImage?: string | HTMLImageElement): void {
         //alert('('+i+','+j+')');
         var gridSize = this.gridSize;
 
         if (optionalImage && $(optionalImage).is('img')) {
-            this.context.drawImage(optionalImage, i * gridSize + this.screen.viewportAdjust.x, j * gridSize + this.screen.viewportAdjust.y, width * gridSize, height * gridSize);
+            this.context.drawImage(<HTMLImageElement>optionalImage, i * gridSize + this.screen.viewportAdjust.x, j * gridSize + this.screen.viewportAdjust.y, width * gridSize, height * gridSize);
         } else {
             if (optionalImage) {
                 this.context.fillStyle = optionalImage;
@@ -541,7 +543,20 @@ class Game {
 
         this.drawMessage();
         // show appropriate mouse cursor
-        this.mouse.draw();
+        this.mouse.draw(
+            this.context,
+            this.screen,
+            this.currentLevel,
+            this.sidebar,
+            this.buildingsFactory,
+            this.turretsFactory,
+            this.vehicles,
+            this.infantry,
+            this.selectedUnits,
+            this.selectedAttackers,
+            this.buildingObstructionGrid,
+            this.obstructionGrid,
+            (i, j, w, h, img) => this.highlightGrid(i, j, w, h, img));
     	    
         ///this.missionStatus();
         //
@@ -621,9 +636,9 @@ class Game {
         }
     }
 
-    selectedItems = [];
-    selectedAttackers = [];
-    selectedUnits = [];
+    selectedItems: IUnit[] = [];
+    selectedAttackers: IUnit[] = [];
+    selectedUnits: IUnit[] = [];
 
     clearSelection() {
         for (var i = this.selectedItems.length - 1; i >= 0; i--) {
