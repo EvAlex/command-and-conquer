@@ -1,5 +1,5 @@
 ﻿
-interface IUnit {
+interface IUnit extends IDestructibleObject {
     animationSpeed: number;
     attacking: boolean;
     bulletFiring: boolean;
@@ -12,47 +12,31 @@ interface IUnit {
     collisionWith: number;
     cost: number;
     defaults: IUnit;
-    draw: () => void;
     drawSelection: () => void;
-    getLife: () => any;
-    health: number;
-    hitPoints: number;
-    imagesToLoad: { count: number, name: string }[];
-    instructions: IInstruction[];
     label: string;
-    life: string;
     move: () => any;
     moveDirection: number;
     moveImageCount: number;
     moveTo: (a, b) => any;
     movementSpeed: number;
     moving: boolean;
-    name: string;
     orders: Object;
     path: IPoint[];
-    pixelHeight: number;
     pixelLeft: number;
     pixelOffsetX: number
     pixelOffsetY: number;
     pixelTop: number;
-    pixelWidth: number;
+    instructions: IInstruction[];
     primaryWeapon: number;
     processOrders: () => any;
     reloadTime: number;
+    turnSpeed: number;
+    turretDirection: number;
     sight: number;
     softCollisionRadius: number;
     speed: number;
-    spriteArray: any[];
-    spriteCanvas: HTMLCanvasElement;
-    spriteCount: number;
-    spriteImage: HTMLImageElement;
     status: string;
     team: string;
-    turnSpeed: number;
-    turretDirection: number;
     turretImageCount: number;
-    type: string;
     underPoint: (a, b) => any;
-    x: number;
-    y: number;
 }

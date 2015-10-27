@@ -550,9 +550,12 @@ class Game {
             this.overlay,
             this.sidebar,
             this.buildingsFactory,
+            this.buildings,
             this.turretsFactory,
+            this.turrets,
             this.vehicles,
             this.infantry,
+            this.units,
             this.selectedUnits,
             this.selectedAttackers,
             this.buildingObstructionGrid,
@@ -684,7 +687,7 @@ class Game {
                 return;
             }
         }
-        var selectedObject = this.mouse.checkOverObject();
+        var selectedObject = this.mouse.checkOverObject(this.overlay, this.buildings, this.turrets, this.units);
         if (rightClick) {
             this.clearSelection();
             this.sidebar.repairMode = false;

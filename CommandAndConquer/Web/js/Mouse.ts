@@ -127,7 +127,7 @@ class Mouse extends VisualObject {
     checkOverObject(
         overlayObjects: IOverlay[],
         buildings: IBuilding[],
-        turrets: IUnit[],
+        turrets: ITurret[],
         units: IUnit[]) {
         var overObject = null;
         for (var i = overlayObjects.length - 1; i >= 0; i--) {
@@ -173,9 +173,11 @@ class Mouse extends VisualObject {
         sidebar: Sidebar,
         buildingsFactory: Buildings,
         buildings: IBuilding[],
-        turrets: Turrets,
+        turretsFactory: Turrets,
+        turrets: ITurret[],
         vehicles: Vehicles,
         infantry: Infantry,
+        units: IUnit[],
         selectedUnits: IUnit[],
         selectedAttackers: IUnit[],
         buildingObstructionGrid: number[][],
@@ -183,12 +185,12 @@ class Mouse extends VisualObject {
         highlightGrid: (i: number, j: number, width: number, height: number, optionalImage?: string) => void) {
 
         this.cursor = this.cursors['default'];
-        var selectedObject = this.checkOverObject(overlayObjects, buildings, );
+        var selectedObject = this.checkOverObject(overlayObjects, buildings, turrets, units);
 
         if (this.y < screen.viewport.top || this.y > screen.viewport.top + screen.viewport.height) {
             // default cursor if too much to the top
         } else if (sidebar.deployMode) {
-            var buildingType = buildingsFactory.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
+            var buildingType = buildingsFactory.types[sidebar.deployBuilding] || turretsFactory.types[sidebar.deployBuilding];
             var grid = $.extend([], buildingType.gridShape);
             grid.push(grid[grid.length - 1]);
             //grid.push(grid[1]);
@@ -231,7 +233,7 @@ class Mouse extends VisualObject {
                         tooltipName = buildingsFactory.types[hovButton.name].label;
                         break;
                     case 'turret':
-                        tooltipName = turrets.types[hovButton.name].label;
+                        tooltipName = turretsFactory.types[hovButton.name].label;
                         break;
                     case 'vehicle':
                         tooltipName = vehicles.types[hovButton.name].label;
