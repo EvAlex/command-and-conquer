@@ -819,7 +819,7 @@ class Game {
         //this.team = this.currentLevel.team;
         this.sidebar.load();
 
-        this.mouse.listenEvents();
+        this.listenEvents();
         this.fog.init();
 
         this.screen.viewportOffset.x = 96;
@@ -942,7 +942,88 @@ class Game {
 
     }
 
+    private listenEvents(): void {
+        this.canvas.addEventListener('mousemove', ev => {
+            var offset = $(this.canvas).offset();
+            this.mouse.x = ev.pageX - offset.left;
+            this.mouse.y = ev.pageY - offset.top;
 
+
+            this.mouse.gridX = Math.floor((this.mouse.gameX) / this.gridSize);
+            this.mouse.gridY = Math.floor((this.mouse.gameY) / this.gridSize);
+            this.mouse.isOverFog = this.fog.isOver(this.mouse.gameX, this.mouse.gameY);
+            //this.panDirection = this.handlePanning();
+            //this.showAppropriateCursor();
+            if (this.mouse.buttonPressed) {
+                if (Math.abs(this.mouse.dragX - this.mouse.gameX) > 5 ||
+                    Math.abs(this.mouse.dragY - this.mouse.gameY) > 5) {
+                    this.mouse.dragSelect = true
+                }
+            } else {
+                this.mouse.dragSelect = false;
+            }
+        });
+
+        this.canvas.addEventListener('click', ev => {
+            //Handle click hotspots
+            this.mouse.click(ev, false, this.sidebar, this.screen, (e, r) => this.click(e, r));
+            this.mouse.dragSelect = false;
+            return false;
+        });
+
+        this.canvas.addEventListener('mousedown', ev => {
+            if (ev.which == 1) {
+                this.mouse.buttonPressed = true;
+                this.mouse.dragX = this.mouse.gameX;
+                this.mouse.dragY = this.mouse.gameY;
+                ev.preventDefault();
+            }
+            return false;
+        });
+
+        this.canvas.addEventListener('contextmenu', ev => {
+            this.mouse.click(ev, true, this.sidebar, this.screen, (e, r) => this.click(e, r));
+            return false;
+        });
+
+        this.canvas.addEventListener('mouseup', ev => {
+            if (ev.which == 1) {
+                if (this.mouse.dragSelect) {
+                    if (!ev.shiftKey) {
+                        this.clearSelection();
+                    }
+                    var x1 = Math.min(this.mouse.gameX, this.mouse.dragX);
+                    var y1 = Math.min(this.mouse.gameY, this.mouse.dragY);
+                    var x2 = Math.max(this.mouse.gameX, this.mouse.dragX);
+                    var y2 = Math.max(this.mouse.gameY, this.mouse.dragY);
+                    for (var i = this.units.length - 1; i >= 0; i--) {
+                        var unit = this.units[i];
+                        if (!unit.selected && unit.team == this.currentLevel.team && x1 <= unit.x * this.gridSize && x2 >= unit.x * this.gridSize
+                            && y1 <= unit.y * this.gridSize && y2 >= unit.y * this.gridSize) {
+                            this.selectItem(unit, ev.shiftKey);
+                        }
+                    };
+                    //this.dragSelect = false;
+                }
+                this.mouse.buttonPressed = false;
+            }
+            return false;
+        });
+
+        this.canvas.addEventListener('mouseleave', ev => {
+            this.mouse.insideCanvas = false;
+        });
+
+        this.canvas.addEventListener('mouseenter', ev => {
+            this.mouse.buttonPressed = false;
+            this.mouse.insideCanvas = true;
+        });
+
+
+        this.canvas.addEventListener('keypress', ev => {
+            this.keyPressed(ev);
+        });
+    }
 
 }
 

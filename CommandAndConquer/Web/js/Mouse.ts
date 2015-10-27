@@ -6,6 +6,7 @@ import Buildings = require('./Buildings');
 import Turrets = require('./Turrets');
 import Infantry = require('./Infantry');
 import Vehicles = require('./Vehicles');
+import Fog = require('./Fog');
 
 class Cursor {
     x: number; 
@@ -303,7 +304,7 @@ class Mouse extends VisualObject {
 
     }
 
-    click(ev, rightClick) {
+    click(ev, rightClick, sidebar: Sidebar, screen: GameScreen, onClick: (ev, rightClick) => void) {
         if (this.y <= screen.viewport.top && this.y > screen.viewport.top - 15) {
             // Tab Area Clicked    
             if (this.x >= 0 && this.x < 160) {
@@ -315,105 +316,21 @@ class Mouse extends VisualObject {
             } else if (this.x >= 480 && this.x < 640) {
                 // Sidebar button clicked
                 //alert ('Sidebar button clicked');
-                this.sidebar.visible = !this.sidebar.visible;
+                sidebar.visible = !sidebar.visible;
             }
         } else if (this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
             //Game Area Clicked
-            if (this.sidebar.visible && this.x > this.sidebar.left) {
+            if (sidebar.visible && this.x > sidebar.left) {
                 //alert ('sidebar clicked');
-                this.sidebar.click(ev, rightClick);
+                sidebar.click(ev, rightClick);
             } else {
-                this.game.click(ev, rightClick);
+                onClick(ev, rightClick);
                 //alert('game area clicked');
             }
 
         }
     }
-
-    listenEvents() {
-        $('#canvas').mousemove(function (ev) {
-            var offset = $('#canvas').offset();
-            this.x = ev.pageX - offset.left;
-            this.y = ev.pageY - offset.top;
-
-
-            this.gridX = Math.floor((this.gameX) / this.game.gridSize);
-            this.gridY = Math.floor((this.gameY) / this.game.gridSize);
-            this.isOverFog = fog.isOver(this.gameX, this.gameY);
-            //this.panDirection = this.handlePanning();
-            //this.showAppropriateCursor();
-            if (this.buttonPressed) {
-                if (Math.abs(this.dragX - this.gameX) > 5 ||
-                    Math.abs(this.dragY - this.gameY) > 5) {
-                    this.dragSelect = true
-                }
-            } else {
-                this.dragSelect = false;
-            }
-        });
-
-        $('#canvas').click(function (ev) {
-            //Handle click hotspots
-            this.click(ev, false);
-            this.dragSelect = false;
-            return false;
-        });
-
-        $('#canvas').mousedown(function (ev) {
-            if (ev.which == 1) {
-                this.buttonPressed = true;
-                this.dragX = this.gameX;
-                this.dragY = this.gameY;
-                ev.preventDefault();
-            }
-            return false;
-        });
-
-        $('#canvas').bind('contextmenu', function (ev) {
-            this.click(ev, true);
-            return false;
-        });
-
-        $('#canvas').mouseup(function (ev) {
-            if (ev.which == 1) {
-                if (this.dragSelect) {
-                    if (!ev.shiftKey) {
-                        this.game.clearSelection();
-                    }
-                    var x1 = Math.min(this.gameX, this.dragX);
-                    var y1 = Math.min(this.gameY, this.dragY);
-                    var x2 = Math.max(this.gameX, this.dragX);
-                    var y2 = Math.max(this.gameY, this.dragY);
-                    for (var i = this.game.units.length - 1; i >= 0; i--) {
-                        var unit = this.game.units[i];
-                        if (!unit.selected && unit.team == this.game.currentLevel.team && x1 <= unit.x * this.game.gridSize && x2 >= unit.x * this.game.gridSize
-                            && y1 <= unit.y * this.game.gridSize && y2 >= unit.y * this.game.gridSize) {
-                            this.game.selectItem(unit, ev.shiftKey);
-                        }
-                    };
-                    //this.dragSelect = false;
-                }
-                this.buttonPressed = false;
-            }
-            return false;
-        });
-
-        $('#canvas').mouseleave(function (ev) {
-            this.insideCanvas = false;
-        });
-
-        $('#canvas').mouseenter(function (ev) {
-            this.buttonPressed = false;
-            this.insideCanvas = true;
-        });
-
-
-        $(document).keypress(function (ev) {
-            this.game.keyPressed(ev);
-        });
-
-    }
-
+    
     loaded: boolean = false;
     preloadCount: number = 0;
     loadedCount: number = 0;
