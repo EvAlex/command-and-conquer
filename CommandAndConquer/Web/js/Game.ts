@@ -275,9 +275,9 @@ class Game {
     }
 
     units = [];
-    buildings = [];
-    turrets = [];
-    overlay = [];
+    buildings: IBuilding[] = [];
+    turrets: ITurret[] = [];
+    overlay: IOverlay[] = [];
     bullets = [];
 
     fireBullet(bullet) {
@@ -547,6 +547,7 @@ class Game {
             this.context,
             this.screen,
             this.currentLevel,
+            this.overlay,
             this.sidebar,
             this.buildingsFactory,
             this.turretsFactory,
@@ -642,7 +643,7 @@ class Game {
 
     clearSelection() {
         for (var i = this.selectedItems.length - 1; i >= 0; i--) {
-            this.selectedItems[i].selected = 0;
+            this.selectedItems[i].selected = false;
             this.selectedItems.splice(i, 1);
         };
         this.selectedAttackers = [];

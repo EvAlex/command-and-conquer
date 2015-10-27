@@ -3,7 +3,7 @@ interface IUnit {
     animationSpeed: number;
     attacking: boolean;
     bulletFiring: boolean;
-    selected: number;
+    selected: boolean;
     colliding: boolean
     collision: (other) => boolean;
     collisionDistance: number;
@@ -39,7 +39,6 @@ interface IUnit {
     primaryWeapon: number;
     processOrders: () => any;
     reloadTime: number;
-    selected: boolean;
     sight: number;
     softCollisionRadius: number;
     speed: number;

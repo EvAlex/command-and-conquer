@@ -269,7 +269,7 @@ class Turrents extends VisualObject {
         };
     }
 
-    add(details) {
+    add(details): ITurret {
         var newTurret = {
             team: game.currentLevel.team
         };

@@ -124,49 +124,55 @@ class Mouse extends VisualObject {
         context.drawImage(this.spriteImage, 30 * (imageNumber), 0, 30, 24, this.x - this.cursor.x, this.y - this.cursor.y, 30, 24);
     }
 
-    checkOverObject() {
-        this.overObject = null;
-        for (var i = this.game.overlay.length - 1; i >= 0; i--) {
-            var overlay = this.game.overlay[i];
+    checkOverObject(
+        overlayObjects: IOverlay[],
+        buildings: IBuilding[],
+        turrets: IUnit[],
+        units: IUnit[]) {
+        var overObject = null;
+        for (var i = overlayObjects.length - 1; i >= 0; i--) {
+            var overlay = overlayObjects[i];
 
             if (overlay.name == 'tiberium' && this.gridX == overlay.x && this.gridY == overlay.y) {
                 //
                 //console.log(overlay.name + ' ' +overlay.x + ' ' +overlay.y + ' '+this.gridX + ' '+this.gridY )
-                this.overObject = overlay;
+                overObject = overlay;
                 //alert('overlay')
             }
         };
-        for (var i = this.game.buildings.length - 1; i >= 0; i--) {
-            if (this.game.buildings[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = this.game.buildings[i];
+        for (var i = buildings.length - 1; i >= 0; i--) {
+            if (buildings[i].underPoint(this.gameX, this.gameY)) {
+                overObject = buildings[i];
                 break;
             }
         };
 
-        for (var i = this.game.turrets.length - 1; i >= 0; i--) {
-            if (this.game.turrets[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = this.game.turrets[i];
+        for (var i = turrets.length - 1; i >= 0; i--) {
+            if (turrets[i].underPoint(this.gameX, this.gameY)) {
+                overObject = turrets[i];
                 break;
             }
         };
 
-        for (var i = this.game.units.length - 1; i >= 0; i--) {
-            if (this.game.units[i].underPoint && this.game.units[i].underPoint(this.gameX, this.gameY)) {
-                this.overObject = this.game.units[i];
+        for (var i = units.length - 1; i >= 0; i--) {
+            if (units[i].underPoint && units[i].underPoint(this.gameX, this.gameY)) {
+                overObject = units[i];
                 break;
             }
         };
 
 
-        return this.overObject;
+        return overObject;
     }
 
     draw(
         context: CanvasRenderingContext2D,
         screen: GameScreen,
         currentLevel: IGameLevel,
+        overlayObjects: IOverlay[],
         sidebar: Sidebar,
-        buildings: Buildings,
+        buildingsFactory: Buildings,
+        buildings: IBuilding[],
         turrets: Turrets,
         vehicles: Vehicles,
         infantry: Infantry,
@@ -177,12 +183,12 @@ class Mouse extends VisualObject {
         highlightGrid: (i: number, j: number, width: number, height: number, optionalImage?: string) => void) {
 
         this.cursor = this.cursors['default'];
-        var selectedObject = this.checkOverObject();
+        var selectedObject = this.checkOverObject(overlayObjects, buildings, );
 
         if (this.y < screen.viewport.top || this.y > screen.viewport.top + screen.viewport.height) {
             // default cursor if too much to the top
         } else if (sidebar.deployMode) {
-            var buildingType = buildings.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
+            var buildingType = buildingsFactory.types[sidebar.deployBuilding] || turrets.types[sidebar.deployBuilding];
             var grid = $.extend([], buildingType.gridShape);
             grid.push(grid[grid.length - 1]);
             //grid.push(grid[1]);
@@ -222,7 +228,7 @@ class Mouse extends VisualObject {
                         tooltipName = infantry.types[hovButton.name].label;
                         break;
                     case 'building':
-                        tooltipName = buildings.types[hovButton.name].label;
+                        tooltipName = buildingsFactory.types[hovButton.name].label;
                         break;
                     case 'turret':
                         tooltipName = turrets.types[hovButton.name].label;

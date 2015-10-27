@@ -302,7 +302,7 @@ class Buildings extends VisualObject {
         this.types[name] = buildingType;
     }
 
-    add(details) {
+    add(details): IBuilding {
         var newBuilding = {
             team: game.currentLevel.team
         };
