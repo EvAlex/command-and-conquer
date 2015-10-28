@@ -340,7 +340,9 @@ class Sidebar extends VisualObject {
 
     }
 
-    load() {
+    load(startingCash: number) {
+        this.cash = startingCash;
+
         this.tabsImage = this.preloadImage('sidebar/tabs.png');
         this.sidebarImage = this.preloadImage('sidebar/this.png');
         this.primaryBuildingImage = this.preloadImage('sidebar/primary.png');

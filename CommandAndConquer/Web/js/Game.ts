@@ -10,6 +10,7 @@ import Infantry = require('./Infantry');
 import Vehicles = require('./Vehicles');
 import Sounds = require('./Sounds');
 import Overlay = require('./Overlay');
+import Player = require('./Player');
 
 class Game {
 
@@ -48,6 +49,9 @@ class Game {
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
 
+    private currentPlayer: Player;
+    private enemyPlayer: Player;
+
     private screen: GameScreen;
     //  Below is moved to GameScreen
     //screenWidth: number;
@@ -63,17 +67,7 @@ class Game {
     //viewportAdjustX: number = 0;
     //viewportAdjustY: number = 0;
 
-    currentLevel: IGameLevel = {
-        id: '', 
-        mapImage: <HTMLImageElement>{
-            width: 0,
-            height: 0
-        },
-        team: '',
-        overlay: null,
-        obstructionGrid: [],
-        mapGrid: [],
-    };
+    currentLevel: IGameLevel;
     gridSize: number;
     obstructionGrid: number[][] = [];
     buildingObstructionGrid: number[][] = [];
@@ -814,10 +808,12 @@ class Game {
         this.sounds.loadAll();
         this.overlayFactory.loadAll();
 
-        this.currentLevel = this.levels.load('gdi1');
+        this.currentLevel = this.levels.load('gdi1', this.buildingsFactory, this.turretsFactory, this.vehicles, this.infantry, this.overlayFactory);
+        this.currentPlayer = new Player(this.currentLevel.team, this.currentLevel.startingCash);
+        this.enemyPlayer = new Player(this.currentLevel.enemyTeam, this.currentLevel.startingEnemyCash);
         this.overlay = this.currentLevel.overlay;
         //this.team = this.currentLevel.team;
-        this.sidebar.load();
+        this.sidebar.load(this.currentPlayer.cash);
 
         this.listenEvents();
         this.fog.init();

@@ -1,11 +1,18 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import Buildings = require('./Buildings');
+import Turrets = require('./Turrets');
+import Infantry = require('./Infantry');
+import Vehicles = require('./Vehicles');
+import Overlay = require('./Overlay');
+import Sidebar = require('./Sidebar');
 
 class Levels extends VisualObject {
     levelDetails = {
         "gdi1": {
             mapUrl: 'maps/gdi/map01.jpeg', // The background map to load
             startingCash: 3000,
+            startingEnemyCash: 3000,
             terrain: [
                 { x1: 0, y1: 27, x2: 30, y2: 30, type: 'water' },
                 { x1: 0, y1: 26, x2: 6, y2: 26, type: 'water' },
@@ -68,6 +75,7 @@ class Levels extends VisualObject {
             gridWidth: 31,
             gridHeight: 31,
             team: 'gdi',
+            enemyTeam: 'nod',
             briefing: 'This is a warning \n for all of you \n Kill enemy troops and have some fun',
             items: {
                 infantry: [],// ['minigunner'],
@@ -121,15 +129,9 @@ class Levels extends VisualObject {
     preloadCount = 0;
     loadedCount = 0;
 
-    load(id) {
-        var level = {
-            id: id,
-            mapImage: this.preloadImage(this.levelDetails[id].mapUrl),
-            mapGrid: [],
-            obstructionGrid: [],
-            overlay: [],
-            team: ''
-        };
+    load(id, buildings: Buildings, turrets: Turrets, vehicles: Vehicles, infantry: Infantry, overlay: Overlay): IGameLevel {
+        var level: IGameLevel;
+
         //level.mapImage = new Image();
         var details = this.levelDetails[id];
         for (var item in details.items) {
@@ -181,12 +183,18 @@ class Levels extends VisualObject {
             overlayArray.push(overlay.add(details.overlay[i]))
         };
 
-        level.mapGrid = mapGrid;
-        level.obstructionGrid = obstructionGrid;
-        level.overlay = overlayArray;
+        level = {
+            id: id,
+            mapImage: this.preloadImage(this.levelDetails[id].mapUrl),
+            mapGrid: mapGrid,
+            obstructionGrid: obstructionGrid,
+            overlay: overlayArray,
+            team: details.team,
+            enemyTeam: details.enemyTeam,
+            startingCash: details.startingCash,
+            startingEnemyCash: details.startingEnemyCash,
+        };
 
-        sidebar.cash = details.startingCash;
-        level.team = details.team;
         return level;
     }
 

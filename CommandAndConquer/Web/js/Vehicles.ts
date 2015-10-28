@@ -839,7 +839,7 @@ class Vehicles extends VisualObject {
         };
     }
 
-    add(details) {
+    add(details): IUnit {
         var newVehicle = {
             team: game.currentLevel.team
         };

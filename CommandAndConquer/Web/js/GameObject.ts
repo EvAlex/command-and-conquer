@@ -1,6 +1,8 @@
 ﻿
-interface IGameObject {
-    //bdraw(): void;
+abstract class GameObject implements IGameObject {
+
+    //abstract draw(): void;
+
     pixelWidth: number;
     pixelHeight: number;
     name: string;
@@ -12,4 +14,7 @@ interface IGameObject {
     type: string;
     x: number;
     y: number;
+
 }
+
+export = GameObject;

@@ -6,5 +6,8 @@ interface IGameLevel {
     mapImage: HTMLImageElement;
     obstructionGrid: number[][];
     team: string;
+    enemyTeam: string;
+    startingCash: number;
+    startingEnemyCash: number;
     overlay: IOverlay[];
 }

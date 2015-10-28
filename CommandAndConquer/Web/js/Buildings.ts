@@ -7,7 +7,7 @@ class Buildings extends VisualObject {
     types = [];
 
     buildingDetails = {
-        'construction-yard': {
+        'construction-yard': <IBuildingDefaults>{
             name: 'construction-yard',
             label: 'Construction Yard',
             type: 'building',
@@ -27,7 +27,7 @@ class Buildings extends VisualObject {
                 [1, 1, 1],
                 [1, 1, 1]]
         },
-        'refinery': {
+        'refinery': <IBuildingDefaults>{
             name: 'refinery',
             label: 'Tiberium Refinery',
             type: 'building',
@@ -49,7 +49,7 @@ class Buildings extends VisualObject {
                 [1, 1, 1],
                 [1, 1, 1]]
         },
-        'barracks': {
+        'barracks': <IBuildingDefaults>{
             name: 'barracks',
             label: 'Barracks',
             type: 'building',
@@ -66,7 +66,7 @@ class Buildings extends VisualObject {
                 [1, 1]]
 
         },
-        'power-plant': {
+        'power-plant': <IBuildingDefaults>{
             name: 'power-plant',
             label: 'Power Plant',
             type: 'building',
@@ -82,7 +82,7 @@ class Buildings extends VisualObject {
             gridShape: [[1, 0],
                 [1, 1]]
         },
-        'advanced-power-plant': {
+        'advanced-power-plant': <IBuildingDefaults>{
             name: 'advanced-power-plant',
             label: 'Advanced Power Plant',
             type: 'building',
@@ -98,7 +98,7 @@ class Buildings extends VisualObject {
             gridShape: [[1, 0],
                 [1, 1]]
         },
-        'tiberium-silo': {
+        'tiberium-silo': <IBuildingDefaults>{
             name: 'tiberium-silo',
             label: 'Tiberium Silo',
             type: 'building',
@@ -113,7 +113,7 @@ class Buildings extends VisualObject {
                 { name: "ultra-damaged", count: 1 }],
             gridShape: [[1, 1]]
         },
-        'hand-of-nod': {
+        'hand-of-nod': <IBuildingDefaults>{
             name: 'hand-of-nod',
             label: 'Hand of Nod',
             type: 'building',
@@ -130,7 +130,7 @@ class Buildings extends VisualObject {
                 [1, 1],
                 [1, 1]]
         },
-        'weapons-factory': {
+        'weapons-factory': <IBuildingDefaults>{
             name: 'weapons-factory',
             label: 'Weapons Factory',
             type: 'building',
@@ -272,11 +272,11 @@ class Buildings extends VisualObject {
     }
 
     load(name) {
-        var details = this.buildingDetails[name];
+        var details = <IBuildingDefaults>this.buildingDetails[name];
         var buildingType = {
             defaults: {
                 type: 'building',
-                draw: buildings.draw,
+                draw: () => this.draw(),
                 underPoint: underPoint,
                 drawSelection: drawSelection,
                 getLife: getLife,
@@ -302,21 +302,43 @@ class Buildings extends VisualObject {
         this.types[name] = buildingType;
     }
 
-    add(details): IBuilding {
+    add(details: IBuildingCreateDetails): IBuilding {
         var newBuilding = {
-            team: game.currentLevel.team
+            team: details.team
         };
         //alert(game.currentLevel.team)
         var name = details.name;
-        $.extend(newBuilding, this.types[name].defaults);
-        $.extend(newBuilding, this.types[name]);
+        $.extend(newBuilding, <IBuildingDefaults>this.types[name].defaults);
+        $.extend(newBuilding, <IBuildingDefaults>this.types[name]);
         $.extend(newBuilding, details);
 
-        return newBuilding;
+        return <IBuilding>newBuilding;
     }
 
 
 
+}
+
+interface IBuildingDefaults {
+    name: string;
+    label: string;
+    type: string;
+    powerIn?: number;
+    powerOut?: number;
+    cost: number;
+    sight: number;
+    hitPoints: number;
+    imagesToLoad: { name: string, count: number }[];
+    gridShape: number[][];
+}
+
+interface IBuildingCreateDetails {
+    name: string;
+    x: number;
+    y: number;
+    team: string;
+    status?: string;
+    health?: number;
 }
 
 export = Buildings;

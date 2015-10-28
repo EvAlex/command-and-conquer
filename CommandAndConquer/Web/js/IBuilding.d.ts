@@ -5,7 +5,7 @@ interface IBuilding extends IDestructibleObject {
     bibImage: HTMLImageElement;
     cost: number;
     defaults: IBuilding;
-    drawSelection: () => any;    
+    drawSelection(): any;    
     gridHeight: number;
     gridWidth: number;
     gridShape: number[][];
@@ -17,7 +17,8 @@ interface IBuilding extends IDestructibleObject {
     powerIn: number;
     sight: number;
     status: string;
+    repairing: boolean;
     team: string;
     tiberiumStorage: number;
-    underPoint: (a, b) => any;
+    underPoint(a, b): any;
 }
