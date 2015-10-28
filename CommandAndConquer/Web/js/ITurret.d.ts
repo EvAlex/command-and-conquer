@@ -9,4 +9,5 @@ interface ITurret extends IBuilding {
     reloadTime: number;
     turnSpeed: number;
     turretDirection: number;
+    bulletFiring: boolean;
 }

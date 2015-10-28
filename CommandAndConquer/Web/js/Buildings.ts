@@ -176,8 +176,8 @@ class Buildings extends VisualObject {
 
         this.loadSpriteSheet(building, details, 'buildings');
 
-        $.extend(buildingType, details);
-        this.types[name] = buildingType;
+        $.extend(building, details);
+        this.types[name] = building;
     }
 
     add(details: IBuildingCreateDetails): IBuilding {

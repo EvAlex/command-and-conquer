@@ -1,4 +1,7 @@
 ﻿
+import Building = require('./Building');
+import GameScreen = require('./GameScreen');
+
 class Fog {
 
     constructor() {
@@ -10,8 +13,8 @@ class Fog {
     private fogCanvas: HTMLCanvasElement;
     private fogContext: CanvasRenderingContext2D;
 
-    isOver(x, y) {
-        var currentMap = game.currentLevel.mapImage;
+    isOver(x, y, mapImage: HTMLImageElement) {
+        var currentMap = mapImage;
 
         var pixel = this.fogContext.getImageData(x * this.canvasWidth / currentMap.width, y * this.canvasHeight / currentMap.height, 1, 1).data;
         //alert("fog "+x+","+y+" "+pixel[0]+" "+pixel[1]+" "+pixel[2]+" "+pixel[3]);
@@ -28,62 +31,70 @@ class Fog {
 
     }
 
-    draw() {
+    draw(
+        context: CanvasRenderingContext2D,
+        mapImage: HTMLImageElement,
+        units: IUnit[],
+        gridSize: number,
+        currentTeam: string,
+        buildings: Building[], turrets: ITurret[],
+        screen: GameScreen) {
+
         var fogCanvas = this.fogCanvas;
         var fogContext = this.fogContext;
-        var currentMap = game.currentLevel.mapImage;
+        var currentMap = mapImage;
         fogContext.save();
 
         fogContext.scale(this.canvasWidth / currentMap.width, this.canvasHeight / currentMap.height);
 
         fogContext.fillStyle = 'rgba(200,200,200,1)';
 
-        for (var i = game.units.length - 1; i >= 0; i--) {
-            var unit = game.units[i];
-            if (unit.team == game.currentLevel.team || unit.bulletFiring) {
+        for (var i = units.length - 1; i >= 0; i--) {
+            var unit = units[i];
+            if (unit.team == currentTeam || unit.bulletFiring) {
                 fogContext.beginPath();
                 fogContext.globalCompositeOperation = "destination-out";
-                fogContext.arc((Math.floor(unit.x) + 0.5) * game.gridSize, (Math.floor(unit.y) + 0.5) * game.gridSize,
+                fogContext.arc((Math.floor(unit.x) + 0.5) * gridSize, (Math.floor(unit.y) + 0.5) * gridSize,
                     //fogContext.arc(((unit.x)+0.5)*game.gridSize,((unit.y)+0.5)*game.gridSize,
-                    (unit.sight + 0.5) * game.gridSize, 0, 2 * Math.PI, false);
+                    (unit.sight + 0.5) * gridSize, 0, 2 * Math.PI, false);
                 //fogContext.globalAlpha = 0.2;
                 fogContext.fill()
             }
         };
-        for (var i = game.buildings.length - 1; i >= 0; i--) {
+        for (var i = buildings.length - 1; i >= 0; i--) {
 
-            var build = game.buildings[i];
+            var build = buildings[i];
 
-            if (build.team == game.currentLevel.team) {
+            if (build.team == currentTeam) {
                 fogContext.beginPath();
                 fogContext.globalCompositeOperation = "destination-out";
                 fogContext.arc(
-                    (Math.floor(build.x)) * game.gridSize + build.pixelWidth / 2,
-                    (Math.floor(build.y)) * game.gridSize + build.pixelHeight / 2,
-                    build.sight * game.gridSize, 0, 2 * Math.PI, false);
+                    (Math.floor(build.x)) * gridSize + build.pixelWidth / 2,
+                    (Math.floor(build.y)) * gridSize + build.pixelHeight / 2,
+                    build.sight * gridSize, 0, 2 * Math.PI, false);
                 fogContext.fill()
             }
         };
 
-        for (var i = game.turrets.length - 1; i >= 0; i--) {
+        for (var i = turrets.length - 1; i >= 0; i--) {
 
-            var turret = game.turrets[i];
+            var turret = turrets[i];
 
-            if (turret.team == game.currentLevel.team || turret.bulletFiring) {
+            if (turret.team == currentTeam || turret.bulletFiring) {
                 fogContext.beginPath();
                 fogContext.globalCompositeOperation = "destination-out";
                 fogContext.arc(
-                    (Math.floor(turret.x)) * game.gridSize + turret.pixelWidth / 2,
-                    (Math.floor(turret.y)) * game.gridSize + turret.pixelHeight / 2,
-                    turret.sight * game.gridSize, 0, 2 * Math.PI, false);
+                    (Math.floor(turret.x)) * gridSize + turret.pixelWidth / 2,
+                    (Math.floor(turret.y)) * gridSize + turret.pixelHeight / 2,
+                    turret.sight * gridSize, 0, 2 * Math.PI, false);
                 fogContext.fill()
             }
         };
 
         fogContext.restore();
-        context.drawImage(this.fogCanvas, 0 + game.viewportX * this.canvasWidth / currentMap.width, 0 + game.viewportY * this.canvasHeight / currentMap.height,
-            game.viewportWidth * this.canvasWidth / currentMap.width, game.viewportHeight * this.canvasHeight / currentMap.height,
-            game.viewportLeft, game.viewportTop, game.viewportWidth, game.viewportHeight)
+        context.drawImage(this.fogCanvas, 0 + screen.viewportOffset.x * this.canvasWidth / currentMap.width, 0 + screen.viewportOffset.y * this.canvasHeight / currentMap.height,
+            screen.viewport.width * this.canvasWidth / currentMap.width, screen.viewport.height * this.canvasHeight / currentMap.height,
+            screen.viewport.left, screen.viewport.top, screen.viewport.width, screen.viewport.height)
     }
 
 

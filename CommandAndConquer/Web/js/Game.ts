@@ -175,7 +175,7 @@ class Game {
         // Buildings can't be built on fog either
         for (var y = 0; y < this.heroObstructionGrid.length; y++) {
             for (var x = 0; x < this.heroObstructionGrid[y].length; x++) {
-                if (this.fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize)) {
+                if (this.fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize, this.currentLevel.mapImage)) {
                     //this.heroObstructionGrid[y][x] = 0;
                     this.buildingObstructionGrid[y][x] = 1;
                 }
@@ -307,14 +307,14 @@ class Game {
                     }
                 };
                 for (var i = this.buildings.length - 1; i >= 0; i--) {
-                    if (this.buildings[i].underPoint(x, y)) {
+                    if (this.buildings[i].underPoint(x, y, this.gridSize)) {
                         overObject = this.buildings[i];
                         break;
                     }
                 };
 
                 for (var i = this.turrets.length - 1; i >= 0; i--) {
-                    if (this.turrets[i].underPoint(x, y)) {
+                    if (this.turrets[i].underPoint(x, y, this.gridSize)) {
                         overObject = this.turrets[i];
                         break;
                     }
@@ -529,7 +529,7 @@ class Game {
     	    
         this.drawBullets();
         if (!this.debugMode) {
-            this.fog.draw();
+            this.fog.draw(this.context, this.currentLevel.mapImage, this.units, this.gridSize, this.currentPlayer.team, this.buildings, this.turrets, this.screen);
         }
 
         this.context.restore();
@@ -947,7 +947,7 @@ class Game {
 
             this.mouse.gridX = Math.floor((this.mouse.gameX) / this.gridSize);
             this.mouse.gridY = Math.floor((this.mouse.gameY) / this.gridSize);
-            this.mouse.isOverFog = this.fog.isOver(this.mouse.gameX, this.mouse.gameY);
+            this.mouse.isOverFog = this.fog.isOver(this.mouse.gameX, this.mouse.gameY, this.currentLevel.mapImage);
             //this.panDirection = this.handlePanning();
             //this.showAppropriateCursor();
             if (this.mouse.buttonPressed) {
