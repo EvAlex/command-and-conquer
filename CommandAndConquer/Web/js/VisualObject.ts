@@ -30,7 +30,7 @@ class VisualObject {
         return imageArray;
     }
 
-    loadSpriteSheet(forObject, details, from) {
+    loadSpriteSheet(forObject: IGameObject, details, from) {
         forObject.spriteCanvas = document.createElement('canvas');
         forObject.spriteImage = this.preloadImage
             (from + '/' + details.name + '-sprite-sheet.png',

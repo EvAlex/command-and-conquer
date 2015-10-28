@@ -5,7 +5,7 @@ interface IBuilding extends IDestructibleObject {
     bibImage: HTMLImageElement;
     cost: number;
     defaults: IBuilding;
-    drawSelection(): any;    
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: any, sidebar: any): any;    
     gridHeight: number;
     gridWidth: number;
     gridShape: number[][];
@@ -20,5 +20,5 @@ interface IBuilding extends IDestructibleObject {
     repairing: boolean;
     team: string;
     tiberiumStorage: number;
-    underPoint(a, b): any;
+    underPoint(a, b, gridSize: number): boolean;
 }

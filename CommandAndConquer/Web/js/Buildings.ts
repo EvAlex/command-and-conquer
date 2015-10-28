@@ -1,10 +1,11 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import Building = require('./Building');
 
 class Buildings extends VisualObject {
 
     loaded = false;
-    types = [];
+    types: Building[] = [];
 
     buildingDetails = {
         'construction-yard': <IBuildingDefaults>{
@@ -159,144 +160,21 @@ class Buildings extends VisualObject {
     preloadCount = 0;
     loadedCount = 0;
 
-    draw() {
-
-        var teamYOffset = 0;
-        if (this.team != game.currentLevel.team) {
-            teamYOffset = this.pixelHeight;
-        }
-            
-        //First draw the bottom grass
-        context.drawImage(this.bibImage, this.x * game.gridSize + game.viewportAdjustX, (this.y + this.gridHeight - 1) * game.gridSize + game.viewportAdjustY);
-
-
-
-
-        var life = this.getLife(),
-            imageCategory: string;
-        if (this.status == "build" || this.status == "sell") {
-            imageCategory = 'build';
-        } else if (this.status == "" || this.life == "ultra-damaged") {
-            imageCategory = this.life;
-        } else {
-            imageCategory = this.life + "-" + this.status;
-        }
-
-
-        var imageWidth = this.gridShape[0].length * game.gridSize;
-        var imageHeight = this.spriteImage.height;
-            
-        // Then draw the base with baseOffset
-        var baseImage = this.spriteArray[this.life + "-base"];
-        if (baseImage && this.status != 'build' && this.status != 'sell') {
-            context.drawImage(this.spriteCanvas, baseImage.offset * imageWidth, teamYOffset, imageWidth, imageHeight, game.gridSize * (this.x) + game.viewportAdjustX, (this.y) * game.gridSize + game.viewportAdjustY, imageWidth, imageHeight);
-        }
-	        
-	        
-        // Finally draw the top part with appropriate animation
-	        
-        var imageList = this.spriteArray[imageCategory];
-        if (!this.animationIndex) {
-            this.animationIndex = 0;
-        }
-        if (imageList.count >= Math.floor(this.animationIndex / this.animationSpeed)) {
-            var imageIndex = Math.floor(this.animationIndex / this.animationSpeed);
-            if (this.status == 'sell') {
-                imageIndex = imageList.count - 1 - Math.floor(this.animationIndex / this.animationSpeed);
-            }
-            context.drawImage(this.spriteCanvas, (imageList.offset + imageIndex) * imageWidth, teamYOffset, imageWidth, imageHeight, game.gridSize * (this.x) + game.viewportAdjustX, (this.y) * game.gridSize + game.viewportAdjustY, imageWidth, imageHeight);
-        }
-
-
-        this.animationIndex++;
-        if (this.animationIndex / this.animationSpeed >= imageList.count) {
-            this.animationIndex = 0;
-            if (this.name == 'refinery' && (this.status == "build" || this.status == 'unload')) {
-                if (this.status == 'build') {
-                    game.units.push(vehicles.add({
-                        name: 'harvester', team: this.team, x: this.x + 0.5,
-                        y: this.y + 2, moveDirection: 14, orders: { type: 'harvest', from: this }
-                    }));
-                    this.status = "";
-                } else {
-                    if (this.harvester.tiberium) {
-                        var subtractAmount = this.harvester.tiberium > 4 ? 5 : this.harvester.tiberium;
-                        if (this.team == game.currentLevel.team) {
-                            sidebar.cash += subtractAmount * 50;
-                        } else {
-                            ai.cash += subtractAmount;
-                        }
-
-                        this.harvester.tiberium -= subtractAmount;
-                    }
-                    if (!this.harvester.tiberium) {
-                        game.units.push(vehicles.add({
-                            name: 'harvester', team: this.team, x: this.x + 0.5,
-                            y: this.y + 2, health: this.harvester.health, moveDirection: 14, orders: { type: 'harvest', from: this, to: this.harvester.orders.from }
-                        }));
-                        this.harvester = null;
-                        this.status = "";
-                    }
-                }
-
-
-
-            } else if (this.status == "build" || this.status == "construct" || this.status == "unload") {
-                this.status = "";
-            }
-            if (this.status == 'sell') {
-                this.status = 'destroy';
-            }
-        }
-
-        this.drawSelection();
-        if (this.repairing) {
-            //alert('repairing');
-            context.globalAlpha = sidebar.textBrightness;
-            context.drawImage(sidebar.repairImageBig, (this.x + this.gridShape[0].length / 2 - 1) * game.gridSize + game.viewportAdjustX, (this.y + this.gridShape.length / 2 - 1) * game.gridSize + game.viewportAdjustY);
-            context.globalAlpha = 1;
-
-            if (this.health >= this.hitPoints) {
-                this.repairing = false;
-                this.health = this.hitPoints;
-            } else {
-                var cashSpent = 1;
-                if (sidebar.cash > cashSpent) {
-                    sidebar.cash -= cashSpent;
-                    this.health += (cashSpent * 2 * this.hitPoints / this.cost);
-                    //console.log (this.health + " " +2*cashSpent*this.hitPoints/this.cost)     
-                }
-            }
-        }
-
-    }
-
-    load(name) {
+    load(name, gridSize: number) {
         var details = <IBuildingDefaults>this.buildingDetails[name];
-        var buildingType = {
-            defaults: {
-                type: 'building',
-                draw: () => this.draw(),
-                underPoint: underPoint,
-                drawSelection: drawSelection,
-                getLife: getLife,
-                animationSpeed: 2,
-                status: "",
-                health: details.hitPoints,
-                gridHeight: details.gridShape.length,
-                gridWidth: details.gridShape[0].length,
-                pixelHeight: details.gridShape.length * game.gridSize,
-                pixelWidth: details.gridShape[0].length * game.gridSize,
-                bibImage: this.preloadImage('buildings/bib/bib-' + details.gridShape[0].length + '.gif'),
-                pixelOffsetX: 0,
-                pixelOffsetY: 0,
-                pixelTop: 0,
-                pixelLeft: 0
+        var building = new Building();
+        building.health = details.hitPoints;
+        building.gridHeight = details.gridShape.length;
+        building.gridWidth = details.gridShape[0].length;
+        building.pixelHeight = details.gridShape.length * gridSize;
+        building.pixelWidth = details.gridShape[0].length * gridSize;
+        building.bibImage = this.preloadImage('buildings/bib/bib-' + details.gridShape[0].length + '.gif');
+        building.pixelOffsetX = 0;
+        building.pixelOffsetY = 0;
+        building.pixelTop = 0;
+        building.pixelLeft = 0;
 
-            }
-        };
-
-        this.loadSpriteSheet(buildingType, details, 'buildings');
+        this.loadSpriteSheet(building, details, 'buildings');
 
         $.extend(buildingType, details);
         this.types[name] = buildingType;

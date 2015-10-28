@@ -7,6 +7,13 @@ import Player = require('./Player');
 
 class Building extends DestructibleObject implements IBuilding {
 
+    constructor() {
+        super();
+        this.type = 'building';
+        this.animationSpeed = 2;
+        this.status = '';
+    }
+
     cost: number;
     defaults: IBuilding;
     gridWidth: number;
@@ -21,16 +28,87 @@ class Building extends DestructibleObject implements IBuilding {
     animationSpeed: number;
     bibImage: HTMLImageElement;
     powerIn: number;
+    primaryBuilding: boolean = false;
     sight: number;
     status: string;
+    selected: boolean;
     repairing: boolean;
     team: string;
     tiberiumStorage: number;
 
-    underPoint(a, b) {
+    underPoint(x, y, gridSize: number): boolean {
+        var xo = this.x * gridSize + this.pixelOffsetX;
+        var yo = this.y * gridSize + this.pixelOffsetY;
+
+        var x1 = xo + this.pixelLeft;
+        var y1 = yo + this.pixelTop;
+        var x2 = x1 + this.pixelWidth;
+        var y2 = y1 + this.pixelHeight;
+        //
+        
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2;
     }
 
-    drawSelection() {
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: GameScreen, sidebar: Sidebar) {
+        if (this.selected) {
+            context.strokeStyle = 'white';
+            //context.strokeWidth = 4;
+            
+            var selectBarSize = 5;
+
+            var x = this.x * gridSize + screen.viewportAdjust.x + this.pixelOffsetX;
+            var y = this.y * gridSize + screen.viewportAdjust.y + this.pixelOffsetY;
+
+            var x1 = x + this.pixelLeft;
+            var y1 = y + this.pixelTop;
+            var x2 = x1 + this.pixelWidth;
+            var y2 = y1 + this.pixelHeight;
+
+            
+            // First draw the white bracket
+            context.beginPath();
+            //alert(x1);
+            context.moveTo(x1, y1 + selectBarSize);
+            context.lineTo(x1, y1);
+            context.lineTo(x1 + selectBarSize, y1);
+
+            context.moveTo(x2 - selectBarSize, y1);
+            context.lineTo(x2, y1);
+            context.lineTo(x2, y1 + selectBarSize);
+
+            context.moveTo(x2, y2 - selectBarSize);
+            context.lineTo(x2, y2);
+            context.lineTo(x2 - selectBarSize, y2);
+
+            context.moveTo(x1 + selectBarSize, y2);
+            context.lineTo(x1, y2);
+            context.lineTo(x1, y2 - selectBarSize);
+
+            context.stroke();
+
+            // Now draw the health bar
+            this.getLife();
+
+            context.beginPath();
+            context.rect(x1, y1 - selectBarSize - 2, this.pixelWidth * this.health / this.hitPoints, selectBarSize);
+            if (this.life == 'healthy') {
+                context.fillStyle = 'lightgreen';
+            } else if (this.life == 'damaged') {
+                context.fillStyle = 'yellow';
+            } else {
+                context.fillStyle = 'red';
+            }
+            context.fill();
+            context.beginPath();
+            context.strokeStyle = 'black';
+            context.rect(x1, y1 - selectBarSize - 2, this.pixelWidth, selectBarSize);
+            context.stroke();
+
+            if (this.primaryBuilding) {
+                context.drawImage(sidebar.primaryBuildingImage, (x1 + x2 - sidebar.primaryBuildingImage.width) / 2, y2 - sidebar.primaryBuildingImage.height);
+            }
+        }
+
     }
 
     draw(
@@ -96,7 +174,7 @@ class Building extends DestructibleObject implements IBuilding {
             this.applyStatusDuringDraw(curPlayerTeam, units, vehiclesFactory, sidebar, enemy);
         }
 
-        this.drawSelection();
+        this.drawSelection(context, gridSize, screen, sidebar);
         if (this.repairing) {
             //alert('repairing');
             context.globalAlpha = sidebar.textBrightness;
