@@ -180,21 +180,16 @@ class Buildings extends VisualObject {
         this.types[name] = building;
     }
 
-    add(details: IBuildingCreateDetails): IBuilding {
-        var newBuilding = {
-            team: details.team
-        };
-        //alert(game.currentLevel.team)
+    add(details: IBuildingCreateDetails): Building {
+        var newBuilding = new Building();
+        newBuilding.team = details.team
         var name = details.name;
         $.extend(newBuilding, <IBuildingDefaults>this.types[name].defaults);
         $.extend(newBuilding, <IBuildingDefaults>this.types[name]);
         $.extend(newBuilding, details);
 
-        return <IBuilding>newBuilding;
+        return newBuilding;
     }
-
-
-
 }
 
 interface IBuildingDefaults {

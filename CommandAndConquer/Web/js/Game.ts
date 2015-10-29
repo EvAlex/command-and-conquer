@@ -5,6 +5,7 @@ import Fog = require('./Fog');
 import Mouse = require('./Mouse');
 import Levels = require('./Levels');
 import Buildings = require('./Buildings');
+import Building = require('./Building');
 import Turrets = require('./Turrets');
 import Infantry = require('./Infantry');
 import Vehicles = require('./Vehicles');
@@ -269,7 +270,7 @@ class Game {
     }
 
     units = [];
-    buildings: IBuilding[] = [];
+    buildings: Building[] = [];
     turrets: ITurret[] = [];
     overlay: IOverlay[] = [];
     bullets = [];

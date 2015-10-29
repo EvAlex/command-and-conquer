@@ -37,7 +37,8 @@ class Fog {
         units: IUnit[],
         gridSize: number,
         currentTeam: string,
-        buildings: Building[], turrets: ITurret[],
+        buildings: Building[],
+        turrets: ITurret[],
         screen: GameScreen) {
 
         var fogCanvas = this.fogCanvas;
