@@ -327,6 +327,7 @@
     <TypeScriptCompile Include="Web\js\Sounds.ts" />
     <TypeScriptCompile Include="Web\js\TiberiumRefinery.ts" />
     <TypeScriptCompile Include="Web\js\Turrets.ts" />
+    <TypeScriptCompile Include="Web\js\Vehicle.ts" />
     <TypeScriptCompile Include="Web\js\Vehicles.ts" />
     <TypeScriptCompile Include="Web\js\VisualObject.ts" />
   </ItemGroup>

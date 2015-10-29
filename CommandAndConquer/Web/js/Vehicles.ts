@@ -1,5 +1,6 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import Vehicle = require('./Vehicle');
 
 class Vehicles extends VisualObject {
     loaded: boolean = false;
@@ -839,10 +840,9 @@ class Vehicles extends VisualObject {
         };
     }
 
-    add(details): IUnit {
-        var newVehicle = {
-            team: game.currentLevel.team
-        };
+    add(details: IVehicleCreateDetails): Vehicle {
+        var newVehicle = new Vehicle();
+        newVehicle.team = details.team;
         var name = details.name;
         $.extend(newVehicle, this.types[name].defaults);
 
@@ -852,6 +852,33 @@ class Vehicles extends VisualObject {
         return newVehicle;
     }
 
+}
+
+interface IVehicleCreateDetails {
+    name: string;
+    x: number;
+    y: number;
+    team?: string;
+    status?: string;
+    health?: number;
+    moveDirection?: number
+    orders: IMoveOrder | IProtectOrder | IGuardOrder;
+}
+
+interface IOrder {
+    type: string;
+}
+
+interface IMoveOrder extends IOrder {
+    from?: IPoint;
+    to: IPoint;
+}
+
+interface IProtectOrder extends IOrder {
+    target: IUnit
+}
+
+interface IGuardOrder extends IOrder {
 }
 
 export = Vehicles;

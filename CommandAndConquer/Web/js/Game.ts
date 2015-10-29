@@ -724,8 +724,13 @@ class Game {
                 && (selectedObject.type == 'building' || selectedObject.type == 'turret')) {
                 if (selectedObject.name == 'refinery' && selectedObject.status == 'unload') {
                     this.units.push(this.vehicles.add({
-                        name: 'harvester', team: selectedObject.team, x: selectedObject.x + 0.5,
-                        y: selectedObject.y + 2, health: selectedObject.harvester.health, moveDirection: 14, orders: { type: 'guard' }
+                        name: 'harvester',
+                        team: selectedObject.team,
+                        x: selectedObject.x + 0.5,
+                        y: selectedObject.y + 2,
+                        health: selectedObject.harvester.health,
+                        moveDirection: 14,
+                        orders: { type: 'guard' }
                     }));
                     selectedObject.harvester = null;
                 }
