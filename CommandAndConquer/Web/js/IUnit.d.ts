@@ -12,7 +12,8 @@ interface IUnit extends IDestructibleObject {
     collisionWith: number;
     cost: number;
     defaults: IUnit;
-    drawSelection: () => void;
+    //drawSelection: () => void;
+    //underPoint: (a, b) => any;
     label: string;
     move: () => any;
     moveDirection: number;
@@ -28,7 +29,7 @@ interface IUnit extends IDestructibleObject {
     pixelTop: number;
     instructions: IInstruction[];
     primaryWeapon: number;
-    processOrders: () => any;
+    //processOrders: () => any;
     reloadTime: number;
     turnSpeed: number;
     turretDirection: number;
@@ -38,5 +39,4 @@ interface IUnit extends IDestructibleObject {
     status: string;
     team: string;
     turretImageCount: number;
-    underPoint: (a, b) => any;
 }

@@ -303,6 +303,7 @@
     <TypeScriptCompile Include="Web\js\Game.ts" />
     <TypeScriptCompile Include="Web\js\GameObject.ts" />
     <TypeScriptCompile Include="Web\js\GameScreen.ts" />
+    <TypeScriptCompile Include="Web\js\Harvester.ts" />
     <TypeScriptCompile Include="Web\js\IBuilding.d.ts" />
     <TypeScriptCompile Include="Web\js\IDestructibleObject.d.ts" />
     <TypeScriptCompile Include="Web\js\IEnergyProducingBuilding.d.ts" />
@@ -311,6 +312,7 @@
     <TypeScriptCompile Include="Web\js\IHarvester.ts" />
     <TypeScriptCompile Include="Web\js\IInstruction.ts" />
     <TypeScriptCompile Include="Web\js\Infantry.ts" />
+    <TypeScriptCompile Include="Web\js\IOrder.d.ts" />
     <TypeScriptCompile Include="Web\js\IOverlay.ts" />
     <TypeScriptCompile Include="Web\js\IPoint.d.ts" />
     <TypeScriptCompile Include="Web\js\ISize.d.ts" />

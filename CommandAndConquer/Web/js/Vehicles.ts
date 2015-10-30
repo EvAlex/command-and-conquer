@@ -865,20 +865,6 @@ interface IVehicleCreateDetails {
     orders: IMoveOrder | IProtectOrder | IGuardOrder;
 }
 
-interface IOrder {
-    type: string;
-}
 
-interface IMoveOrder extends IOrder {
-    from?: IPoint;
-    to: IPoint;
-}
-
-interface IProtectOrder extends IOrder {
-    target: IUnit
-}
-
-interface IGuardOrder extends IOrder {
-}
 
 export = Vehicles;

@@ -22,3 +22,7 @@ interface IBuilding extends IDestructibleObject {
     tiberiumStorage: number;
     underPoint(a, b, gridSize: number): boolean;
 }
+
+interface ITiberiumRefinery extends IBuilding {
+    harvester: IHarvester;
+}

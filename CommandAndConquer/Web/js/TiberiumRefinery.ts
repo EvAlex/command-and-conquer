@@ -4,7 +4,7 @@ import Sidebar = require('./Sidebar');
 import Vehicles = require('./Vehicles');
 import Player = require('./Player');
 
-class TiberiumRefinery extends Building {
+class TiberiumRefinery extends Building implements ITiberiumRefinery {
 
     harvester: IHarvester;
     tiberiumStorage: number;
