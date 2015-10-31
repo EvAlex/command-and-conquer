@@ -1,6 +1,9 @@
 ﻿
 interface IInstruction {
     type: string;
+}
+
+interface IMoveInstruction extends IInstruction {
     distance: number;
 }
 
@@ -8,6 +11,18 @@ interface IInstruction {
  * type="turn"
  */
 interface ITurnInstruction extends IInstruction {
-    type: string;
+    toDirection: number;
+}
+
+/**
+ * type="fire"
+ */
+interface IFireInstruction extends IInstruction {
+}
+
+/**
+ * type="aim"
+ */
+interface IAimInstruction extends IInstruction {
     toDirection: number;
 }

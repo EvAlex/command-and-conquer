@@ -8,6 +8,14 @@ interface IMoveOrder extends IOrder {
     to: IPoint;
 }
 
+/**
+ *  type="patrol"
+ */
+interface IPatrolOrder extends IOrder {
+    from: IPoint;
+    to: IPoint;
+}
+
 interface IProtectOrder extends IOrder {
     target: IUnit
 }
@@ -29,4 +37,12 @@ interface IHarvestOrder extends IOrder {
 interface IHarvestReturnOrder extends IOrder {
     from: ITiberium;
     to?: ITiberiumRefinery;
+}
+
+/**
+ *  type="attack"
+ */
+interface IAttackOrder extends IOrder {
+    target: IUnit;
+    lastOrders: IOrder;
 }

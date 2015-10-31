@@ -822,7 +822,8 @@ class Game {
         this.sidebar.load(this.currentPlayer.cash);
 
         this.listenEvents();
-        this.fog.init();
+
+        this.fog.init(this.currentLevel.mapImage.width, this.currentLevel.mapImage.height);
 
         this.screen.viewportOffset.x = 96;
         this.screen.viewportOffset.y = 264;

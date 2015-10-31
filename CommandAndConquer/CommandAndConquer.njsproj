@@ -295,6 +295,7 @@
     <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="typings\winston\winston.d.ts" />
+    <TypeScriptCompile Include="Web\js\AStar.ts" />
     <TypeScriptCompile Include="Web\js\Building.ts" />
     <TypeScriptCompile Include="Web\js\Buildings.ts" />
     <TypeScriptCompile Include="Web\js\cnc.ts" />
@@ -305,6 +306,7 @@
     <TypeScriptCompile Include="Web\js\GameScreen.ts" />
     <TypeScriptCompile Include="Web\js\Harvester.ts" />
     <TypeScriptCompile Include="Web\js\IBuilding.d.ts" />
+    <TypeScriptCompile Include="Web\js\ICollisionPoint.d.ts" />
     <TypeScriptCompile Include="Web\js\IDestructibleObject.d.ts" />
     <TypeScriptCompile Include="Web\js\IEnergyProducingBuilding.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameLevel.d.ts" />

@@ -46,6 +46,38 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
     health: number;
     hitPoints: number;
     life: string;
+
+    protected findEnemiesInRange(hero, increment, units: IUnit[], buildings: IBuilding[], turrets: ITurret[]) {
+        if (!increment)
+            increment = 0;
+        if (!hero) {
+            hero = this;
+        }
+        var enemies = [],
+            test;
+
+        for (var i = units.length - 1; i >= 0; i--) {
+            test = units[i];
+            if (test.team != hero.team && Math.pow(test.x - hero.x, 2) + Math.pow(test.y - hero.y, 2) <= Math.pow(hero.sight + increment, 2)) {
+                enemies.push(test);
+                //alert(hero.name + ':' +hero.x + ',' + hero.y+ ' too close to ' + test.name + ':' +test.x + ',' + test.y)      
+            }
+        };
+        for (var i = buildings.length - 1; i >= 0; i--) {
+            test = buildings[i];
+            if (test.team != hero.team && Math.pow(test.x + test.gridWidth / 2 - hero.x, 2) + Math.pow(test.y + test.gridHeight / 2 - hero.y, 2) <= Math.pow(hero.sight + increment, 2)) {
+                enemies.push(test);
+            }
+        };
+        for (var i = turrets.length - 1; i >= 0; i--) {
+            test = turrets[i];
+
+            if (test.team != hero.team && Math.pow(test.x + test.gridWidth / 2 - hero.x, 2) + Math.pow(test.y + test.gridHeight / 2 - hero.y, 2) <= Math.pow(hero.sight + increment, 2)) {
+                enemies.push(test);
+            }
+        };
+        return enemies;
+    }
 }
 
 export = DestructibleObject;

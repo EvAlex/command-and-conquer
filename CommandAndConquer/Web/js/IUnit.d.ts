@@ -9,7 +9,7 @@ interface IUnit extends IDestructibleObject {
     collisionDistance: number;
     collisionRadius: number;
     collisionType: string;
-    collisionWith: number;
+    collisionWith: ICollisionPoint;
     cost: number;
     defaults: IUnit;
     //drawSelection: () => void;
@@ -18,15 +18,17 @@ interface IUnit extends IDestructibleObject {
     move: () => any;
     moveDirection: number;
     moveImageCount: number;
-    moveTo: (a, b) => any;
+    //moveTo: (a, b) => any;
     movementSpeed: number;
     moving: boolean;
     orders: Object;
     path: IPoint[];
     pixelLeft: number;
+    pixelTop: number;
     pixelOffsetX: number
     pixelOffsetY: number;
-    pixelTop: number;
+    gridHeight: number;
+    gridWidth: number;
     instructions: IInstruction[];
     primaryWeapon: number;
     //processOrders: () => any;

@@ -125,7 +125,7 @@ class Harvester extends Vehicle implements IHarvester {
         return orders;
     }
 
-    private findTiberiumInRange(hero, allOverlays: IOverlay[], gridSize: number, fog: Fog, mapImage: HTMLImageElement): ITiberium {
+    private findTiberiumInRange(hero, allOverlays: IOverlay[], gridSize: number, fog: Fog): ITiberium {
         if (!hero) {
             hero = this;
         }
@@ -133,7 +133,7 @@ class Harvester extends Vehicle implements IHarvester {
         var currentOverlay;
         for (var i = 0; i < allOverlays.length; i++) {
             var overlay = allOverlays[i];
-            if (overlay.name == 'tiberium' && (<ITiberium>overlay).stage > 0 && !fog.isOver(overlay.x * gridSize, overlay.y * gridSize, mapImage)) {
+            if (overlay.name == 'tiberium' && (<ITiberium>overlay).stage > 0 && !fog.isOver(overlay.x * gridSize, overlay.y * gridSize)) {
                 var distance = Math.pow(overlay.x - hero.x, 2) + Math.pow(overlay.y - hero.y, 2);
                 if (!currentDistance || (currentDistance > distance)) {
                     currentOverlay = overlay;
