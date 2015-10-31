@@ -2,6 +2,9 @@
 import Vehicle = require('./Vehicle');
 import GameScreen = require('./GameScreen');
 import Sidebar = require('./Sidebar');
+import Buildings = require('./Buildings');
+import Building = require('./Building');
+import Sounds = require('./Sounds');
 import Fog = require('./Fog');
 
 class Harvester extends Vehicle implements IHarvester {
@@ -40,19 +43,48 @@ class Harvester extends Vehicle implements IHarvester {
 
     }
 
-    processOrders(gridSize: number) {
-        super.processOrders(gridSize);
+    processOrders(
+        speedAdjustmentFactor: number,
+        units: IUnit[],
+        buildings: Building[],
+        turrets: ITurret[],
+        allOverlays: IOverlay[],
+        buildingsFactory: Buildings,
+        fog: Fog,
+        sounds: Sounds,
+        curPlayerTeam: string,
+        obstructionGrid: number[][],
+        heroObstructionGrid: number[][],
+        debugMode: boolean,
+        context: CanvasRenderingContext2D,
+        gridSize: number,
+        screen: GameScreen) {
+
+        super.processOrders(speedAdjustmentFactor, units, buildings, turrets, allOverlays, buildingsFactory, fog, sounds, curPlayerTeam, obstructionGrid, heroObstructionGrid, debugMode, context, gridSize, screen);
 
         if (this.orders.type == 'harvest') {
-            this.orders = this.processHarvestOrder(<IHarvestOrder>this.orders, gridSize);
+            this.orders = this.processHarvestOrder(<IHarvestOrder>this.orders, allOverlays, units, curPlayerTeam, obstructionGrid, heroObstructionGrid, speedAdjustmentFactor, debugMode, context, gridSize, screen, fog);
         } else if (this.orders.type == 'harvest-return') {
-            this.orders = this.processHarvestReturnOrder(<IHarvestReturnOrder>this.orders, gridSize);
+            this.orders = this.processHarvestReturnOrder(<IHarvestReturnOrder>this.orders, allOverlays, units, buildings, curPlayerTeam, obstructionGrid, heroObstructionGrid, speedAdjustmentFactor, debugMode, context, gridSize, screen, fog);
         }
     }
 
-    private processHarvestOrder(order: IHarvestOrder, gridSize: number): IHarvestOrder | IHarvestReturnOrder {
+    private processHarvestOrder(
+        order: IHarvestOrder,
+        allOverlays: IOverlay[],
+        units: IUnit[],
+        curPlayerTeam: string,
+        obstructionGrid: number[][],
+        heroObstructionGrid: number[][],
+        speedAdjustmentFactor: number,
+        debugMode: boolean,
+        context: CanvasRenderingContext2D,
+        gridSize: number,
+        screen: GameScreen,
+        fog: Fog): IHarvestOrder | IHarvestReturnOrder {
+
         if (!order.to) {
-            order.to = findTiberiumInRange(this);
+            order.to = this.findTiberiumInRange(this, allOverlays, gridSize, fog);
         }
         if (!order.to) {
             if (this.tiberium) {
@@ -63,7 +95,7 @@ class Harvester extends Vehicle implements IHarvester {
         var distance = Math.pow(Math.pow(order.to.y + 0.5 - this.y, 2) + Math.pow(order.to.x + 0.5 - this.x, 2), 0.5);
 
         if (distance > 1.5 * this.softCollisionRadius / gridSize) {
-            this.moveTo(this.orders.to);
+            this.moveTo(this.orders.to, false, speedAdjustmentFactor, units, curPlayerTeam, obstructionGrid, heroObstructionGrid, debugMode, context, gridSize, screen);
         } else {
             if (this.tiberium && this.tiberium >= 14) {
                 this.orders = { type: 'harvest-return', to: order.from, from: order.to };
@@ -71,7 +103,7 @@ class Harvester extends Vehicle implements IHarvester {
             }
 
             if (order.to.stage < 1) {
-                order.to = findTiberiumInRange(this);
+                order.to = this.findTiberiumInRange(this, allOverlays, gridSize, fog);
             } else {
                 if (!this.tiberium || this.tiberium < 14) {
                     if (this.status == "") {
@@ -85,10 +117,23 @@ class Harvester extends Vehicle implements IHarvester {
         return order;
     }
 
-    private processHarvestReturnOrder(orders: IHarvestReturnOrder, gridSize: number): IHarvestOrder | IHarvestReturnOrder {
+    private processHarvestReturnOrder(
+        orders: IHarvestReturnOrder,
+        allOverlays: IOverlay[],
+        units: IUnit[],
+        buildings: IBuilding[],
+        curPlayerTeam: string,
+        obstructionGrid: number[][],
+        heroObstructionGrid: number[][],
+        speedAdjustmentFactor: number,
+        debugMode: boolean,
+        context: CanvasRenderingContext2D,
+        gridSize: number,
+        screen: GameScreen,
+        fog: Fog): IHarvestOrder | IHarvestReturnOrder {
 
         if (!orders.to) {
-            orders.to = findRefineryInRange(this);
+            orders.to = this.findRefineryInRange(buildings);
             if (!orders.to) {
                 return orders;
             }
@@ -98,7 +143,7 @@ class Harvester extends Vehicle implements IHarvester {
         var distance = Math.pow(Math.pow(destination.y - this.y, 2) + Math.pow(destination.x - this.x, 2), 0.5);
         //alert(distance)
         if (distance > 3 * this.softCollisionRadius / gridSize) {
-            this.moveTo(destination);
+            this.moveTo(destination, false, speedAdjustmentFactor, units, curPlayerTeam, obstructionGrid, heroObstructionGrid, debugMode, context, gridSize, screen);
             //this.moveTo({x:10,y:10})
         } else if (orders.to.life != "ultra-damaged") {
             if (this.tiberium == 0) {
@@ -142,5 +187,21 @@ class Harvester extends Vehicle implements IHarvester {
             }
         };
         return currentOverlay;
+    }
+
+    private findRefineryInRange(buildings: IBuilding[]) {
+        var currentDistance;
+        var currentRefinery;
+        for (var i = 0; i < buildings.length; i++) {
+            var building = buildings[i];
+            if (building.name == 'refinery' && building.team == this.team) {
+                var distance = Math.pow(building.x - this.x, 2) + Math.pow(building.y - this.y, 2);
+                if (!currentDistance || (currentDistance > distance)) {
+                    currentRefinery = building;
+                    currentDistance = distance;
+                }
+            }
+        };
+        return currentRefinery;
     }
 }

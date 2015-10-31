@@ -6,6 +6,7 @@ import Buildings = require('./Buildings');
 import Building = require('./Building');
 import Sounds = require('./Sounds');
 import AStar = require('./AStar');
+import Fog = require('./Fog');
 
 class Vehicle extends DestructibleObject implements IUnit {
     animationIndex: number;
@@ -123,7 +124,9 @@ class Vehicle extends DestructibleObject implements IUnit {
         units: IUnit[],
         buildings: Building[],
         turrets: ITurret[],
+        allOverlays: IOverlay[],
         buildingsFactory: Buildings,
+        fog: Fog,
         sounds: Sounds,
         curPlayerTeam: string,
         obstructionGrid: number[][],
