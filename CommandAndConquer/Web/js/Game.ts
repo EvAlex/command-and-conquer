@@ -176,7 +176,7 @@ class Game {
         // Buildings can't be built on fog either
         for (var y = 0; y < this.heroObstructionGrid.length; y++) {
             for (var x = 0; x < this.heroObstructionGrid[y].length; x++) {
-                if (this.fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize, this.currentLevel.mapImage)) {
+                if (this.fog.isOver((x + 0.5) * this.gridSize, (y + 0.5) * this.gridSize)) {
                     //this.heroObstructionGrid[y][x] = 0;
                     this.buildingObstructionGrid[y][x] = 1;
                 }
@@ -530,7 +530,7 @@ class Game {
     	    
         this.drawBullets();
         if (!this.debugMode) {
-            this.fog.draw(this.context, this.currentLevel.mapImage, this.units, this.gridSize, this.currentPlayer.team, this.buildings, this.turrets, this.screen);
+            this.fog.draw(this.context, this.units, this.gridSize, this.currentPlayer.team, this.buildings, this.turrets, this.screen);
         }
 
         this.context.restore();
@@ -954,7 +954,7 @@ class Game {
 
             this.mouse.gridX = Math.floor((this.mouse.gameX) / this.gridSize);
             this.mouse.gridY = Math.floor((this.mouse.gameY) / this.gridSize);
-            this.mouse.isOverFog = this.fog.isOver(this.mouse.gameX, this.mouse.gameY, this.currentLevel.mapImage);
+            this.mouse.isOverFog = this.fog.isOver(this.mouse.gameX, this.mouse.gameY);
             //this.panDirection = this.handlePanning();
             //this.showAppropriateCursor();
             if (this.mouse.buttonPressed) {

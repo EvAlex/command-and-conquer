@@ -306,7 +306,9 @@
     <TypeScriptCompile Include="Web\js\GameScreen.ts" />
     <TypeScriptCompile Include="Web\js\Harvester.ts" />
     <TypeScriptCompile Include="Web\js\IBuilding.d.ts" />
+    <TypeScriptCompile Include="Web\js\ICollidable.d.ts" />
     <TypeScriptCompile Include="Web\js\ICollisionPoint.d.ts" />
+    <TypeScriptCompile Include="Web\js\ICollisionType.d.ts" />
     <TypeScriptCompile Include="Web\js\IDestructibleObject.d.ts" />
     <TypeScriptCompile Include="Web\js\IEnergyProducingBuilding.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameLevel.d.ts" />

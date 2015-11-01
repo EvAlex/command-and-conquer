@@ -9,21 +9,34 @@ import AStar = require('./AStar');
 import Fog = require('./Fog');
 
 class Vehicle extends DestructibleObject implements IUnit {
+
+    constructor() {
+        super();
+        this.type = 'vehicle';
+        this.animationSpeed = 4;
+        this.pixelLeft = 0;
+        this.pixelTop = 0;
+        this.pixelOffsetX = 0;
+        this.pixelOffsetY = 0;
+        this.moveDirection = 0;
+        this.turretDirection = 0;
+        this.status = '';
+    }
+
     animationIndex: number;
     animationSpeed: number;
     attacking: boolean;
     bulletFiring: boolean;
     selected: boolean;
     colliding: boolean
-    collision: (other) => boolean;
     collisionDistance: number;
     collisionRadius: number;
+    softCollisionRadius: number;
     collisionType: string;
     collisionWith: ICollisionPoint;
     cost: number;
     defaults: IUnit;
     label: string;
-    move: () => any;
     moveDirection: number;
     moveImageCount: number;
     movementSpeed: number;
@@ -42,7 +55,6 @@ class Vehicle extends DestructibleObject implements IUnit {
     turnSpeed: number;
     turretDirection: number;
     sight: number;
-    softCollisionRadius: number;
     speed: number;
     status: string;
     team: string;
@@ -350,7 +362,7 @@ class Vehicle extends DestructibleObject implements IUnit {
             var collision;
             for (var k = units.length - 1; k >= 0; k--) {
 
-                if (collision = this.collision(units[k])) {
+                if (collision = this.collision(units[k], gridSize)) {
                     if (collision.distance < this.collisionDistance) {
                         this.collisionType = collision.type;
                         this.collisionDistance = collision.distance;
@@ -369,7 +381,7 @@ class Vehicle extends DestructibleObject implements IUnit {
                             x: (l + 0.5), y: (k + 0.5),
                             collisionRadius: gridSize * 0.5, softCollisionRadius: gridSize * 0.7
                         };
-                        if (collision = this.collision(tile)) {
+                        if (collision = this.collision(tile, gridSize)) {
                             if (collision.distance < this.collisionDistance) {
                                 this.collisionType = collision.type;
                                 this.collisionDistance = collision.distance;
@@ -569,10 +581,12 @@ class Vehicle extends DestructibleObject implements IUnit {
                     if (obstructionGrid[k][l] > 0) {
                         //alert((k+0.5)*game.gridSize +' '+(l+0.5)*game.gridSize + ' game.gridSize*0.5')
                         var tile = {
-                            x: (l + 0.5), y: (k + 0.5),
-                            collisionRadius: gridSize * 0.5, softCollisionRadius: gridSize * 0.7
+                            x: (l + 0.5),
+                            y: (k + 0.5),
+                            collisionRadius: gridSize * 0.5,
+                            softCollisionRadius: gridSize * 0.7
                         };
-                        if (collision2 = this.collision(tile)) {
+                        if (collision2 = this.collision(tile, gridSize)) {
                             break;
                         }
                     }
@@ -599,6 +613,100 @@ class Vehicle extends DestructibleObject implements IUnit {
 
 
         }
+    }
+
+    move(speedAdjustmentFactor: number, gridSize: number, sounds: Sounds) {
+        this.moving = false;
+        this.attacking = false;
+        if (!this.instructions) {
+            this.instructions = [];
+        }
+        if (this.instructions.length == 0) {
+
+            return;
+        }
+
+        for (var i = 0; i < this.instructions.length; i++) {
+            var instr = this.instructions[i];
+            if (instr.type == 'turn') {
+                var turnInstr = <ITurnInstruction>instr;
+                if (turnInstr.toDirection == this.moveDirection) {
+                    // instruction complete...
+                    instr.type = 'done';
+                    //return;
+                }
+                if ((turnInstr.toDirection > this.moveDirection && (turnInstr.toDirection - this.moveDirection) < 16)
+                    || (turnInstr.toDirection < this.moveDirection && (this.moveDirection - turnInstr.toDirection) > 16)) {
+                    //alert(this.turnSpeed*0.05)
+                    this.moveDirection = this.moveDirection + this.turnSpeed * 0.1;
+                    if ((this.moveDirection - turnInstr.toDirection) * (this.moveDirection + this.turnSpeed * 0.1 - turnInstr.toDirection) <= 0) {
+                        this.moveDirection = turnInstr.toDirection;
+                    }
+                } else {
+                    this.moveDirection = this.moveDirection - this.turnSpeed * 0.1;
+                    if ((this.moveDirection - turnInstr.toDirection) * (this.moveDirection - this.turnSpeed * 0.1 - turnInstr.toDirection) <= 0) {
+                        this.moveDirection = turnInstr.toDirection;
+                    }
+                }
+                if (this.moveDirection > 31) {
+                    this.moveDirection = 0;
+                } else if (this.moveDirection < 0) {
+                    this.moveDirection = 31;
+                }
+            }
+
+            if (instr.type == 'move') {
+                //alert(1);
+                var moveInstr = <IMoveInstruction>instr;
+                if (moveInstr.distance <= 0) {
+                    //this.instructions.splice(0,1);
+                    //return;
+                    instr.type = 'done';
+                    return;
+                }
+                this.moving = true;
+                //alert(this.movementSpeed)
+                var movement = this.movementSpeed * speedAdjustmentFactor / gridSize;
+                moveInstr.distance -= movement;
+                var angle = (this.moveDirection / 32) * 2 * Math.PI;
+
+                this.x = (this.x - movement * Math.sin(angle));
+                this.y = (this.y - movement * Math.cos(angle));
+
+            }
+            if (instr.type == 'aim') {
+                var aimInstr = <IAimInstruction>instr;
+	            
+                //alert('aiming: ' + instr.toDirection + ' and turret is at '+this.turretDirection)
+                if (aimInstr.toDirection == this.turretDirection) {
+                    // instruction complete...
+                    instr.type = 'done';
+                    //return;
+                } else {
+
+                    var delta = this.angleDiff(Math.floor(this.turretDirection), Math.floor(aimInstr.toDirection), 32);
+                    if (Math.abs(delta) < 1) {
+                        //this.turretDirection = instr.toDirection
+                        this.turretDirection = aimInstr.toDirection;
+                        instr.type = 'done';
+                    } else {
+                        this.turretDirection = this.addAngle(this.turretDirection, delta / Math.abs(delta), 32)
+                    }
+                }
+            }
+
+            if (instr.type == 'fire') {
+                // alert(this.fireCounter)
+                if (!this.bulletFiring) {
+                    sounds.play('tank_fire');
+                    this.bulletFiring = true;
+                    var angle = (this.turretDirection / 32) * 2 * Math.PI;
+                    game.fireBullet({ x: this.x, y: this.y, angle: angle, range: this.sight, source: this });
+                }
+
+
+            }
+        };
     }
 
     findPath(
@@ -682,6 +790,29 @@ class Vehicle extends DestructibleObject implements IUnit {
 
                 //alert(path.length)
             }
+        }
+    }
+
+    collision(otherUnit: ICollidable, gridSize: number): ICollisionType {
+        if (this == otherUnit) {
+            return null;
+        }
+	        
+        //alert(otherUnit.x + ' ' + otherUnit.y)
+        var distanceSquared = Math.pow(this.x - otherUnit.x, 2) + Math.pow(this.y - otherUnit.y, 2);
+        var radiusSquared = Math.pow((this.collisionRadius + otherUnit.collisionRadius) / gridSize, 2);
+        var softHardRadiusSquared = Math.pow((this.softCollisionRadius + otherUnit.collisionRadius) / gridSize, 2);
+        var softRadiusSquared = Math.pow((this.softCollisionRadius + otherUnit.softCollisionRadius) / gridSize, 2);
+
+
+        if (distanceSquared <= radiusSquared) {
+            return { type: 'hard', distance: Math.pow(distanceSquared, 0.5) };
+        } else if (distanceSquared < softHardRadiusSquared) {
+            return { type: 'soft-hard', distance: Math.pow(distanceSquared, 0.5) };
+        } else if (distanceSquared <= softRadiusSquared) {
+            return { type: 'soft', distance: Math.pow(distanceSquared, 0.5) };
+        } else {
+            return null;
         }
     }
 }
