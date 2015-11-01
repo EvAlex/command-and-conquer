@@ -47,7 +47,7 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
     hitPoints: number;
     life: string;
 
-    protected findEnemiesInRange(hero, increment, units: IUnit[], buildings: IBuilding[], turrets: ITurret[]) {
+    protected findEnemiesInRange(hero, increment, units: IUnit[], buildings: IBuilding[], turrets: ITurret[]): IUnit[] {
         if (!increment)
             increment = 0;
         if (!hero) {

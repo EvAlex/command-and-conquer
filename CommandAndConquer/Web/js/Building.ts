@@ -48,10 +48,7 @@ class Building extends DestructibleObject implements IBuilding {
             
         //First draw the bottom grass
         context.drawImage(this.bibImage, this.x * gridSize + screen.viewportAdjust.x, (this.y + this.gridHeight - 1) * gridSize + screen.viewportAdjust.y);
-
-
-
-
+        
         var life = this.getLife(),
             imageCategory: string;
         if (this.status == "build" || this.status == "sell") {

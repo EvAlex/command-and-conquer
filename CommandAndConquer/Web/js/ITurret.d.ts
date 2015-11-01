@@ -1,11 +1,11 @@
 ﻿
 interface ITurret extends IBuilding {
-    defaults: ITurret;
+    //defaults: ITurret;
     instructions: IInstruction[];
-    move: () => any;
-    orders: { type: string };
+    move(sounds: ISoundsManager): any;
+    orders: IOrder;
     primaryWeapon: number;
-    processOrders: () => any;
+    processOrders(gridSize: number, units: IUnit[], buildings: IBuilding[], turrets: ITurret[]): any;
     reloadTime: number;
     turnSpeed: number;
     turretDirection: number;

@@ -430,9 +430,9 @@ class Game {
         };
         for (var i = this.turrets.length - 1; i >= 0; i--) {
             if (this.turrets[i].processOrders) {
-                this.turrets[i].processOrders();
+                this.turrets[i].processOrders(this.gridSize, this.units, this.buildings, this.turrets);
             }
-            this.turrets[i].move();
+            this.turrets[i].move(this.sounds);
         };
     }
 

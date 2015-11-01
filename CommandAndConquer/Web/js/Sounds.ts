@@ -1,5 +1,5 @@
 ﻿
-class Sounds {
+class Sounds implements ISoundsManager {
     sound_list = [];
     loaded = true;
 
