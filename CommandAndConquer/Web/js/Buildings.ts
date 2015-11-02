@@ -16,7 +16,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerOut: 30,
             cost: 5000,
             sight: 3,
-            hitPoints: 400,
+            maxHitPoints: 400,
             imagesToLoad: [
                 { name: 'build', count: 32 },
                 { name: "damaged", count: 4 },
@@ -37,7 +37,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             cost: 2000,
             tiberiumStorage: 1000,
             sight: 4,
-            hitPoints: 450,
+            maxHitPoints: 450,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 12 },
@@ -57,7 +57,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerIn: 20,
             cost: 300,
             sight: 3,
-            hitPoints: 400,
+            maxHitPoints: 400,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 10 },
@@ -74,7 +74,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerOut: 100,
             cost: 300,
             sight: 2,
-            hitPoints: 200,
+            maxHitPoints: 200,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 4 },
@@ -90,7 +90,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerOut: 200,
             cost: 700,
             sight: 2,
-            hitPoints: 300,
+            maxHitPoints: 300,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 4 },
@@ -106,7 +106,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerIn: 10,
             cost: 150,
             sight: 2,
-            hitPoints: 150,
+            maxHitPoints: 150,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 5 },
@@ -121,7 +121,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerIn: 20,
             cost: 300,
             sight: 3,
-            hitPoints: 400,
+            maxHitPoints: 400,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 1 },
@@ -138,7 +138,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
             powerIn: 30,
             cost: 2000,
             sight: 3,
-            hitPoints: 200,
+            maxHitPoints: 200,
             imagesToLoad: [
                 { name: 'build', count: 20 },
                 { name: "damaged", count: 1 },
@@ -163,7 +163,7 @@ class Buildings extends VisualObject implements IBuildingsFactory {
     load(name, gridSize: number) {
         var details = <IBuildingDefaults>this.buildingDetails[name];
         var building = new Building();
-        building.health = details.hitPoints;
+        building.hitPoints = details.hitPoints;
         building.gridHeight = details.gridShape.length;
         building.gridWidth = details.gridShape[0].length;
         building.pixelHeight = details.gridShape.length * gridSize;
@@ -188,6 +188,11 @@ class Buildings extends VisualObject implements IBuildingsFactory {
         $.extend(newBuilding, <IBuildingDefaults>this.types[name]);
         $.extend(newBuilding, details);
 
+        if (details.hitPoints)
+            newBuilding.hitPoints = details.hitPoints;
+        else
+            newBuilding.hitPoints = newBuilding.maxHitPoints;
+
         return newBuilding;
     }
 }
@@ -200,7 +205,7 @@ interface IBuildingDefaults {
     powerOut?: number;
     cost: number;
     sight: number;
-    hitPoints: number;
+    hitPoints?: number;
     imagesToLoad: { name: string, count: number }[];
     gridShape: number[][];
 }
@@ -211,7 +216,7 @@ interface IBuildingCreateDetails {
     y: number;
     team: string;
     status?: string;
-    health?: number;
+    hitPoints?: number;
 }
 
 export = Buildings;

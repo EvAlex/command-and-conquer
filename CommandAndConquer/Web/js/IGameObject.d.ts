@@ -19,6 +19,7 @@ interface IGameObject {
     spriteCount: number;
     spriteImage: HTMLImageElement;
     type: string;
+    status: string;
     x: number;
     y: number;
 }

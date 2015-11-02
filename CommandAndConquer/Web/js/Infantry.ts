@@ -5,7 +5,7 @@ class Infantry extends DestructibleObject implements IUnit {
 
     constructor(health: number) {
         super('infantry');
-        this.health = health;
+        this.hitPoints = health;
         this.status = 'stand';
         this.animationSpeed = 4;
         this.pixelOffsetX = -50 / 2;

@@ -35,7 +35,7 @@ class TiberiumRefinery extends Building implements ITiberiumRefinery {
             } else {
                 units.push(vehiclesFactory.add({
                     name: 'harvester', team: this.team, x: this.x + 0.5,
-                    y: this.y + 2, health: this.harvester.health, moveDirection: 14, orders: { type: 'harvest', from: this, to: this.harvester.orders.from }
+                    y: this.y + 2, hitPoints: this.harvester.hitPoints, moveDirection: 14, orders: { type: 'harvest', from: this, to: this.harvester.orders.from }
                 }));
                 this.harvester = null;
                 this.status = "";

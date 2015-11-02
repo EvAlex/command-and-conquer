@@ -13,7 +13,7 @@ class Turret extends Building implements ITurret {
         this.type= 'turret';
         this.status = '';        
         this.animationSpeed = 4;
-        this.health = health;
+        this.hitPoints = health;
         this.pixelLeft = 0;
         this.pixelTop = 0;
         this.pixelOffsetX = 0;

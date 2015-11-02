@@ -13,7 +13,7 @@ class InfantryFactory extends VisualObject {
             speed: 8,
             cost: 100,
             sight: 1,
-            hitPoints: 50,
+            maxHitPoints: 50,
             collisionRadius: 5,
             imagesToLoad: [
                 { name: 'stand', count: 1, directionCount: 8 },

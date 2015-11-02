@@ -9,8 +9,10 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
         super(type);
     }
 
+    status: string;
+
     getLife(): void {
-        var life = this.health / this.hitPoints;
+        var life = this.hitPoints / this.maxHitPoints;
         if (life > 0.7) {
             this.life = "healthy";
         } else if (life > 0.4) {
@@ -42,7 +44,7 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
                 healthBarHeight = 5;
 
             context.beginPath();
-            context.rect(bounds.left, bounds.top - healthBarHeight - 2, this.pixelWidth * this.health / this.hitPoints, healthBarHeight);
+            context.rect(bounds.left, bounds.top - healthBarHeight - 2, this.pixelWidth * this.hitPoints / this.maxHitPoints, healthBarHeight);
             if (this.life == 'healthy') {
                 context.fillStyle = 'lightgreen';
             } else if (this.life == 'damaged') {
@@ -58,8 +60,8 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
         }
     }
 
-    health: number;
     hitPoints: number;
+    maxHitPoints: number;
     life: string;
 
     protected findEnemiesInRange(hero, increment, units: IUnit[], buildings: IBuilding[], turrets: ITurret[]): IUnit[] {

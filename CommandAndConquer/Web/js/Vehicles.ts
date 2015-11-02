@@ -13,7 +13,7 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
             turnSpeed: 5,
             speed: 12,
             cost: 5000,
-            hitPoints: 200,
+            maxHitPoints: 200,
             sight: 2,
             moveImageCount: 32,
             pixelWidth: 48,
@@ -34,7 +34,7 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
             turnSpeed: 5,
             speed: 12,
             cost: 1400,
-            hitPoints: 600,
+            maxHitPoints: 600,
             sight: 2,
             tiberium: 0,
             moveImageCount: 32,
@@ -64,7 +64,7 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
             speed: 18,
             cost: 600,
             sight: 3,
-            hitPoints: 300,
+            maxHitPoints: 300,
             primaryWeapon: 9,
             reloadTime: 2000,
             moveImageCount: 32,
@@ -107,6 +107,11 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
         $.extend(newVehicle, this.types[name]);
         $.extend(newVehicle, details);
 
+        if (details.hitPoints)
+            newVehicle.hitPoints = details.hitPoints;
+        else
+            newVehicle.hitPoints = newVehicle.maxHitPoints;
+
         return newVehicle;
     }
 
@@ -118,7 +123,7 @@ interface IVehicleCreateDetails {
     y: number;
     team?: string;
     status?: string;
-    health?: number;
+    hitPoints?: number;
     moveDirection?: number
     turretDirection?: number;
     orders: IMoveOrder | IProtectOrder | IGuardOrder;

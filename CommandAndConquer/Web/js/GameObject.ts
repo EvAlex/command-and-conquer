@@ -9,6 +9,8 @@ abstract class GameObject implements IGameObject {
         this.type = type;
     }
 
+    status: string;
+
     abstract draw(
         context: CanvasRenderingContext2D,
         curPlayerTeam: string,

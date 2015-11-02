@@ -311,7 +311,7 @@ class Game implements IBulletDrawer {
             //alert(x + ' ' + y)
                 
             if (!bullet.dead) {
-                var overObject;
+                var overObject: IDestructibleObject;
                 for (var i = this.units.length - 1; i >= 0; i--) {
                     if (this.units[i].underPoint && this.units[i].underPoint(x, y, this.gridSize) && this.units[i].team != bullet.source.team) {
                         overObject = this.units[i];
@@ -335,8 +335,8 @@ class Game implements IBulletDrawer {
                 if (overObject) {
                     bullet.dead = true;
                     //alert(overObject.health);
-                    overObject.health = overObject.health - Math.floor((bullet.damage ? bullet.damage : 10) + 10 * Math.random());
-                    if (overObject.health <= 0) {
+                    overObject.hitPoints = overObject.hitPoints - Math.floor((bullet.damage ? bullet.damage : 10) + 10 * Math.random());
+                    if (overObject.hitPoints <= 0) {
                         overObject.status = 'destroy';
                     }
                 }
@@ -740,7 +740,7 @@ class Game implements IBulletDrawer {
                         team: selectedObject.team,
                         x: selectedObject.x + 0.5,
                         y: selectedObject.y + 2,
-                        health: selectedObject.harvester.health,
+                        hitPoints: selectedObject.harvester.health,
                         moveDirection: 14,
                         orders: { type: 'guard' }
                     }));
@@ -855,7 +855,7 @@ class Game implements IBulletDrawer {
         this.turrets.push(this.turretsFactory.add({ name: 'gun-turret', x: 9, y: 25, turretDirection: 24, team: 'nod' }));
         //this.turrets.push(this.turretsFactory.add({name:'gun-turret',x:9,y:26,turretDirection:26,team:'nod'}));
 
-        this.buildings.push(this.buildingsFactory.add({ name: 'refinery', team: 'nod', x: 26, y: 8, status: 'build', health: 200 }));
+        this.buildings.push(this.buildingsFactory.add({ name: 'refinery', team: 'nod', x: 26, y: 8, status: 'build', hitPoints: 200 }));
         //this.units.push(this.vehicles.add({name:'harvester',team:'nod',x:24,y:18,moveDirection:0}));
             
             

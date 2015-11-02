@@ -97,14 +97,14 @@ class Building extends DestructibleObject implements IBuilding {
             context.drawImage(sidebar.repairImageBig, (this.x + this.gridShape[0].length / 2 - 1) * gridSize + screen.viewportAdjust.x, (this.y + this.gridShape.length / 2 - 1) * gridSize + screen.viewportAdjust.y);
             context.globalAlpha = 1;
 
-            if (this.health >= this.hitPoints) {
+            if (this.hitPoints >= this.maxHitPoints) {
                 this.repairing = false;
-                this.health = this.hitPoints;
+                this.hitPoints = this.maxHitPoints;
             } else {
                 var cashSpent = 1;
                 if (sidebar.cash > cashSpent) {
                     sidebar.cash -= cashSpent;
-                    this.health += (cashSpent * 2 * this.hitPoints / this.cost);
+                    this.hitPoints += (cashSpent * 2 * this.maxHitPoints / this.cost);
                     //console.log (this.health + " " +2*cashSpent*this.hitPoints/this.cost)     
                 }
             }
