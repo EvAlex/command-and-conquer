@@ -614,7 +614,7 @@ class Vehicle extends DestructibleObject implements IUnit {
         }
     }
 
-    move(speedAdjustmentFactor: number, gridSize: number, sounds: Sounds) {
+    move(speedAdjustmentFactor: number, gridSize: number, sounds: Sounds, bulletDrawer: IBulletDrawer) {
         this.moving = false;
         this.attacking = false;
         if (!this.instructions) {
@@ -700,7 +700,7 @@ class Vehicle extends DestructibleObject implements IUnit {
                     sounds.play('tank_fire');
                     this.bulletFiring = true;
                     var angle = (this.turretDirection / 32) * 2 * Math.PI;
-                    game.fireBullet({ x: this.x, y: this.y, angle: angle, range: this.sight, source: this });
+                    bulletDrawer.fireBullet({ x: this.x, y: this.y, angle: angle, range: this.sight, source: this });
                 }
 
 

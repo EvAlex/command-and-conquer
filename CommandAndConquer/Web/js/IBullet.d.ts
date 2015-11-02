@@ -3,11 +3,11 @@ interface IBullet {
     x: number;
     y: number;
     angle: number;
-    speed: number;
+    speed?: number;
     range: number;
     source: IShooter;
-    dead: boolean;
-    damage: number;
+    dead?: boolean;
+    damage?: number;
 }
 
 interface IShooter {

@@ -169,7 +169,7 @@ class Turret extends Building implements ITurret {
         }
     }
 
-    move(sounds: Sounds) {
+    move(sounds: Sounds, bulletDrawer: IBulletDrawer) {
         if (!this.instructions) {
             this.instructions = [];
         }
@@ -216,7 +216,7 @@ class Turret extends Building implements ITurret {
                     sounds.play('tank_fire');
                     this.bulletFiring = true;
                     var angle = (this.turretDirection / 32) * 2 * Math.PI;
-                    game.fireBullet({
+                    bulletDrawer.fireBullet({
                         x: this.x + 0.5,
                         y: this.y + 0.5,
                         angle: angle,

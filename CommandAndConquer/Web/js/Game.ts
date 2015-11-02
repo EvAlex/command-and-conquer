@@ -13,7 +13,7 @@ import Sounds = require('./Sounds');
 import OverlayFactory = require('./OverlayFactory');
 import Player = require('./Player');
 
-class Game {
+class Game implements IBulletDrawer {
 
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
@@ -436,7 +436,7 @@ class Game {
             if (this.turrets[i].processOrders) {
                 this.turrets[i].processOrders(this.gridSize, this.units, this.buildings, this.turrets);
             }
-            this.turrets[i].move(this.sounds);
+            this.turrets[i].move(this.sounds, this);
         };
     }
 
