@@ -299,6 +299,7 @@
     <TypeScriptCompile Include="Web\js\AStar.ts" />
     <TypeScriptCompile Include="Web\js\Building.ts" />
     <TypeScriptCompile Include="Web\js\Buildings.ts" />
+    <TypeScriptCompile Include="Web\js\IBuildingsFactory.d.ts" />
     <TypeScriptCompile Include="Web\js\IBulletDrawer.d.ts" />
     <TypeScriptCompile Include="Web\js\cnc.ts" />
     <TypeScriptCompile Include="Web\js\DestructibleObject.ts" />
@@ -314,12 +315,14 @@
     <TypeScriptCompile Include="Web\js\ICollisionType.d.ts" />
     <TypeScriptCompile Include="Web\js\IDestructibleObject.d.ts" />
     <TypeScriptCompile Include="Web\js\IEnergyProducingBuilding.d.ts" />
+    <TypeScriptCompile Include="Web\js\IFog.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameLevel.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameObject.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameScreen.d.ts" />
     <TypeScriptCompile Include="Web\js\IHarvester.ts" />
     <TypeScriptCompile Include="Web\js\IInstruction.ts" />
     <TypeScriptCompile Include="Web\js\Infantry.ts" />
+    <TypeScriptCompile Include="Web\js\IPlayer.d.ts" />
     <TypeScriptCompile Include="Web\js\IRectangle.d.ts" />
     <TypeScriptCompile Include="Web\js\InfantryFactory.ts" />
     <TypeScriptCompile Include="Web\js\IOrder.d.ts" />
@@ -330,6 +333,7 @@
     <TypeScriptCompile Include="Web\js\ISoundsManager.d.ts" />
     <TypeScriptCompile Include="Web\js\ITurret.d.ts" />
     <TypeScriptCompile Include="Web\js\IUnit.d.ts" />
+    <TypeScriptCompile Include="Web\js\IVehiclesFactory.d.ts" />
     <TypeScriptCompile Include="Web\js\Levels.ts" />
     <TypeScriptCompile Include="Web\js\Mouse.ts" />
     <TypeScriptCompile Include="Web\js\Overlay.ts" />
