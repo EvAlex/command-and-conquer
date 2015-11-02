@@ -338,7 +338,7 @@ class Mouse extends VisualObject {
     loadedCount: number = 0;
     spriteImage: HTMLImageElement = null;
     cursor: Cursor;
-    cursors: Object;
+    cursors: Object = {};
     cursorCount: number = 0;
 
     loadCursor(name: string, x: number = 0, y: number = 0, imageCount: number = 1, cursorSpeed: number = 1) {

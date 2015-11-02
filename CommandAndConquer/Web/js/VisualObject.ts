@@ -35,11 +35,9 @@ class VisualObject {
 
     loadSpriteSheet(forObject: IGameObject, details, from) {
         forObject.spriteCanvas = document.createElement('canvas');
-        forObject.spriteImage = this.preloadImage
-            (from + '/' + details.name + '-sprite-sheet.png',
-            function () {
-                this.transformSpriteSheet(forObject, details);
-            });
+        forObject.spriteImage = this.preloadImage(from + '/' + details.name + '-sprite-sheet.png', () => {
+            this.transformSpriteSheet(forObject, details);
+        });
         forObject.spriteArray = [];
         forObject.spriteCount = 0;
         for (var i = 0; i < details.imagesToLoad.length; i++) {

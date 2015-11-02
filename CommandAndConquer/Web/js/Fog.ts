@@ -2,12 +2,16 @@
 import Building = require('./Building');
 import GameScreen = require('./GameScreen');
 
-class Fog {
+class Fog implements IFog {
 
-    constructor() {
+    constructor(mapImage: HTMLImageElement) {
         this.fogCanvas = document.createElement('canvas');
         this.canvasWidth = 128;
         this.canvasHeight = 128;
+        mapImage.addEventListener('load', () => {
+            this.mapWidth = mapImage.width;
+            this.mapHeight = mapImage.height;
+        });
     }
 
     private fogCanvas: HTMLCanvasElement;

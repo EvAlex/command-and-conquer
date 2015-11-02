@@ -76,7 +76,7 @@ class Turrets extends VisualObject {
     add(details: ITurretCreateDetails): ITurret {
 
         var name = details.name;
-        var newTurret = new Turret(this.types[name].defaults.hitPoints);
+        var newTurret = new Turret(this.types[name].hitPoints);
         newTurret.team = details.team;
         $.extend(newTurret, this.types[name].defaults);
 

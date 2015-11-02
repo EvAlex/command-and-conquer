@@ -2,7 +2,7 @@
 import VisualObject = require('./VisualObject');
 import Building = require('./Building');
 
-class Buildings extends VisualObject {
+class Buildings extends VisualObject implements IBuildingsFactory {
 
     loaded = false;
     types: Building[] = [];

@@ -382,7 +382,7 @@ class Sidebar extends VisualObject implements ISidebar {
         this.cash = startingCash;
 
         this.tabsImage = this.preloadImage('sidebar/tabs.png');
-        this.sidebarImage = this.preloadImage('sidebar/this.png');
+        this.sidebarImage = this.preloadImage('sidebar/sidebar.png');
         this.primaryBuildingImage = this.preloadImage('sidebar/primary.png');
         this.readyImage = this.preloadImage('sidebar/ready.png');
         this.holdImage = this.preloadImage('sidebar/hold.png');

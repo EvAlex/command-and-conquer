@@ -34,11 +34,11 @@ class Building extends DestructibleObject implements IBuilding {
         context: CanvasRenderingContext2D,
         curPlayerTeam: string,
         gridSize: number,
-        screen: GameScreen,
+        screen: IGameScreen,
         units: IUnit[],
-        vehiclesFactory: Vehicles,
-        sidebar: Sidebar,
-        enemy: Player) {
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer) {
 
         var teamYOffset = 0;
         if (this.team != curPlayerTeam) {
@@ -112,7 +112,7 @@ class Building extends DestructibleObject implements IBuilding {
 
     }
 
-    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: GameScreen, sidebar: Sidebar) {
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
         super.drawSelection(context, gridSize, screen, sidebar);
 
         if (this.selected) {
@@ -126,9 +126,9 @@ class Building extends DestructibleObject implements IBuilding {
     protected applyStatusDuringDraw(
         curPlayerTeam: string,
         units: IUnit[],
-        vehiclesFactory: Vehicles,
-        sidebar: Sidebar,
-        enemy: Player): void {
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer): void {
 
         if (this.status == "build" || this.status == "construct" || this.status == "unload") {
             this.status = "";

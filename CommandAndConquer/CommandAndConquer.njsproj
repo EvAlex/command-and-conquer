@@ -295,9 +295,11 @@
     <TypeScriptCompile Include="typings\serve-static\serve-static.d.ts" />
     <TypeScriptCompile Include="typings\tsd.d.ts" />
     <TypeScriptCompile Include="typings\winston\winston.d.ts" />
+    <TypeScriptCompile Include="Web\js\App.ts" />
     <TypeScriptCompile Include="Web\js\AStar.ts" />
     <TypeScriptCompile Include="Web\js\Building.ts" />
     <TypeScriptCompile Include="Web\js\Buildings.ts" />
+    <TypeScriptCompile Include="Web\js\IBulletDrawer.d.ts" />
     <TypeScriptCompile Include="Web\js\cnc.ts" />
     <TypeScriptCompile Include="Web\js\DestructibleObject.ts" />
     <TypeScriptCompile Include="Web\js\Fog.ts" />

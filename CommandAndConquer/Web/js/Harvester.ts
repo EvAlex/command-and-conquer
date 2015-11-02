@@ -15,11 +15,14 @@ class Harvester extends Vehicle implements IHarvester {
         context: CanvasRenderingContext2D,
         curPlayerTeam: string,
         gridSize: number,
-        screen: GameScreen,
-        sidebar: Sidebar,
-        debugMode: boolean) {
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void {
 
-        super.draw(context, curPlayerTeam, gridSize, screen, sidebar, debugMode);
+        super.draw(context, curPlayerTeam, gridSize, screen, units, vehiclesFactory, sidebar, enemy, debugMode);
 
         if (this.status != '') {
             var imageList = this.spriteArray[this.status];

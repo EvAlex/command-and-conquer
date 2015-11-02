@@ -6,7 +6,7 @@ import Mouse = require('./Mouse');
 import Levels = require('./Levels');
 import Buildings = require('./Buildings');
 import Building = require('./Building');
-import Turrets = require('./Turrets');
+import TurretsFactory = require('./Turrets');
 import Infantry = require('./InfantryFactory');
 import Vehicles = require('./Vehicles');
 import Sounds = require('./Sounds');
@@ -28,10 +28,10 @@ class Game implements IBulletDrawer {
         this.speedAdjustmentFactor = 0.2;
 
         this.sidebar = new Sidebar();
-        this.fog = new Fog();
         this.mouse = new Mouse();
         this.levels = new Levels();
         this.buildingsFactory = new Buildings;
+        this.turretsFactory = new TurretsFactory();
         this.infantry = new Infantry();
         this.vehicles = new Vehicles();
         this.sounds = new Sounds();
@@ -43,7 +43,7 @@ class Game implements IBulletDrawer {
     private mouse: Mouse;
     private levels: Levels;
     private buildingsFactory: Buildings;
-    private turretsFactory: Turrets;
+    private turretsFactory: TurretsFactory;
     private infantry: Infantry;
     private vehicles: Vehicles;
     private sounds: Sounds;
@@ -273,7 +273,7 @@ class Game implements IBulletDrawer {
 
     }
 
-    units = [];
+    units: IUnit[] = [];
     buildings: Building[] = [];
     turrets: ITurret[] = [];
     overlay: IOverlay[] = [];
@@ -306,7 +306,7 @@ class Game implements IBulletDrawer {
             if (!bullet.dead) {
                 var overObject;
                 for (var i = this.units.length - 1; i >= 0; i--) {
-                    if (this.units[i].underPoint && this.units[i].underPoint(x, y) && this.units[i].team != bullet.source.team) {
+                    if (this.units[i].underPoint && this.units[i].underPoint(x, y, this.gridSize) && this.units[i].team != bullet.source.team) {
                         overObject = this.units[i];
                         break;
                     }
@@ -348,7 +348,7 @@ class Game implements IBulletDrawer {
     }
 
     drawObjects() {
-        var objects = [];
+        var objects: IGameObject[] = [];
         for (var i = this.buildings.length - 1; i >= 0; i--) {
             if (this.buildings[i].status == 'destroy') {
                 this.buildings.splice(i, 1);
@@ -404,13 +404,13 @@ class Game implements IBulletDrawer {
         for (var i = this.overlay.length - 1; i >= 0; i--) {
             var overlay = this.overlay[i];
             if (overlay.name == 'tiberium') {
-                overlay.draw(this.context, this.gridSize, this.screen);
+                overlay.draw(this.context, this.currentPlayer.team, this.gridSize, this.screen, this.units, this.vehicles, this.sidebar, this.enemyPlayer, this.debugMode);
             }
         };
 
         for (var i = objects.length - 1; i >= 0; i--) {
             if (objects[i].name != 'tiberium') {
-                objects[i].draw();
+                objects[i].draw(this.context, this.currentPlayer.team, this.gridSize, this.screen, this.units, this.vehicles, this.sidebar, this.enemyPlayer, this.debugMode);
             }
 
         };
@@ -427,10 +427,10 @@ class Game implements IBulletDrawer {
 
     moveObjects() {
         for (var i = this.units.length - 1; i >= 0; i--) {
-            if (this.units[i].processOrders) {
-                this.units[i].processOrders();
+            if (this.units[i]['processOrders']) {
+                this.units[i].processOrders(this.speedAdjustmentFactor, this.units, this.buildings, this.turrets, this.overlay, this.buildingsFactory, this.fog, this.sounds, this.currentPlayer.team, this.obstructionGrid, this.heroObstructionGrid, this.debugMode, this.context, this.gridSize, this.screen);
             }
-            this.units[i].move();
+            this.units[i].move(this.speedAdjustmentFactor, this.gridSize, this.sounds, this);
         };
         for (var i = this.turrets.length - 1; i >= 0; i--) {
             if (this.turrets[i].processOrders) {
@@ -824,6 +824,7 @@ class Game implements IBulletDrawer {
         this.enemyPlayer = new Player(this.currentLevel.enemyTeam, this.currentLevel.startingEnemyCash);
         this.overlay = this.currentLevel.overlay;
         //this.team = this.currentLevel.team;
+        this.fog = new Fog(this.currentLevel.mapImage);
         this.sidebar.load(this.currentPlayer.cash, this.screen, this.canvas.width);
 
         this.listenEvents();
@@ -936,7 +937,7 @@ class Game implements IBulletDrawer {
 
         }, this.animationTimeout * 40 * 600);
 
-        this.statusLoop = setInterval(this.missionStatus, 3000);
+        this.statusLoop = setInterval(() => this.missionStatus(), 3000);
 
     }
 

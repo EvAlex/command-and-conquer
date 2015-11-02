@@ -63,9 +63,12 @@ class Vehicle extends DestructibleObject implements IUnit {
         context: CanvasRenderingContext2D,
         curPlayerTeam: string,
         gridSize: number,
-        screen: GameScreen,
-        sidebar: Sidebar,
-        debugMode: boolean) {
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void {
 	        
         // Finally draw the top part with appropriate animation
         var imageWidth = this.pixelWidth;
@@ -614,7 +617,7 @@ class Vehicle extends DestructibleObject implements IUnit {
         }
     }
 
-    move(speedAdjustmentFactor: number, gridSize: number, sounds: Sounds, bulletDrawer: IBulletDrawer) {
+    move(speedAdjustmentFactor: number, gridSize: number, sounds: ISoundsManager, bulletDrawer: IBulletDrawer) {
         this.moving = false;
         this.attacking = false;
         if (!this.instructions) {

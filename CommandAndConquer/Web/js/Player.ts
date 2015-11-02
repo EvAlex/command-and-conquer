@@ -1,5 +1,5 @@
 ﻿
-class Player {
+class Player implements IPlayer {
 
     constructor(team: string, startingCash: number) {
         this.team = team;

@@ -9,7 +9,16 @@ abstract class GameObject implements IGameObject {
         this.type = type;
     }
 
-    //abstract draw(): void;
+    abstract draw(
+        context: CanvasRenderingContext2D,
+        curPlayerTeam: string,
+        gridSize: number,
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void;
 
     pixelLeft: number;
     pixelTop: number;

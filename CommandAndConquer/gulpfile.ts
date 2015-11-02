@@ -10,8 +10,8 @@ gulp.task('default', () => {
 });
 
 gulp.task('build', () => {
-    return gulp.src('./Web/js/cnc.js')
-        .pipe(browserify({}))
+    return gulp.src('./Web/js/App.js')
+        .pipe(browserify({ debug: true }))
         .pipe(rename('app.js'))
         .pipe(gulp.dest('./Web'));
 });

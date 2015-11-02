@@ -20,6 +20,17 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
         }
     }
 
+    abstract draw(
+        context: CanvasRenderingContext2D,
+        curPlayerTeam: string,
+        gridSize: number,
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void;
+
     drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
         super.drawSelection(context, gridSize, screen, sidebar);
 

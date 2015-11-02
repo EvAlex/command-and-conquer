@@ -13,7 +13,16 @@ class Overlay extends GameObject implements IOverlay {
     gridOffsetY: number;
     stage: number;
 
-    draw(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen): void {
+    draw(
+        context: CanvasRenderingContext2D,
+        curPlayerTeam: string,
+        gridSize: number,
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void {
 	        
         // Finally draw the top part with appropriate animation
         var imageWidth = this.pixelWidth;

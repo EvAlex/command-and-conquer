@@ -71,15 +71,14 @@ class OverlayFactory extends VisualObject {
         this.load('trees');
     }
 
-    add(details) {
-        var newOverlay = {
-            type: 0,
-            stage: 0
-        };
+    add(details): IOverlay {
         var name = details.name;
+        var newOverlay = new Overlay(name);
+        newOverlay.stage = 0;
 
         $.extend(newOverlay, this.types[name]);
         $.extend(newOverlay, details);
+        newOverlay.type = '0';
         return newOverlay;
     }
 

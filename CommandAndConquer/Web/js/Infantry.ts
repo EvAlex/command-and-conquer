@@ -104,7 +104,15 @@ class Infantry extends DestructibleObject implements IUnit {
     animationIndex: number;
     imageArray: number[][];
 
-    draw(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
+    draw(
+        context: CanvasRenderingContext2D,
+        curPlayerTeam: string,
+        gridSize: number,
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer): void {
         //alert(this.status);
         //alert(this.imageArray[this.status][this.moveDirection])
         var imageList = this.imageArray[this.status][this.moveDirection];
@@ -129,6 +137,24 @@ class Infantry extends DestructibleObject implements IUnit {
         //drawSprite(moveImage, x, y, this.team, this.type);
         ////context.fillRect(this.x*game.gridSize+game.viewportAdjustX+this.pixelWidth/2,this.y*game.gridSize+game.viewportAdjustY+this.pixelHeight/2,10,10);
         this.drawSelection(context, gridSize, screen, sidebar);
+    }
+
+    processOrders(
+        speedAdjustmentFactor: number,
+        units: IUnit[],
+        buildings: IBuilding[],
+        turrets: ITurret[],
+        allOverlays: IOverlay[],
+        buildingsFactory: IBuildingsFactory,
+        fog: IFog,
+        sounds: ISoundsManager,
+        curPlayerTeam: string,
+        obstructionGrid: number[][],
+        heroObstructionGrid: number[][],
+        debugMode: boolean,
+        context: CanvasRenderingContext2D,
+        gridSize: number,
+        screen: IGameScreen): any {
     }
 }
 

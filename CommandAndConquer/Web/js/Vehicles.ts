@@ -2,7 +2,7 @@
 import VisualObject = require('./VisualObject');
 import Vehicle = require('./Vehicle');
 
-class Vehicles extends VisualObject {
+class Vehicles extends VisualObject implements IVehiclesFactory {
     loaded: boolean = false;
     types = [];
     vehicleDetails = {

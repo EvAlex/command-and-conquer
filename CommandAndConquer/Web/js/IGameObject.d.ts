@@ -1,6 +1,15 @@
 ﻿
 interface IGameObject {
-    //bdraw(): void;
+    draw(
+        context: CanvasRenderingContext2D,
+        curPlayerTeam: string,
+        gridSize: number,
+        screen: IGameScreen,
+        units: IUnit[],
+        vehiclesFactory: IVehiclesFactory,
+        sidebar: ISidebar,
+        enemy: IPlayer,
+        debugMode: boolean): void;
     pixelWidth: number;
     pixelHeight: number;
     name: string;

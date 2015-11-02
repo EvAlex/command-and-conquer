@@ -5,7 +5,7 @@ interface IBuilding extends IDestructibleObject {
     bibImage: HTMLImageElement;
     cost: number;
     defaults: IBuilding;
-    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: any, sidebar: any): any;    
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar): any;    
     gridHeight: number;
     gridWidth: number;
     gridShape: number[][];
