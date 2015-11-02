@@ -317,11 +317,13 @@
     <TypeScriptCompile Include="Web\js\IGameScreen.d.ts" />
     <TypeScriptCompile Include="Web\js\IHarvester.ts" />
     <TypeScriptCompile Include="Web\js\IInstruction.ts" />
-    <TypeScriptCompile Include="Web\js\IRectangle.d.ts" />
     <TypeScriptCompile Include="Web\js\Infantry.ts" />
+    <TypeScriptCompile Include="Web\js\IRectangle.d.ts" />
+    <TypeScriptCompile Include="Web\js\InfantryFactory.ts" />
     <TypeScriptCompile Include="Web\js\IOrder.d.ts" />
     <TypeScriptCompile Include="Web\js\IOverlay.ts" />
     <TypeScriptCompile Include="Web\js\IPoint.d.ts" />
+    <TypeScriptCompile Include="Web\js\ISidebar.d.ts" />
     <TypeScriptCompile Include="Web\js\ISize.d.ts" />
     <TypeScriptCompile Include="Web\js\ISoundsManager.d.ts" />
     <TypeScriptCompile Include="Web\js\ITurret.d.ts" />

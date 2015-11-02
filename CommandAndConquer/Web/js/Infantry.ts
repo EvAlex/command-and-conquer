@@ -1,123 +1,64 @@
 ﻿
-import VisualObject = require('./VisualObject');
+import DestructibleObject = require('./DestructibleObject');
 
-class Infantry extends VisualObject {
-    types = [];
-    loaded: boolean = true;
-    infantryDetails = {
-        'minigunner': {
-            name: 'minigunner',
-            label: 'Minigunner',
-            speed: 8,
-            cost: 100,
-            sight: 1,
-            hitPoints: 50,
-            collisionRadius: 5,
-            imagesToLoad: [
-                { name: 'stand', count: 1, directionCount: 8 },
-                { name: "walk", count: 6, directionCount: 8 },
-                { name: "fire", count: 8, directionCount: 8 }
-            ]
-        }
-    };
-    preloadCount: number = 0;
-    loadedCount: number = 0;
+class Infantry extends DestructibleObject implements IUnit {
+    animationSpeed: number;
+    attacking: boolean;
+    bulletFiring: boolean;
+    moveDirection: number;
+    moveImageCount: number;
+    movementSpeed: number;
+    moving: boolean;
+    orders: IOrder;
+    path: IPoint[];
+    gridHeight: number;
+    gridWidth: number;
+    instructions: IInstruction[];
+    primaryWeapon: number;
+    reloadTime: number;
+    turnSpeed: number;
+    turretDirection: number;
+    sight: number;
+    speed: number;
+    status: string;
+    team: string;
+    turretImageCount: number;
 
-    collision(otherUnit) {
+    cost: number;
+    defaults: IUnit;
+    label: string;
+
+    collisionRadius: number;
+    softCollisionRadius: number;
+    colliding: boolean
+    collisionDistance: number;
+    collisionType: string;
+    collisionWith: ICollisionPoint;
+
+    collision(otherUnit: ICollidable, gridSize: number): ICollisionType {
         if (this == otherUnit) {
-            return false;
+            return null;
         }
+	        
+        //alert(otherUnit.x + ' ' + otherUnit.y)
         var distanceSquared = Math.pow(this.x - otherUnit.x, 2) + Math.pow(this.y - otherUnit.y, 2);
-        var radiusSquared = Math.pow((this.collisionRadius + otherUnit.collisionRadius) / game.gridSize, 2);
-        //alert(distanceSquared +' '+ radiusSquared)
-        return distanceSquared <= radiusSquared;
-    };
+        var radiusSquared = Math.pow((this.collisionRadius + otherUnit.collisionRadius) / gridSize, 2);
+        var softHardRadiusSquared = Math.pow((this.softCollisionRadius + otherUnit.collisionRadius) / gridSize, 2);
+        var softRadiusSquared = Math.pow((this.softCollisionRadius + otherUnit.softCollisionRadius) / gridSize, 2);
 
-    load(name) {
-        var details = this.infantryDetails[name];
-        var infantryType = {
-            defaults: {
-                type: 'infantry',
-                draw: this.draw,
-                drawSelection: drawSelection,
-                underPoint: underPoint,
-                collision: this.collision,
-                move: this.move,
-                getLife: getLife,
-                status: 'stand',
-                animationSpeed: 4,
-                health: details.hitPoints,
-                pixelOffsetX: -50 / 2,
-                pixelOffsetY: -39 / 2,
-                pixelWidth: 16,
-                pixelHeight: 16,
-                pixelTop: 6,
-                pixelLeft: 16
-            },
-            imageArray: []
-        };
 
-        //$.extend(infantryType,defaults);
-            
-        // Load all the images
-        infantryType.imageArray = [];
-        for (var i = details.imagesToLoad.length - 1; i >= 0; i--) {
-            var constructImageCount = details.imagesToLoad[i].count;
-            var constructImageDirectionCount = details.imagesToLoad[i].directionCount;
-            var constructImageName = details.imagesToLoad[i].name;
-            var imgArray = [];
-            for (var j = 0; j < constructImageDirectionCount; j++) {
-                imgArray[j] = (this.loadImageArray('units/infantry/' + name + '/' + name + '-' + constructImageName + '-' + j, constructImageCount, '.gif'));
-            }
-            //alert(imgArray)
-            infantryType.imageArray[constructImageName] = imgArray;
+        if (distanceSquared <= radiusSquared) {
+            return { type: 'hard', distance: Math.pow(distanceSquared, 0.5) };
+        } else if (distanceSquared < softHardRadiusSquared) {
+            return { type: 'soft-hard', distance: Math.pow(distanceSquared, 0.5) };
+        } else if (distanceSquared <= softRadiusSquared) {
+            return { type: 'soft', distance: Math.pow(distanceSquared, 0.5) };
+        } else {
+            return null;
         }
-        // Add all the basic unit details
-        $.extend(infantryType, details);
-        this.types[name] = infantryType;
     }
 
-    draw() {
-        //alert(this.status);
-        //alert(this.imageArray[this.status][this.moveDirection])
-        var imageList = this.imageArray[this.status][this.moveDirection];
-        //alert(imageList.length)
-	        
-        this.animationIndex++;
-
-        if (this.animationIndex / this.animationSpeed >= imageList.length) {
-            //alert(this.animationIndex + ' / '+ this.animationSpeed)
-            this.animationIndex = 0;
-
-        }
-        var moveImage = imageList[Math.floor(this.animationIndex / this.animationSpeed)];
-            
-        //alert(this.moveOffsetX)
-	        
-        var x = this.x * game.gridSize + game.viewportAdjustX + this.pixelOffsetX;
-        var y = this.y * game.gridSize + game.viewportAdjustY + this.pixelOffsetY;
-
-        debugger;
-        console.error('drawSprite() not implemented here'); 
-        //drawSprite(moveImage, x, y, this.team, this.type);
-        ////context.fillRect(this.x*game.gridSize+game.viewportAdjustX+this.pixelWidth/2,this.y*game.gridSize+game.viewportAdjustY+this.pixelHeight/2,10,10);
-        this.drawSelection();
-    }
-
-    add(details): IUnit {
-        var newInfantry = {
-            moveDirection: 0,
-            animationIndex: 0,
-            team: game.currentLevel.team
-        };
-        var name = details.name;
-
-        $.extend(newInfantry, this.types[name].defaults);
-        $.extend(newInfantry, this.types[name]);
-        $.extend(newInfantry, details);
-
-        return newInfantry;
-    }
+    speedCounter: number;
 
     move() {
         if (!this.speedCounter) {
@@ -146,6 +87,35 @@ class Infantry extends VisualObject {
         }
     }
 
+    animationIndex: number;
+    imageArray: number[][];
+
+    draw(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
+        //alert(this.status);
+        //alert(this.imageArray[this.status][this.moveDirection])
+        var imageList = this.imageArray[this.status][this.moveDirection];
+        //alert(imageList.length)
+	        
+        this.animationIndex++;
+
+        if (this.animationIndex / this.animationSpeed >= imageList.length) {
+            //alert(this.animationIndex + ' / '+ this.animationSpeed)
+            this.animationIndex = 0;
+
+        }
+        var moveImage = imageList[Math.floor(this.animationIndex / this.animationSpeed)];
+            
+        //alert(this.moveOffsetX)
+	        
+        var x = this.x * gridSize + screen.viewportAdjust.x + this.pixelOffsetX;
+        var y = this.y * gridSize + screen.viewportAdjust.y + this.pixelOffsetY;
+
+        debugger;
+        console.error('drawSprite() not implemented here'); 
+        //drawSprite(moveImage, x, y, this.team, this.type);
+        ////context.fillRect(this.x*game.gridSize+game.viewportAdjustX+this.pixelWidth/2,this.y*game.gridSize+game.viewportAdjustY+this.pixelHeight/2,10,10);
+        this.drawSelection(context, gridSize, screen, sidebar);
+    }
 }
 
 export = Infantry;

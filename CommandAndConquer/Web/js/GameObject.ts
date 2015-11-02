@@ -27,7 +27,7 @@ abstract class GameObject implements IGameObject {
 
     selected: boolean;
 
-    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: GameScreen, sidebar: Sidebar) {
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
         if (this.selected) {
             context.strokeStyle = 'white';
             //context.strokeWidth = 4;
@@ -60,7 +60,7 @@ abstract class GameObject implements IGameObject {
 
     }
 
-    protected getSelectionBounds(gridSize: number, screen: GameScreen): Rectangle {
+    protected getSelectionBounds(gridSize: number, screen: IGameScreen): Rectangle {
         var x = this.x * gridSize + screen.viewportAdjust.x + this.pixelOffsetX;
         var y = this.y * gridSize + screen.viewportAdjust.y + this.pixelOffsetY;
 

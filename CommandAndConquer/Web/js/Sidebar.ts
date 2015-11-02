@@ -2,12 +2,12 @@
 import VisualObject = require('./VisualObject');
 import Buildings = require('./Buildings');
 import Turrets = require('./Turrets');
-import Infantry = require('./Infantry');
+import InfantryFactory = require('./InfantryFactory');
 import Vehicles = require('./Vehicles');
 import Mouse = require('./Mouse');
 import GameScreen = require('./GameScreen');
 
-class Sidebar extends VisualObject {
+class Sidebar extends VisualObject implements ISidebar {
     loaded = true;
     preloadCount = 0;
     loadedCount = 0;
@@ -69,7 +69,7 @@ class Sidebar extends VisualObject {
         unitButton,
         buildings: IBuilding[],
         units: IUnit[],
-        infantryFactory: Infantry,
+        infantryFactory: InfantryFactory,
         vehiclesFactory: Vehicles) {
 
         var constructedAt;
@@ -505,7 +505,7 @@ class Sidebar extends VisualObject {
         soundsManager: ISoundsManager,
         buildings: IBuilding[],
         units: IUnit[],
-        infantryFactory: Infantry,
+        infantryFactory: InfantryFactory,
         vehiclesFactory: Vehicles) { //side is left or right; index is 0 to 5
 
         var buttons = (side == 'left') ? this.leftButtons : this.rightButtons;
@@ -609,7 +609,7 @@ class Sidebar extends VisualObject {
     draw(
         units: IUnit[],
         buildings: IBuilding[],
-        infantryFactory: Infantry,
+        infantryFactory: InfantryFactory,
         vehiclesFactory: Vehicles,
         context: CanvasRenderingContext2D,
         soundsManager: ISoundsManager,

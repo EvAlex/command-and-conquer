@@ -2,7 +2,7 @@
 import VisualObject = require('./VisualObject');
 import Buildings = require('./Buildings');
 import Turrets = require('./Turrets');
-import Infantry = require('./Infantry');
+import InfantryFactory = require('./InfantryFactory');
 import Vehicles = require('./Vehicles');
 import Overlay = require('./OverlayFactory');
 import Sidebar = require('./Sidebar');
@@ -129,7 +129,7 @@ class Levels extends VisualObject {
     preloadCount = 0;
     loadedCount = 0;
 
-    load(id, buildings: Buildings, turrets: Turrets, vehicles: Vehicles, infantry: Infantry, overlay: Overlay): IGameLevel {
+    load(id, buildings: Buildings, turrets: Turrets, vehicles: Vehicles, infantry: InfantryFactory, overlay: Overlay): IGameLevel {
         var level: IGameLevel;
 
         //level.mapImage = new Image();

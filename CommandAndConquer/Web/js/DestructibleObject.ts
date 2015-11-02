@@ -16,7 +16,7 @@ abstract class DestructibleObject extends GameObject implements IDestructibleObj
         }
     }
 
-    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: GameScreen, sidebar: Sidebar) {
+    drawSelection(context: CanvasRenderingContext2D, gridSize: number, screen: IGameScreen, sidebar: ISidebar) {
         super.drawSelection(context, gridSize, screen, sidebar);
 
         if (this.selected) {

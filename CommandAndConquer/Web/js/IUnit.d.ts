@@ -1,14 +1,9 @@
 ﻿
-interface IUnit extends IDestructibleObject, ICollidable {
+interface IUnit extends IDestructibleObject, ICollidingObject {
     animationSpeed: number;
     attacking: boolean;
     bulletFiring: boolean;
     selected: boolean;
-    collision(other: IUnit, gridSize: number): ICollisionType;
-    colliding: boolean
-    collisionDistance: number;
-    collisionType: string;
-    collisionWith: ICollisionPoint;
     cost: number;
     defaults: IUnit;
     //drawSelection: () => void;

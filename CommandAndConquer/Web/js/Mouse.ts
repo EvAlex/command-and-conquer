@@ -4,7 +4,7 @@ import GameScreen = require('./GameScreen');
 import Sidebar = require('./Sidebar');
 import Buildings = require('./Buildings');
 import Turrets = require('./Turrets');
-import Infantry = require('./Infantry');
+import InfantryFactory = require('./InfantryFactory');
 import Vehicles = require('./Vehicles');
 import Fog = require('./Fog');
 
@@ -177,7 +177,7 @@ class Mouse extends VisualObject {
         turretsFactory: Turrets,
         turrets: ITurret[],
         vehicles: Vehicles,
-        infantry: Infantry,
+        infantry: InfantryFactory,
         units: IUnit[],
         selectedUnits: IUnit[],
         selectedAttackers: IUnit[],
