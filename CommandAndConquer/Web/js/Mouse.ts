@@ -129,7 +129,8 @@ class Mouse extends VisualObject {
         overlayObjects: IOverlay[],
         buildings: IBuilding[],
         turrets: ITurret[],
-        units: IUnit[]) {
+        units: IUnit[],
+        gridSize: number) {
         var overObject = null;
         for (var i = overlayObjects.length - 1; i >= 0; i--) {
             var overlay = overlayObjects[i];
@@ -142,21 +143,21 @@ class Mouse extends VisualObject {
             }
         };
         for (var i = buildings.length - 1; i >= 0; i--) {
-            if (buildings[i].underPoint(this.gameX, this.gameY)) {
+            if (buildings[i].underPoint(this.gameX, this.gameY, gridSize)) {
                 overObject = buildings[i];
                 break;
             }
         };
 
         for (var i = turrets.length - 1; i >= 0; i--) {
-            if (turrets[i].underPoint(this.gameX, this.gameY)) {
+            if (turrets[i].underPoint(this.gameX, this.gameY, gridSize)) {
                 overObject = turrets[i];
                 break;
             }
         };
 
         for (var i = units.length - 1; i >= 0; i--) {
-            if (units[i].underPoint && units[i].underPoint(this.gameX, this.gameY)) {
+            if (units[i]['underPoint'] && units[i].underPoint(this.gameX, this.gameY, gridSize)) {
                 overObject = units[i];
                 break;
             }
@@ -183,10 +184,11 @@ class Mouse extends VisualObject {
         selectedAttackers: IUnit[],
         buildingObstructionGrid: number[][],
         obstructionGrid: number[][],
-        highlightGrid: (i: number, j: number, width: number, height: number, optionalImage?: string) => void) {
+        gridSize: number,
+        highlightGrid: (i: number, j: number, width: number, height: number, optionalImage?: HTMLImageElement) => void) {
 
         this.cursor = this.cursors['default'];
-        var selectedObject = this.checkOverObject(overlayObjects, buildings, turrets, units);
+        var selectedObject = this.checkOverObject(overlayObjects, buildings, turrets, units, gridSize);
 
         if (this.y < screen.viewport.top || this.y > screen.viewport.top + screen.viewport.height) {
             // default cursor if too much to the top
@@ -223,7 +225,7 @@ class Mouse extends VisualObject {
             }
         } else if (sidebar.visible && this.x > sidebar.left) {
             //over a button
-            var hovButton = sidebar.hoveredButton();
+            var hovButton = sidebar.hoveredButton(this);
             if (hovButton) {
                 var tooltipName = hovButton.type;
                 switch (hovButton.type) {
@@ -304,7 +306,7 @@ class Mouse extends VisualObject {
 
     }
 
-    click(ev, rightClick, sidebar: Sidebar, screen: GameScreen, onClick: (ev, rightClick) => void) {
+    click(ev, rightClick, sidebar: Sidebar, screen: GameScreen, soundsManager: ISoundsManager, onClick: (ev, rightClick) => void) {
         if (this.y <= screen.viewport.top && this.y > screen.viewport.top - 15) {
             // Tab Area Clicked    
             if (this.x >= 0 && this.x < 160) {
@@ -322,7 +324,7 @@ class Mouse extends VisualObject {
             //Game Area Clicked
             if (sidebar.visible && this.x > sidebar.left) {
                 //alert ('sidebar clicked');
-                sidebar.click(ev, rightClick);
+                sidebar.click(ev, rightClick, this, soundsManager);
             } else {
                 onClick(ev, rightClick);
                 //alert('game area clicked');

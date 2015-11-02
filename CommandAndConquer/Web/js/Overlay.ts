@@ -4,7 +4,7 @@ import GameObject = require('./GameObject');
 class Overlay extends GameObject implements IOverlay {
 
     constructor(name: string) {
-        super();
+        super('overlay');
         this.name = name;
     }
 

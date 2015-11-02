@@ -8,8 +8,7 @@ import Player = require('./Player');
 class Building extends DestructibleObject implements IBuilding {
 
     constructor() {
-        super();
-        this.type = 'building';
+        super('building');
         this.animationSpeed = 2;
         this.status = '';
     }

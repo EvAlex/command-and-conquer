@@ -2,6 +2,20 @@
 import DestructibleObject = require('./DestructibleObject');
 
 class Infantry extends DestructibleObject implements IUnit {
+
+    constructor(health: number) {
+        super('infantry');
+        this.health = health;
+        this.status = 'stand';
+        this.animationSpeed = 4;
+        this.pixelOffsetX = -50 / 2;
+        this.pixelOffsetY = -39 / 2;
+        this.pixelWidth = 16;
+        this.pixelHeight = 16;
+        this.pixelTop = 6;
+        this.pixelLeft = 16
+    }
+
     animationSpeed: number;
     attacking: boolean;
     bulletFiring: boolean;

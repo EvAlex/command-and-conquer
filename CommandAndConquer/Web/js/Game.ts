@@ -559,6 +559,7 @@ class Game {
             this.selectedAttackers,
             this.buildingObstructionGrid,
             this.obstructionGrid,
+            this.gridSize,
             (i, j, w, h, img) => this.highlightGrid(i, j, w, h, img));
     	    
         ///this.missionStatus();
@@ -686,7 +687,7 @@ class Game {
                 return;
             }
         }
-        var selectedObject = this.mouse.checkOverObject(this.overlay, this.buildings, this.turrets, this.units);
+        var selectedObject = this.mouse.checkOverObject(this.overlay, this.buildings, this.turrets, this.units, this.gridSize);
         if (rightClick) {
             this.clearSelection();
             this.sidebar.repairMode = false;
@@ -818,7 +819,7 @@ class Game {
         this.sounds.loadAll();
         this.overlayFactory.loadAll();
 
-        this.currentLevel = this.levels.load('gdi1', this.buildingsFactory, this.turretsFactory, this.vehicles, this.infantry, this.overlayFactory);
+        this.currentLevel = this.levels.load('gdi1', this.buildingsFactory, this.turretsFactory, this.vehicles, this.infantry, this.overlayFactory, this.gridSize);
         this.currentPlayer = new Player(this.currentLevel.team, this.currentLevel.startingCash);
         this.enemyPlayer = new Player(this.currentLevel.enemyTeam, this.currentLevel.startingEnemyCash);
         this.overlay = this.currentLevel.overlay;
@@ -973,7 +974,7 @@ class Game {
 
         this.canvas.addEventListener('click', ev => {
             //Handle click hotspots
-            this.mouse.click(ev, false, this.sidebar, this.screen, (e, r) => this.click(e, r));
+            this.mouse.click(ev, false, this.sidebar, this.screen, this.sounds,(e, r) => this.click(e, r));
             this.mouse.dragSelect = false;
             return false;
         });
@@ -989,7 +990,7 @@ class Game {
         });
 
         this.canvas.addEventListener('contextmenu', ev => {
-            this.mouse.click(ev, true, this.sidebar, this.screen, (e, r) => this.click(e, r));
+            this.mouse.click(ev, true, this.sidebar, this.screen, this.sounds, (e, r) => this.click(e, r));
             return false;
         });
 

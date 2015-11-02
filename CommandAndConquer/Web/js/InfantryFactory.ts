@@ -1,7 +1,9 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import Infantry = require('./Infantry')
 
 class InfantryFactory extends VisualObject {
+
     types = [];
     loaded: boolean = true;
     infantryDetails = {
@@ -23,36 +25,16 @@ class InfantryFactory extends VisualObject {
     preloadCount: number = 0;
     loadedCount: number = 0;
 
-    
+
 
     load(name) {
         var details = this.infantryDetails[name];
-        var infantryType = {
-            defaults: {
-                type: 'infantry',
-                draw: this.draw,
-                drawSelection: drawSelection,
-                underPoint: underPoint,
-                collision: this.collision,
-                move: this.move,
-                getLife: getLife,
-                status: 'stand',
-                animationSpeed: 4,
-                health: details.hitPoints,
-                pixelOffsetX: -50 / 2,
-                pixelOffsetY: -39 / 2,
-                pixelWidth: 16,
-                pixelHeight: 16,
-                pixelTop: 6,
-                pixelLeft: 16
-            },
-            imageArray: []
-        };
+        var infantry = new Infantry(details.hitPoints);
 
         //$.extend(infantryType,defaults);
             
         // Load all the images
-        infantryType.imageArray = [];
+        infantry.imageArray = [];
         for (var i = details.imagesToLoad.length - 1; i >= 0; i--) {
             var constructImageCount = details.imagesToLoad[i].count;
             var constructImageDirectionCount = details.imagesToLoad[i].directionCount;
@@ -62,21 +44,18 @@ class InfantryFactory extends VisualObject {
                 imgArray[j] = (this.loadImageArray('units/infantry/' + name + '/' + name + '-' + constructImageName + '-' + j, constructImageCount, '.gif'));
             }
             //alert(imgArray)
-            infantryType.imageArray[constructImageName] = imgArray;
+            infantry.imageArray[constructImageName] = imgArray;
         }
         // Add all the basic unit details
-        $.extend(infantryType, details);
-        this.types[name] = infantryType;
+        $.extend(infantry, details);
+        this.types[name] = infantry;
     }
 
-    
 
-    add(details): IUnit {
-        var newInfantry = {
-            moveDirection: 0,
-            animationIndex: 0,
-            team: game.currentLevel.team
-        };
+
+    add(details: ICreateInfantryDetails): IUnit {
+        var newInfantry = new Infantry(0);
+        newInfantry.team = details.team;
         var name = details.name;
 
         $.extend(newInfantry, this.types[name].defaults);
@@ -85,9 +64,16 @@ class InfantryFactory extends VisualObject {
 
         return newInfantry;
     }
+}
 
-    
-
+interface ICreateInfantryDetails {
+    name: string;
+    team?: string;
+    moveDirection?: number;
+    animationIndex?: number;
+    x: number;
+    y: number;
+    instructions?: IInstruction[];
 }
 
 export = InfantryFactory;

@@ -7,7 +7,7 @@ interface IUnit extends IDestructibleObject, ICollidingObject {
     cost: number;
     defaults: IUnit;
     //drawSelection: () => void;
-    //underPoint: (a, b) => any;
+    underPoint(x: number, y: number, gridSize: number): boolean;
     label: string;
     //move(speedAdjustmentFactor: number, gridSize: number, sounds: Sounds): any;
     moveDirection: number;

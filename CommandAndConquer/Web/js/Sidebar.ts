@@ -87,7 +87,7 @@ class Sidebar extends VisualObject implements ISidebar {
                 x: constructedAt.x + constructedAt.gridWidth / 2,
                 y: constructedAt.y + constructedAt.gridHeight,
                 moveDirection: 4,
-                instructions: [{ type: 'move', distance: 2 }]
+                instructions: [<IMoveInstruction>{ type: 'move', distance: 2 }],
             }));
         } else if (unitButton.type == 'vehicle') {
             constructedAt.status = 'construct';

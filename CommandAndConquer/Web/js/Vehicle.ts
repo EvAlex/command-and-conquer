@@ -11,8 +11,7 @@ import Fog = require('./Fog');
 class Vehicle extends DestructibleObject implements IUnit {
 
     constructor() {
-        super();
-        this.type = 'vehicle';
+        super('vehicle');
         this.animationSpeed = 4;
         this.pixelLeft = 0;
         this.pixelTop = 0;

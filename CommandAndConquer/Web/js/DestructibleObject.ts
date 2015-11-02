@@ -4,7 +4,11 @@ import GameScreen = require('./GameScreen');
 import Sidebar = require('./Sidebar');
 
 abstract class DestructibleObject extends GameObject implements IDestructibleObject {
-    
+
+    constructor(type: string) {
+        super(type);
+    }
+
     getLife(): void {
         var life = this.health / this.hitPoints;
         if (life > 0.7) {

@@ -129,7 +129,7 @@ class Levels extends VisualObject {
     preloadCount = 0;
     loadedCount = 0;
 
-    load(id, buildings: Buildings, turrets: Turrets, vehicles: Vehicles, infantry: InfantryFactory, overlay: Overlay): IGameLevel {
+    load(id, buildings: Buildings, turrets: Turrets, vehicles: Vehicles, infantry: InfantryFactory, overlay: Overlay, gridSize: number): IGameLevel {
         var level: IGameLevel;
 
         //level.mapImage = new Image();
@@ -142,7 +142,7 @@ class Levels extends VisualObject {
             }
             if (item == "buildings") {
                 for (var i = details.items[item].length - 1; i >= 0; i--) {
-                    buildings.load(details.items[item][i]);
+                    buildings.load(details.items[item][i], gridSize);
                 };
             }
 

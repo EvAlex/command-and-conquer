@@ -5,6 +5,10 @@ import Rectangle = require('./Rectangle');
 
 abstract class GameObject implements IGameObject {
 
+    constructor(type: string) {
+        this.type = type;
+    }
+
     //abstract draw(): void;
 
     pixelLeft: number;
