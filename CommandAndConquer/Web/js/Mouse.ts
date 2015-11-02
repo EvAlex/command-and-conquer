@@ -21,6 +21,9 @@ class Mouse extends VisualObject {
 
     constructor() {
         super();
+        this.x = 0;
+        this.y = 0;
+        this.cursorLoop = 0;
     }
     
     x: number;
@@ -55,27 +58,27 @@ class Mouse extends VisualObject {
             }
 
             if (this.x < this.panningThreshold && this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
-                screen.viewportDelta.y = -this.panningVelocity;
+                screen.viewportDelta.x = -this.panningVelocity;
                 panDirection += "_left";
             } else if (this.x > screen.width - this.panningThreshold && this.y >= screen.viewport.top && this.y <= screen.viewport.top + screen.viewport.height) {
-                screen.viewportDelta.y = this.panningVelocity;
+                screen.viewportDelta.x = this.panningVelocity;
                 panDirection += "_right";
             } else {
-                screen.viewportDelta.y = 0;
+                screen.viewportDelta.x = 0;
                 panDirection += "";
             }
         }
 
-        if ((screen.viewportOffset.x + screen.viewportDelta.y < 0)
-            || (screen.viewportOffset.x + screen.viewportDelta.y + screen.width + (sidebar.visible ? -sidebar.width : 0) > mapImageSize.width)) {
-            screen.viewportDelta.y = 0;
+        if ((screen.viewportOffset.x + screen.viewportDelta.x < 0)
+            || (screen.viewportOffset.x + screen.viewportDelta.x + screen.width + (sidebar.visible ? -sidebar.width : 0) > mapImageSize.width)) {
+            screen.viewportDelta.x = 0;
             //console.log (screen.viewportOffset.x+screen.viewportDelta.y +screen.width+(this.sidebar.visible?-this.sidebar.width:0));
             //console.log (this.game.currentLevel.mapImage.width);
         }
 
         if (!sidebar.visible && (screen.viewportOffset.x + screen.width > mapImageSize.width)) {
             screen.viewportOffset.x = mapImageSize.width - screen.width;
-            screen.viewportDelta.y = 0;
+            screen.viewportDelta.x = 0;
         }
 
         if ((screen.viewportOffset.y + screen.viewportDelta.y < 0)
@@ -84,14 +87,14 @@ class Mouse extends VisualObject {
         }
 
         if (panDirection != "") {
-            if (screen.viewportDelta.y == 0 && screen.viewportDelta.y == 0) {
+            if (screen.viewportDelta.x == 0 && screen.viewportDelta.y == 0) {
                 panDirection = "no_pan" + panDirection;
             } else {
                 panDirection = "pan" + panDirection;
             }
         }
         this.panDirection = panDirection;
-        screen.viewportOffset.x += screen.viewportDelta.y;
+        screen.viewportOffset.x += screen.viewportDelta.x;
         screen.viewportOffset.y += screen.viewportDelta.y;
         this.gameX = this.x + screen.viewportOffset.x - screen.viewport.left;
         this.gameY = this.y + screen.viewportOffset.y - screen.viewport.top;

@@ -95,9 +95,16 @@ class Game implements IBulletDrawer {
     drawMap() {
         //context.drawImage(this.currentLevel.mapImage,0,0);
         this.mouse.handlePanning(this.screen, this.currentLevel.mapImage, this.sidebar);
-        this.context.drawImage(this.currentLevel.mapImage,
-            this.screen.viewportOffset.x, this.screen.viewportOffset.y, this.screen.viewport.width, this.screen.viewport.height,
-            this.screen.viewport.left, this.screen.viewport.top, this.screen.viewport.width, this.screen.viewport.height);
+        this.context.drawImage(
+            this.currentLevel.mapImage,
+            this.screen.viewportOffset.x,
+            this.screen.viewportOffset.y,
+            this.screen.viewport.width,
+            this.screen.viewport.height,
+            this.screen.viewport.left,
+            this.screen.viewport.top,
+            this.screen.viewport.width,
+            this.screen.viewport.height);
     	    
     	    
         // Create an obstruction grid from the level 
@@ -869,9 +876,9 @@ class Game implements IBulletDrawer {
         this.units.push(this.vehicles.add({ name: 'light-tank', x: 4, y: 23, team: 'nod', orders: { type: 'patrol', from: { x: 4, y: 23 }, to: { x: 22, y: 25 } } }));
         this.units.push(this.vehicles.add({ name: 'light-tank', x: 2, y: 10, team: 'nod', orders: { type: 'protect', target: this.units[0] } }));
 
-        this.units.push(this.vehicles.add({ name: 'mcv', x: 23.5, y: 23.5, moveDirection: 0, orders: { type: 'move', to: { x: 23, y: 21 } } }));
-        this.units.push(this.vehicles.add({ name: 'light-tank', x: 23, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 22, y: 23 } } }));
-        this.units.push(this.vehicles.add({ name: 'light-tank', x: 24, y: 27, moveDirection: 0, orders: { type: 'move', to: { x: 24, y: 23 } } }));
+        this.units.push(this.vehicles.add({ name: 'mcv', x: 23.5, y: 23.5, team: 'gdi', moveDirection: 0, orders: { type: 'move', to: { x: 23, y: 21 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 23, y: 27, team: 'gdi', moveDirection: 0, orders: { type: 'move', to: { x: 22, y: 23 } } }));
+        this.units.push(this.vehicles.add({ name: 'light-tank', x: 24, y: 27, team: 'gdi', moveDirection: 0, orders: { type: 'move', to: { x: 24, y: 23 } } }));
     	    
     	    
         //this.buildings.push(this.buildingsFactory.add({name:'weapons-factory',x:18,y:6}));
@@ -992,6 +999,7 @@ class Game implements IBulletDrawer {
 
         this.canvas.addEventListener('contextmenu', ev => {
             this.mouse.click(ev, true, this.sidebar, this.screen, this.sounds, (e, r) => this.click(e, r));
+            ev.preventDefault();
             return false;
         });
 

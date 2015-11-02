@@ -11,6 +11,7 @@ class Fog implements IFog {
         mapImage.addEventListener('load', () => {
             this.mapWidth = mapImage.width;
             this.mapHeight = mapImage.height;
+            this.initialized = true;
         });
     }
 
@@ -18,11 +19,17 @@ class Fog implements IFog {
     private fogContext: CanvasRenderingContext2D;
 
     isOver(x, y) {
-        var pixel = this.fogContext.getImageData(x * this.canvasWidth / this.mapWidth, y * this.canvasHeight / this.mapHeight, 1, 1).data;
+        if (!this.initialized)
+            return false;
+
+        var fx = x * this.canvasWidth / this.mapWidth,
+            fy = y * this.canvasHeight / this.mapHeight,
+            pixel = this.fogContext.getImageData(fx, fy, 1, 1).data;
         //alert("fog "+x+","+y+" "+pixel[0]+" "+pixel[1]+" "+pixel[2]+" "+pixel[3]);
         return (pixel[3] == 255);
     }
 
+    private initialized: boolean = false;
     canvasWidth: number;
     canvasHeight: number;
     mapWidth: number;
