@@ -120,6 +120,7 @@ interface IVehicleCreateDetails {
     status?: string;
     health?: number;
     moveDirection?: number
+    turretDirection?: number;
     orders: IMoveOrder | IProtectOrder | IGuardOrder;
 }
 

@@ -2,7 +2,7 @@
 import Point = require('./Point');
 import Rectangle = require('./Rectangle');
 
-class GameScreen {
+class GameScreen implements IGameScreen {
 
     constructor(width: number, height: number) {
         this.width = width;

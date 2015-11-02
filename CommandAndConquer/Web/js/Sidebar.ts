@@ -1,40 +1,63 @@
 ﻿
 import VisualObject = require('./VisualObject');
+import Buildings = require('./Buildings');
+import Turrets = require('./Turrets');
+import Infantry = require('./Infantry');
+import Vehicles = require('./Vehicles');
+import Mouse = require('./Mouse');
+import GameScreen = require('./GameScreen');
 
 class Sidebar extends VisualObject {
     loaded = true;
     preloadCount = 0;
     loadedCount = 0;
     repairImageBig: HTMLImageElement = null;
+    repairImageSmall: HTMLImageElement;
     primaryBuildingImage: HTMLImageElement = null;
-    placementWhiteImage: string;
-    placementRedImage: string;
     tabsImage: HTMLImageElement = null;
+    sidebarImage: HTMLImageElement;
+    readyImage: HTMLImageElement;
+    holdImage: HTMLImageElement;
+    placementWhiteImage: HTMLImageElement;
+    placementRedImage: HTMLImageElement;
+    powerIndicator: HTMLImageElement;
+    repairButtonPressed: HTMLImageElement;
+    sellButtonPressed: HTMLImageElement;
     width: number = 160;
     left: number = 0;
     top: number = 0;
     visible: boolean = true;
     cash: number = 0;
+    insufficientFunds: boolean;
     deployMode: boolean = false;
+    mapMode: boolean;
     deployBuilding: string;
     repairMode: boolean = false;
     sellMode: boolean = false;
     messageBox = null;
 
-    finishDeployingBuilding() {
-        for (var i = 0; i < game.buildings.length; i++) {
-            if (game.buildings[i].name == 'construction-yard' && game.buildings[i].team == game.currentLevel.team) {
-                game.buildings[i].status = 'construct';
+    finishDeployingBuilding(
+        buildings: IBuilding[],
+        buildingsFactory: Buildings,
+        turrets: ITurret[],
+        turretsFactory: Turrets,
+        soundsManager: ISoundsManager,
+        mouse: Mouse,
+        curPlayerTeam: string) {
+
+        for (var i = 0; i < buildings.length; i++) {
+            if (buildings[i].name == 'construction-yard' && buildings[i].team == curPlayerTeam) {
+                buildings[i].status = 'construct';
                 break;
             }
         };
-        if (buildings.types[this.deployBuilding]) {
-            game.buildings.push(buildings.add({ name: this.deployBuilding, x: mouse.gridX, y: mouse.gridY, status: 'build' }));
+        if (buildingsFactory.types[this.deployBuilding]) {
+            buildings.push(buildingsFactory.add({ name: this.deployBuilding, x: mouse.gridX, y: mouse.gridY, status: 'build', team: curPlayerTeam }));
         } else {
-            game.turrets.push(turrets.add({ name: this.deployBuilding, x: mouse.gridX, y: mouse.gridY, status: 'build' }));
+            turrets.push(turretsFactory.add({ name: this.deployBuilding, x: mouse.gridX, y: mouse.gridY, team: curPlayerTeam, status: 'build' }));
         }
 
-        sounds.play('construction')
+        soundsManager.play('construction')
         this.deployMode = false;
         for (var i = this.leftButtons.length - 1; i >= 0; i--) {
             this.leftButtons[i].status = '';
@@ -42,26 +65,38 @@ class Sidebar extends VisualObject {
         this.deployBuilding = null;
     }
 
-    finishDeployingUnit(unitButton) {
+    finishDeployingUnit(
+        unitButton,
+        buildings: IBuilding[],
+        units: IUnit[],
+        infantryFactory: Infantry,
+        vehiclesFactory: Vehicles) {
+
         var constructedAt;
-        for (var i = 0; i < game.buildings.length; i++) {
-            if (game.buildings[i].name == unitButton.dependency[0]) {
-                constructedAt = game.buildings[i];
+        for (var i = 0; i < buildings.length; i++) {
+            if (buildings[i].name == unitButton.dependency[0]) {
+                constructedAt = buildings[i];
                 //game.buildings[i].status='construct';
                 break;
             }
         };
 
         if (unitButton.type == 'infantry') {
-            game.units.push(infantry.add({
-                name: unitButton.name, x: constructedAt.x + constructedAt.gridWidth / 2,
-                y: constructedAt.y + constructedAt.gridHeight, moveDirection: 4, instructions: [{ type: 'move', distance: 2 }]
+            units.push(infantryFactory.add({
+                name: unitButton.name,
+                x: constructedAt.x + constructedAt.gridWidth / 2,
+                y: constructedAt.y + constructedAt.gridHeight,
+                moveDirection: 4,
+                instructions: [{ type: 'move', distance: 2 }]
             }));
         } else if (unitButton.type == 'vehicle') {
             constructedAt.status = 'construct';
-            var vehicle = vehicles.add({
-                name: unitButton.name, x: constructedAt.x + 1,
-                y: constructedAt.y + 3, moveDirection: 16, turretDirection: 16,
+            var vehicle = vehiclesFactory.add({
+                name: unitButton.name,
+                x: constructedAt.x + 1,
+                y: constructedAt.y + 3,
+                moveDirection: 16,
+                turretDirection: 16,
                 orders: {
                     type: 'move', to: {
                         x: Math.floor(constructedAt.x - 1 + (Math.random() * 4)),
@@ -70,7 +105,7 @@ class Sidebar extends VisualObject {
                     }
                 }
             });
-            game.units.push(vehicle);   
+            units.push(vehicle);   
     	                
             //alert(vehicle.orders.to.x + ' '+vehicle.orders.to.y)
     	        
@@ -87,7 +122,7 @@ class Sidebar extends VisualObject {
         this.deployBuilding = null;
     }
 
-    hoveredButton() {
+    hoveredButton(mouse: Mouse) {
         var clickY = mouse.y - this.top;
         var clickX = mouse.x;
         if (clickY >= 165 && clickY <= 455) {
@@ -116,7 +151,7 @@ class Sidebar extends VisualObject {
 
     }
 
-    click(ev, rightClick) {
+    click(ev, rightClick, mouse: Mouse, soundsManager: ISoundsManager) {
         var clickY = mouse.y - this.top;
         var clickX = mouse.x;
         //alert(2)
@@ -139,22 +174,22 @@ class Sidebar extends VisualObject {
             if (clickX >= 500 && clickX <= 530) {
                 if (this.leftButtonOffset > 0) {
                     this.leftButtonOffset--;
-                    sounds.play('button');
+                    soundsManager.play('button');
                 }
             } else if (clickX >= 532 && clickX <= 562) {
                 if (this.leftButtonOffset + 6 < this.leftButtons.length) {
                     this.leftButtonOffset++;
-                    sounds.play('button');
+                    soundsManager.play('button');
                 }
             } else if (clickX >= 570 && clickX <= 600) {
                 if (this.rightButtonOffset > 0) {
                     this.rightButtonOffset--;
-                    sounds.play('button');
+                    soundsManager.play('button');
                 }
             } else if (clickX >= 602 && clickX <= 632) {
                 if (this.rightButtonOffset + 6 < this.rightButtons.length) {
                     this.rightButtonOffset++;
-                    sounds.play('button');
+                    soundsManager.play('button');
                 }
             }
             // Press a unit icon
@@ -190,21 +225,21 @@ class Sidebar extends VisualObject {
                     buttonPressed.status = 'building';
                     buttonPressed.counter = 0;
                     buttonPressed.spent = buttonPressed.cost;
-                    sounds.play('building');
+                    soundsManager.play('building');
                     //} else {
                     //    sounds.play('insufficient_funds');
                     //}
                 } else if (buttonPressed.status == 'building' && !rightClick) {
-                    sounds.play('not_ready');
+                    soundsManager.play('not_ready');
                 } else if (buttonPressed.status == 'building' && rightClick) {
                     buttonPressed.status = 'hold';
-                    sounds.play('on_hold');
+                    soundsManager.play('on_hold');
                 } else if (buttonPressed.status == 'hold' && !rightClick) {
                     buttonPressed.status = 'building';
-                    sounds.play('building');
+                    soundsManager.play('building');
                 } else if ((buttonPressed.status == 'hold' || buttonPressed.status == 'ready') && rightClick) {
                     buttonPressed.status = '';
-                    sounds.play('cancelled');
+                    soundsManager.play('cancelled');
                     this.cash += buttonPressed.cost - buttonPressed.spent;
                     for (var i = buttons.length - 1; i >= 0; i--) {
                         buttons[i].status = '';
@@ -217,7 +252,7 @@ class Sidebar extends VisualObject {
                         this.deployBuilding = buttonPressed.name;
                     }
                 } else if (buttonPressed.status == 'disabled') {
-                    sounds.play('building_in_progress');
+                    soundsManager.play('building_in_progress');
                 }
 
             }
@@ -228,7 +263,10 @@ class Sidebar extends VisualObject {
     leftButtons = [];
     rightButtons = [];
 
-    checkDependency() {
+    checkDependency(
+        buildings: IBuilding[],
+        soundsManager: ISoundsManager,
+        curPlayerTeam: string) {
         //alert(this.allButtons.length);
         for (var i = 0; i < this.allButtons.length; i++) {
             var button = this.allButtons[i];
@@ -238,12 +276,12 @@ class Sidebar extends VisualObject {
             for (var j = button.dependency.length - 1; j >= 0; j--) {
                 var found = false;
                 var dependency = button.dependency[j];
-                for (var k = game.buildings.length - 1; k >= 0; k--) {
-                    var building = game.buildings[k];
+                for (var k = buildings.length - 1; k >= 0; k--) {
+                    var building = buildings[k];
                     if (building.name == dependency
                         && building.status != 'build'
                         && building.life != 'ultra-damaged'
-                        && building.team == game.currentLevel.team
+                        && building.team == curPlayerTeam
                     ) {
                         found = true;
                         //alert(building.name)
@@ -280,7 +318,7 @@ class Sidebar extends VisualObject {
                     button.counter = 0;
                     //button.cost = buildings.types[button.name].cost;
                     button.speed = this.buildSpeedMultiplier / button.cost;
-                    sounds.play('new_construction_options');
+                    soundsManager.play('new_construction_options');
                     this.visible = true;
                 } else if (buttonFound && !dependenciesSatisfied) {
                     if (this.leftButtons[foundIndex].status == 'building'
@@ -321,7 +359,7 @@ class Sidebar extends VisualObject {
                     }
                     */
                     button.speed = this.buildSpeedMultiplier / button.cost;
-                    sounds.play('new_construction_options');
+                    soundsManager.play('new_construction_options');
                 } else if (buttonFound && !dependenciesSatisfied) {
                     if (this.rightButtons[foundIndex].status == 'building'
                         || this.rightButtons[foundIndex].status == 'hold'
@@ -340,7 +378,7 @@ class Sidebar extends VisualObject {
 
     }
 
-    load(startingCash: number) {
+    load(startingCash: number, screen: GameScreen, canvasWidth: number) {
         this.cash = startingCash;
 
         this.tabsImage = this.preloadImage('sidebar/tabs.png');
@@ -359,8 +397,8 @@ class Sidebar extends VisualObject {
         this.repairImageBig = this.preloadImage('sidebar/repair-big.png');
         this.repairImageSmall = this.preloadImage('sidebar/repair-small.png');
 
-        this.top = game.viewportTop - 2;
-        this.left = canvas.width - this.width;
+        this.top = screen.viewport.top - 2;
+        this.left = canvasWidth - this.width;
         var buttonList = [
             { name: 'power-plant', type: 'building', cost: 300, dependency: ['construction-yard'] },
             { name: 'advanced-power-plant', type: 'building', cost: 700, dependency: ['construction-yard', 'power-plant'] },
@@ -393,7 +431,7 @@ class Sidebar extends VisualObject {
     textBrightness: number = 0;
     textBrightnessDelta: number = -0.1;
 
-    drawButtonLabel(labelImage, x, y) {
+    drawButtonLabel(labelImage, x: number, y: number, context: CanvasRenderingContext2D) {
         var labelOffsetX = this.iconWidth / 2 - labelImage.width / 2;
         var labelOffsetY = this.iconHeight / 2;
         //context.fillStyle = 'rgba(255,255,255,'+this.textBrightness+')';
@@ -404,7 +442,7 @@ class Sidebar extends VisualObject {
         context.globalAlpha = 1;
     }
 
-    drawButtonCost(cost, x, y) {
+    drawButtonCost(cost, x: number, y: number, context: CanvasRenderingContext2D) {
         var costOffsetX = 35;
         var costOffsetY = 10;
         context.fillStyle = 'white';
@@ -418,7 +456,13 @@ class Sidebar extends VisualObject {
     rightButtonOffset: number = 0;
     buildSpeedMultiplier: number = 300;
 
-    drawButton(side, index) { //side is left or right; index is 0 to 5
+    drawButton(
+        side: string,
+        index: number,
+        context: CanvasRenderingContext2D,
+        spriteContext: CanvasRenderingContext2D,
+        spriteCanvas: HTMLCanvasElement) { //side is left or right; index is 0 to 5
+
         var buttons = (side == 'left') ? this.leftButtons : this.rightButtons;
         var offset = (side == 'left') ? this.leftButtonOffset : this.rightButtonOffset;
         var button = buttons[index + offset];
@@ -427,7 +471,7 @@ class Sidebar extends VisualObject {
 
         context.drawImage(button.image, xOffset, yOffset);
         if (button.status == 'ready') {
-            this.drawButtonLabel(this.readyImage, xOffset, yOffset);
+            this.drawButtonLabel(this.readyImage, xOffset, yOffset, context);
         } else if (button.status == 'disabled') {
             context.fillStyle = 'rgba(200,200,200,0.6)';
             context.fillRect(xOffset, yOffset, this.iconWidth, this.iconHeight);
@@ -451,11 +495,19 @@ class Sidebar extends VisualObject {
             spriteContext.fill();
             context.drawImage(spriteCanvas, 0, 0, this.iconWidth, this.iconHeight, xOffset, yOffset, this.iconWidth, this.iconHeight);
 
-            this.drawButtonLabel(this.holdImage, xOffset, yOffset);
+            this.drawButtonLabel(this.holdImage, xOffset, yOffset, context);
         }
     }
 
-    processButton(side, index) { //side is left or right; index is 0 to 5
+    processButton(
+        side: string,
+        index: number,
+        soundsManager: ISoundsManager,
+        buildings: IBuilding[],
+        units: IUnit[],
+        infantryFactory: Infantry,
+        vehiclesFactory: Vehicles) { //side is left or right; index is 0 to 5
+
         var buttons = (side == 'left') ? this.leftButtons : this.rightButtons;
         var offset = 0;// (side=='left')?this.leftButtonOffset:this.rightButtonOffset;
         var button = buttons[index + offset];
@@ -464,7 +516,7 @@ class Sidebar extends VisualObject {
         if (button.status == 'building') {
             if (this.cash == 0) {
                 if (!this.insufficientFunds) {
-                    sounds.play('insufficient_funds');
+                    soundsManager.play('insufficient_funds');
                     this.insufficientFunds = true;
                 }
                 return;
@@ -485,11 +537,11 @@ class Sidebar extends VisualObject {
                 this.cash -= button.spent;
                 button.status = 'ready';
                 if (side == 'left') {
-                    sounds.play('construction_complete');
+                    soundsManager.play('construction_complete');
                 } else {
                     if (button.type == 'infantry' || button.type == 'vehicle') {
-                        sounds.play('unit_ready')
-                        this.finishDeployingUnit(button);
+                        soundsManager.play('unit_ready')
+                        this.finishDeployingUnit(button, buildings, units, infantryFactory, vehiclesFactory);
                     }
                 }
             }
@@ -501,7 +553,12 @@ class Sidebar extends VisualObject {
     lowPowerMode: boolean = false;
     powerScale: number = 4;
 
-    checkPower() {
+    checkPower(
+        buildings: IBuilding[],
+        context: CanvasRenderingContext2D,
+        soundsManager: ISoundsManager,
+        curPlayerTeam: string) {
+
         var offsetX = this.left;
         var offsetY = this.top + 160;
         var barHeight = 320;
@@ -509,13 +566,13 @@ class Sidebar extends VisualObject {
 
         this.powerOut = 0;
         this.powerIn = 0;
-        for (var k = game.buildings.length - 1; k >= 0; k--) {
-            var building = game.buildings[k];
-            if (building.powerIn && building.team == game.currentLevel.team) {
+        for (var k = buildings.length - 1; k >= 0; k--) {
+            var building = buildings[k];
+            if (building.powerIn && building.team == curPlayerTeam) {
                 this.powerIn += building.powerIn;
             }
-            if (building.powerOut && building.team == game.currentLevel.team) {
-                this.powerOut += building.powerOut;
+            if ((<IEnergyProducingBuilding>building).powerOut && building.team == curPlayerTeam) {
+                this.powerOut += (<IEnergyProducingBuilding>building).powerOut;
             }
         };
             
@@ -539,7 +596,7 @@ class Sidebar extends VisualObject {
         } else if (this.powerOut < this.powerIn) {
             context.fillStyle = red;
             if (this.lowPowerMode == false) {
-                sounds.play('low_power')
+                soundsManager.play('low_power')
             }
             this.lowPowerMode = true;
 
@@ -549,7 +606,18 @@ class Sidebar extends VisualObject {
 
     }
 
-    draw(context: CanvasRenderingContext2D) {
+    draw(
+        units: IUnit[],
+        buildings: IBuilding[],
+        infantryFactory: Infantry,
+        vehiclesFactory: Vehicles,
+        context: CanvasRenderingContext2D,
+        soundsManager: ISoundsManager,
+        spriteContext: CanvasRenderingContext2D,
+        spriteCanvas: HTMLCanvasElement,
+        screen: GameScreen,
+        curPlayerTeam: string) {
+        
         context.drawImage(this.tabsImage, 0, this.top - this.tabsImage.height + 2);
         context.fillStyle = 'lightgreen';
         context.font = '12px "Command and Conquer"';
@@ -559,7 +627,7 @@ class Sidebar extends VisualObject {
 
 
 
-        this.checkDependency();
+        this.checkDependency(buildings, soundsManager, curPlayerTeam);
 
         this.textBrightness = this.textBrightness + this.textBrightnessDelta;
         if (this.textBrightness < 0) {
@@ -567,10 +635,10 @@ class Sidebar extends VisualObject {
         }
 
         for (var i = 0; i < this.leftButtons.length; i++) {
-            this.processButton('left', i);
+            this.processButton('left', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory);
         }
         for (var i = 0; i < this.rightButtons.length; i++) {
-            this.processButton('right', i);
+            this.processButton('right', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory);
         }
 
         if (this.visible) {
@@ -582,19 +650,19 @@ class Sidebar extends VisualObject {
             if (this.sellMode) {
                 context.drawImage(this.sellButtonPressed, this.left + 57, this.top + 145);
             }
-            this.checkPower();
+            this.checkPower(buildings, context, soundsManager, curPlayerTeam);
             var maxLeft = this.leftButtons.length > 6 ? 6 : this.leftButtons.length;
             for (var i = 0; i < maxLeft; i++) {
-                this.drawButton('left', i);
+                this.drawButton('left', i, context, spriteContext, spriteCanvas);
             }
             var maxRight = this.rightButtons.length > 6 ? 6 : this.rightButtons.length;
             for (var i = 0; i < maxRight; i++) {
-                this.drawButton('right', i);
+                this.drawButton('right', i, context, spriteContext, spriteCanvas);
             }
 
         }
 
-        context.clearRect(0, game.viewportTop + game.viewportHeight, canvas.width, 30);
+        context.clearRect(0, screen.viewport.top + screen.viewport.height, context.canvas.width, 30);
     }
 
 

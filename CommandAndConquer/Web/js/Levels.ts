@@ -4,7 +4,7 @@ import Buildings = require('./Buildings');
 import Turrets = require('./Turrets');
 import Infantry = require('./Infantry');
 import Vehicles = require('./Vehicles');
-import Overlay = require('./Overlay');
+import Overlay = require('./OverlayFactory');
 import Sidebar = require('./Sidebar');
 
 class Levels extends VisualObject {

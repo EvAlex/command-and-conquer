@@ -306,6 +306,7 @@
     <TypeScriptCompile Include="Web\js\GameScreen.ts" />
     <TypeScriptCompile Include="Web\js\Harvester.ts" />
     <TypeScriptCompile Include="Web\js\IBuilding.d.ts" />
+    <TypeScriptCompile Include="Web\js\IBullet.d.ts" />
     <TypeScriptCompile Include="Web\js\ICollidable.d.ts" />
     <TypeScriptCompile Include="Web\js\ICollisionPoint.d.ts" />
     <TypeScriptCompile Include="Web\js\ICollisionType.d.ts" />
@@ -313,8 +314,10 @@
     <TypeScriptCompile Include="Web\js\IEnergyProducingBuilding.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameLevel.d.ts" />
     <TypeScriptCompile Include="Web\js\IGameObject.d.ts" />
+    <TypeScriptCompile Include="Web\js\IGameScreen.d.ts" />
     <TypeScriptCompile Include="Web\js\IHarvester.ts" />
     <TypeScriptCompile Include="Web\js\IInstruction.ts" />
+    <TypeScriptCompile Include="Web\js\IRectangle.d.ts" />
     <TypeScriptCompile Include="Web\js\Infantry.ts" />
     <TypeScriptCompile Include="Web\js\IOrder.d.ts" />
     <TypeScriptCompile Include="Web\js\IOverlay.ts" />
@@ -326,6 +329,7 @@
     <TypeScriptCompile Include="Web\js\Levels.ts" />
     <TypeScriptCompile Include="Web\js\Mouse.ts" />
     <TypeScriptCompile Include="Web\js\Overlay.ts" />
+    <TypeScriptCompile Include="Web\js\OverlayFactory.ts" />
     <TypeScriptCompile Include="Web\js\Player.ts" />
     <TypeScriptCompile Include="Web\js\Point.ts" />
     <TypeScriptCompile Include="Web\js\Rectangle.ts" />

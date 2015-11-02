@@ -92,7 +92,8 @@ interface ITurretCreateDetails {
     team: string;
     x: number;
     y: number;
-    turretDirection: number;
+    turretDirection?: number;
+    status?: string;
 }
 
 export = Turrets;

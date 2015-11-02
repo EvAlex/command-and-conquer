@@ -104,7 +104,7 @@ class Infantry extends VisualObject {
         this.drawSelection();
     }
 
-    add(details) {
+    add(details): IUnit {
         var newInfantry = {
             moveDirection: 0,
             animationIndex: 0,

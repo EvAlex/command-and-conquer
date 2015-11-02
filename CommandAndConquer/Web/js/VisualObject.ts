@@ -1,16 +1,19 @@
 ﻿
 class VisualObject {
 
+    protected loaded: boolean;
+    protected preloadCount: number;
+    protected loadedCount: number;
+
     preloadImage(imgUrl: string, callbackFunction?: () => void): HTMLImageElement {
-        var loadee = this;
         this.loaded = false;
         var image = new Image();
         image.src = 'images/' + imgUrl;
         this.preloadCount++;
-        $(image).bind('load', function () {
-            loadee.loadedCount++;
-            if (loadee.loadedCount == loadee.preloadCount) {
-                loadee.loaded = true;
+        $(image).bind('load', () => {
+            this.loadedCount++;
+            if (this.loadedCount == this.preloadCount) {
+                this.loaded = true;
             }
             if (callbackFunction) {
                 callbackFunction();

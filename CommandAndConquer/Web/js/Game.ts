@@ -10,7 +10,7 @@ import Turrets = require('./Turrets');
 import Infantry = require('./Infantry');
 import Vehicles = require('./Vehicles');
 import Sounds = require('./Sounds');
-import Overlay = require('./Overlay');
+import OverlayFactory = require('./OverlayFactory');
 import Player = require('./Player');
 
 class Game {
@@ -18,6 +18,8 @@ class Game {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
         this.context = canvas.getContext('2d');
+        this.spriteCanvas = canvas;
+        this.spriteContext = canvas.getContext('2d');
         this.screen = new GameScreen(canvas.width, canvas.height);
         this.screen.viewport.top = 35;
         this.gridSize = 24;
@@ -33,7 +35,7 @@ class Game {
         this.infantry = new Infantry();
         this.vehicles = new Vehicles();
         this.sounds = new Sounds();
-        this.overlayFactory = new Overlay();
+        this.overlayFactory = new OverlayFactory();
     }
 
     private sidebar: Sidebar;
@@ -45,10 +47,12 @@ class Game {
     private infantry: Infantry;
     private vehicles: Vehicles;
     private sounds: Sounds;
-    private overlayFactory: Overlay;
+    private overlayFactory: OverlayFactory;
 
     private canvas: HTMLCanvasElement;
     private context: CanvasRenderingContext2D;
+    private spriteCanvas: HTMLCanvasElement;
+    private spriteContext: CanvasRenderingContext2D;
 
     private currentPlayer: Player;
     private enemyPlayer: Player;
@@ -273,15 +277,15 @@ class Game {
     buildings: Building[] = [];
     turrets: ITurret[] = [];
     overlay: IOverlay[] = [];
-    bullets = [];
+    bullets: IBullet[] = [];
 
-    fireBullet(bullet) {
+    fireBullet(bullet: IBullet) {
         bullet.x = bullet.x - 0.5 * Math.sin(bullet.angle);
         bullet.y = bullet.y - 0.5 * Math.cos(bullet.angle);
         bullet.range = bullet.range - 0.5;
         //alert(bullet.x +' '+bullet.y)
         this.bullets.push(bullet);
-        setTimeout(function () { bullet.source.bulletFiring = false; }, bullet.source.reloadTime);
+        setTimeout(() => { bullet.source.bulletFiring = false; }, bullet.source.reloadTime);
     }
 
     drawBullets() {
@@ -400,7 +404,7 @@ class Game {
         for (var i = this.overlay.length - 1; i >= 0; i--) {
             var overlay = this.overlay[i];
             if (overlay.name == 'tiberium') {
-                overlay.draw();
+                overlay.draw(this.context, this.gridSize, this.screen);
             }
         };
 
@@ -507,7 +511,7 @@ class Game {
         // Draw sidebar if appropriate
         // set viewport
 
-        this.sidebar.draw(this.context);
+        this.sidebar.draw(this.units, this.buildings, this.infantry, this.vehicles, this.context, this.sounds, this.spriteContext, this.spriteCanvas, this.screen, this.currentPlayer.team);
         this.setViewport();
 
         this.drawMap();
@@ -715,7 +719,7 @@ class Game {
                     }
                 }
             }
-            this.sidebar.finishDeployingBuilding();                        
+            this.sidebar.finishDeployingBuilding(this.buildings, this.buildingsFactory, this.turrets, this.turretsFactory, this.sounds, this.mouse, this.currentPlayer.team);                        
             //} else {
             //    sounds.play('cannot_deploy_here');
             //}
@@ -819,7 +823,7 @@ class Game {
         this.enemyPlayer = new Player(this.currentLevel.enemyTeam, this.currentLevel.startingEnemyCash);
         this.overlay = this.currentLevel.overlay;
         //this.team = this.currentLevel.team;
-        this.sidebar.load(this.currentPlayer.cash);
+        this.sidebar.load(this.currentPlayer.cash, this.screen, this.canvas.width);
 
         this.listenEvents();
 

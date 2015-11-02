@@ -1,5 +1,5 @@
 ﻿
-class Rectangle {
+class Rectangle implements IRectangle {
     constructor(
         public left?: number,
         public top?: number,
