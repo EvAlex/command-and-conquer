@@ -1,6 +1,7 @@
 ﻿
 import VisualObject = require('./VisualObject');
 import Building = require('./Building');
+import TiberiumRefinery = require('./TiberiumRefinery');
 
 class Buildings extends VisualObject implements IBuildingsFactory {
 
@@ -162,7 +163,9 @@ class Buildings extends VisualObject implements IBuildingsFactory {
 
     load(name, gridSize: number) {
         var details = <IBuildingDefaults>this.buildingDetails[name];
-        var building = new Building();
+        var building = name == this.buildingDetails.refinery.name
+            ? new TiberiumRefinery()
+            : new Building();
         building.hitPoints = details.hitPoints;
         building.gridHeight = details.gridShape.length;
         building.gridWidth = details.gridShape[0].length;
@@ -181,7 +184,9 @@ class Buildings extends VisualObject implements IBuildingsFactory {
     }
 
     add(details: IBuildingCreateDetails): Building {
-        var newBuilding = new Building();
+        var newBuilding = details.name == this.buildingDetails.refinery.name
+            ? new TiberiumRefinery()
+            : new Building();
         newBuilding.team = details.team
         var name = details.name;
         $.extend(newBuilding, <IBuildingDefaults>this.types[name].defaults);

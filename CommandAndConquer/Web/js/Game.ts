@@ -403,7 +403,7 @@ class Game implements IBulletDrawer {
             }
             return obj.y
         }
-        objects.sort(function (a, b) {
+        objects.sort((a, b) => {
             return cgY(b) - cgY(a);
             //return b.y - a.y;
         });
@@ -933,11 +933,11 @@ class Game implements IBulletDrawer {
         */
         this.animationLoop = setInterval(() => this.animate(), this.animationTimeout);
 
-        this.tiberiumLoop = setInterval(function () {
+        this.tiberiumLoop = setInterval(() => {
             for (var i = 0; i < this.overlay.length; i++) {
                 var overlay = this.overlay[i];
-                if (overlay.name == 'tiberium' && overlay.stage < 11) {
-                    overlay.stage++;
+                if (overlay.name == 'tiberium' && (<ITiberium>overlay).stage < 11) {
+                    (<ITiberium>overlay).stage++;
                 }
             };
 

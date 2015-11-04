@@ -6,6 +6,10 @@ import Player = require('./Player');
 
 class TiberiumRefinery extends Building implements ITiberiumRefinery {
 
+    constructor() {
+        super();
+    }
+
     harvester: IHarvester;
     tiberiumStorage: number;
 
@@ -18,8 +22,12 @@ class TiberiumRefinery extends Building implements ITiberiumRefinery {
 
         if (this.status == 'build') {
             units.push(vehiclesFactory.add({
-                name: 'harvester', team: this.team, x: this.x + 0.5,
-                y: this.y + 2, moveDirection: 14, orders: { type: 'harvest', from: this }
+                name: 'harvester',
+                team: this.team,
+                x: this.x + 0.5,
+                y: this.y + 2,
+                moveDirection: 14,
+                orders: { type: 'harvest', from: this }
             }));
             this.status = "";
         } else if (this.status == 'unload') {
