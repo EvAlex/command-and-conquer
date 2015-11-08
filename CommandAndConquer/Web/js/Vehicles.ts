@@ -1,6 +1,7 @@
 ﻿
 import VisualObject = require('./VisualObject');
 import Vehicle = require('./Vehicle');
+import Harvester = require('./Harvester');
 
 class Vehicles extends VisualObject implements IVehiclesFactory {
     loaded: boolean = false;
@@ -88,7 +89,9 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
     
     load(name) {
         var details = this.vehicleDetails[name];
-        var vehicle = new Vehicle();
+        var vehicle = name == this.vehicleDetails.harvester.name
+            ? new Harvester()
+            : new Vehicle();
 
         this.loadSpriteSheet(vehicle, details, 'units/vehicles');
 
@@ -99,7 +102,9 @@ class Vehicles extends VisualObject implements IVehiclesFactory {
     movementSpeed: number = 0;
     
     add(details: IVehicleCreateDetails): Vehicle {
-        var newVehicle = new Vehicle();
+        var newVehicle = details.name == this.vehicleDetails.harvester.name
+            ? new Harvester()
+            : new Vehicle();
         newVehicle.team = details.team;
         var name = details.name;
         $.extend(newVehicle, this.types[name].defaults);

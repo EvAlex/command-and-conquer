@@ -86,14 +86,16 @@ class Harvester extends Vehicle implements IHarvester {
         screen: GameScreen,
         fog: Fog): IHarvestOrder | IHarvestReturnOrder {
 
+        var res: IHarvestOrder | IHarvestReturnOrder; 
+
         if (!order.to) {
             order.to = this.findTiberiumInRange(this, allOverlays, gridSize, fog);
         }
         if (!order.to) {
             if (this.tiberium) {
-                this.orders = <IHarvestReturnOrder>{ type: 'harvest-return' };
+                res = <IHarvestReturnOrder>{ type: 'harvest-return' };
             }
-            return;
+            return res;
         }
         var distance = Math.pow(Math.pow(order.to.y + 0.5 - this.y, 2) + Math.pow(order.to.x + 0.5 - this.x, 2), 0.5);
 
@@ -101,8 +103,8 @@ class Harvester extends Vehicle implements IHarvester {
             this.moveTo(this.orders.to, false, speedAdjustmentFactor, units, curPlayerTeam, obstructionGrid, heroObstructionGrid, debugMode, context, gridSize, screen);
         } else {
             if (this.tiberium && this.tiberium >= 14) {
-                this.orders = { type: 'harvest-return', to: order.from, from: order.to };
-                return;
+                res = { type: 'harvest-return', to: order.from, from: order.to };
+                return res;
             }
 
             if (order.to.stage < 1) {
@@ -116,8 +118,9 @@ class Harvester extends Vehicle implements IHarvester {
 
             }
         }
+        res = order;
 
-        return order;
+        return res;
     }
 
     private processHarvestReturnOrder(
@@ -135,10 +138,13 @@ class Harvester extends Vehicle implements IHarvester {
         screen: GameScreen,
         fog: Fog): IHarvestOrder | IHarvestReturnOrder {
 
+        var res: IHarvestOrder | IHarvestReturnOrder = this.orders;
+
         if (!orders.to) {
             orders.to = this.findRefineryInRange(buildings);
             if (!orders.to) {
-                return orders;
+                res = orders;
+                return res;
             }
         }
 
@@ -150,12 +156,13 @@ class Harvester extends Vehicle implements IHarvester {
             //this.moveTo({x:10,y:10})
         } else if (orders.to.life != "ultra-damaged") {
             if (this.tiberium == 0) {
-                return <IHarvestOrder>{ type: 'harvest', to: orders.from, from: orders.to };
+                res = <IHarvestOrder>{ type: 'harvest', to: orders.from, from: orders.to };
+                return res;
             }
 
             if (this.moveDirection != 14) {
                 this.instructions.push(<ITurnInstruction>{ type: 'turn', toDirection: 14 });
-                return;
+                return res;
             }
 
             if (orders.to.status == "") {
@@ -169,8 +176,9 @@ class Harvester extends Vehicle implements IHarvester {
 
             }
         }
+        res = orders;
 
-        return orders;
+        return res;
     }
 
     private findTiberiumInRange(hero, allOverlays: IOverlay[], gridSize: number, fog: Fog): ITiberium {
@@ -208,3 +216,5 @@ class Harvester extends Vehicle implements IHarvester {
         return currentRefinery;
     }
 }
+
+export = Harvester
