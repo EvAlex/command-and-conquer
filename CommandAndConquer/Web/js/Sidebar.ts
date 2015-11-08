@@ -70,7 +70,8 @@ class Sidebar extends VisualObject implements ISidebar {
         buildings: IBuilding[],
         units: IUnit[],
         infantryFactory: InfantryFactory,
-        vehiclesFactory: Vehicles) {
+        vehiclesFactory: Vehicles,
+        curPlayerTeam: string) {
 
         var constructedAt;
         for (var i = 0; i < buildings.length; i++) {
@@ -84,6 +85,7 @@ class Sidebar extends VisualObject implements ISidebar {
         if (unitButton.type == 'infantry') {
             units.push(infantryFactory.add({
                 name: unitButton.name,
+                team: curPlayerTeam,
                 x: constructedAt.x + constructedAt.gridWidth / 2,
                 y: constructedAt.y + constructedAt.gridHeight,
                 moveDirection: 4,
@@ -93,6 +95,7 @@ class Sidebar extends VisualObject implements ISidebar {
             constructedAt.status = 'construct';
             var vehicle = vehiclesFactory.add({
                 name: unitButton.name,
+                team: curPlayerTeam,
                 x: constructedAt.x + 1,
                 y: constructedAt.y + 3,
                 moveDirection: 16,
@@ -506,7 +509,8 @@ class Sidebar extends VisualObject implements ISidebar {
         buildings: IBuilding[],
         units: IUnit[],
         infantryFactory: InfantryFactory,
-        vehiclesFactory: Vehicles) { //side is left or right; index is 0 to 5
+        vehiclesFactory: Vehicles,
+        curPlayerTeam: string) { //side is left or right; index is 0 to 5
 
         var buttons = (side == 'left') ? this.leftButtons : this.rightButtons;
         var offset = 0;// (side=='left')?this.leftButtonOffset:this.rightButtonOffset;
@@ -541,7 +545,7 @@ class Sidebar extends VisualObject implements ISidebar {
                 } else {
                     if (button.type == 'infantry' || button.type == 'vehicle') {
                         soundsManager.play('unit_ready')
-                        this.finishDeployingUnit(button, buildings, units, infantryFactory, vehiclesFactory);
+                        this.finishDeployingUnit(button, buildings, units, infantryFactory, vehiclesFactory, curPlayerTeam);
                     }
                 }
             }
@@ -635,10 +639,10 @@ class Sidebar extends VisualObject implements ISidebar {
         }
 
         for (var i = 0; i < this.leftButtons.length; i++) {
-            this.processButton('left', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory);
+            this.processButton('left', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory, curPlayerTeam);
         }
         for (var i = 0; i < this.rightButtons.length; i++) {
-            this.processButton('right', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory);
+            this.processButton('right', i, soundsManager, buildings, units, infantryFactory, vehiclesFactory, curPlayerTeam);
         }
 
         if (this.visible) {
