@@ -130,7 +130,7 @@ class Building extends DestructibleObject implements IBuilding {
         sidebar: ISidebar,
         enemy: IPlayer): void {
 
-        if (this.status == "build" || this.status == "construct" || this.status == "unload") {
+        if (this.status == "build" || this.status == "construct") {
             this.status = "";
         } else if (this.status == 'sell') {
             this.status = 'destroy';
